@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -8,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_plugin_qpos/flutter_plugin_qpos.dart';
 import 'package:flutter_plugin_qpos/QPOSModel.dart';
 import 'package:flutter_plugin_qpos_example/keyboard/view_keyboard.dart';
+import 'package:flutter_plugin_qpos_example/pages/SecondPage.dart';
 
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:toast/toast.dart';
@@ -42,23 +44,24 @@ class _MyAppState extends State<PluginPage> {
   FlutterPluginQpos _flutterPluginQpos = FlutterPluginQpos();
   String _platformVersion = 'Unknown';
   String display = "";
-  QPOSModel trasactionData;
-  StreamSubscription _subscription;
-  List<String> items;
-  int numPinField;
+  QPOSModel? trasactionData;
+  StreamSubscription? _subscription;
+  List<String>? items;
+  int? numPinField;
   var scanFinish = 0;
-  String _mAddress;
+  String? _mAddress;
   var _updateValue;
   bool _visibility = false;
   bool concelFlag = false;
-  ProgressDialog pr;
+  ProgressDialog? pr;
+  int? test;
 
   @override
   void initState() {
     super.initState();
     initPlatformState();
     _subscription =
-        _flutterPluginQpos.onPosListenerCalled.listen((QPOSModel datas) {
+        _flutterPluginQpos.onPosListenerCalled!.listen((QPOSModel datas) {
       parasListener(datas);
       setState(() {
         trasactionData = datas;
@@ -71,7 +74,7 @@ class _MyAppState extends State<PluginPage> {
     super.dispose();
     //取消监听
     if (_subscription != null) {
-      _subscription.cancel();
+      _subscription!.cancel();
     }
   }
 
@@ -81,7 +84,7 @@ class _MyAppState extends State<PluginPage> {
 
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      platformVersion = await _flutterPluginQpos.posSdkVersion;
+      platformVersion = (await _flutterPluginQpos.posSdkVersion)!;
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
@@ -123,7 +126,7 @@ class _MyAppState extends State<PluginPage> {
               disconnectToDevice();
             },
             child: Text("disconnect"),
-          ),
+          )
         ],
       ),
     );
@@ -131,6 +134,7 @@ class _MyAppState extends State<PluginPage> {
     Widget btnMenuSection = new PopupMenuButton<String>(
         initialValue: "",
         child: RaisedButton(
+            onPressed: () {  },
             child: new Text("update button")
         ),
         onSelected: (String string) {
@@ -160,6 +164,7 @@ class _MyAppState extends State<PluginPage> {
     Widget btnMenuDeviceInfoSection = new PopupMenuButton<String>(
         initialValue: "",
         child: RaisedButton(
+            onPressed: () {  },
             child: new Text("device_info button")
         ),
         onSelected: (String string) {
@@ -227,6 +232,12 @@ class _MyAppState extends State<PluginPage> {
                 },
                 child: Text("open uart"),
               ),
+              RaisedButton(
+                onPressed: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>SecondPage(_flutterPluginQpos)));
+                },
+                child: Text('Go to the second page'),
+              ),
               buttonSection,
               textSection,
               btnMenuSection,
@@ -291,10 +302,10 @@ class _MyAppState extends State<PluginPage> {
     //Map map = new Map<String, dynamic>.from(json.decode(datas));
     // CustomerModel testModel = CustomerModel.fromJson(json.decode(datas));
     //String method = map["method"];
-    String method = datas.method;
-    List<String> paras;
+    String? method = datas.method;
+    List<String> paras = new List.empty();
     //String parameters = map["parameters"];
-    String parameters = datas.parameters;
+    String? parameters = datas.parameters;
     if (parameters != null && parameters.length > 0) {
       paras = parameters.split("||");
     }
@@ -302,7 +313,7 @@ class _MyAppState extends State<PluginPage> {
     switch (method) {
       case 'onRequestTransactionResult':
         setState(() {
-          display = parameters;
+          display = parameters!;
         });
         break;
       case 'onRequestWaitingUser':
@@ -320,12 +331,12 @@ class _MyAppState extends State<PluginPage> {
         break;
       case 'onRequestDisplay':
         setState(() {
-          display = parameters;
+          display = parameters!;
         });
         break;
       case 'onQposInfoResult':
         setState(() {
-          display = parameters;
+          display = parameters!;
         });
         break;
       case 'onCbcMacResult':
@@ -344,20 +355,21 @@ class _MyAppState extends State<PluginPage> {
         _flutterPluginQpos.sendPin("1111");
         break;
       case 'onQposRequestPinResult':
-        _showKeyboard(context,parameters);
+        _showKeyboard(context,parameters!);
         break;
       case 'onGetPosComm':
         break;
       case 'onDeviceFound':
         setState(() {
           if (items == null) {
-            items = new List();
+            // ignore: deprecated_member_use
+            items = new List.empty();
           }
-          items.add(parameters);
+          items!.add(parameters!);
         });
         StringBuffer buffer = new StringBuffer();
-        for (int i = 0; i < items.length; i++) {
-          buffer.write(items[i]);
+        for (int i = 0; i < items!.length; i++) {
+          buffer.write(items![i]);
         }
         print("onDeviceFound : ${buffer.toString()}");
         break;
@@ -371,7 +383,7 @@ class _MyAppState extends State<PluginPage> {
         }
 
         if (Utils.equals(paras[0], "NFC_ONLINE") || Utils.equals(paras[0], "NFC_OFFLINE")) {
-          Future<HashMap<String, String>> map = _flutterPluginQpos.getNFCBatchData();
+          Future<HashMap>? map = _flutterPluginQpos.getNFCBatchData();
           setState(() {
             display = map.toString();
           });
@@ -382,10 +394,13 @@ class _MyAppState extends State<PluginPage> {
         }
         break;
       case 'onQposIdResult':
+        setState(() {
+          display = parameters!;
+        });
         break;
       case 'onError':
         setState(() {
-          display = parameters;
+          display = parameters!;
         });
         break;
       case 'onReturnRSAResult':
@@ -463,21 +478,22 @@ class _MyAppState extends State<PluginPage> {
         break;
       case 'onRequestQposConnected':
         setState(() {
-          display = "device connected!";
-        });
+                display = "device connected!";
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>SecondPage(_flutterPluginQpos)));
+            });
         break;
       case 'onUpdatePosFirmwareResult':
         concelFlag = true;
-        if (pr.isShowing()) {
-          pr.hide();
+        if (pr!.isShowing()) {
+          pr!.hide();
         }
         break;
       case 'onUpdatePosFirmwareProcessChanged':
         print('onUpdatePosFirmwareProcessChanged${parameters}');
 
-        print('onUpdatePosFirmwareProcessChanged${double.parse(parameters)}');
-        if(pr != null && pr.isShowing()){
-          pr.update(
+        print('onUpdatePosFirmwareProcessChanged${double.parse(parameters!)}');
+        if(pr != null && pr!.isShowing()){
+          pr!.update(
             progress: double.parse(parameters),
             message: "Please wait...",
             progressWidget: Container(
@@ -601,7 +617,7 @@ class _MyAppState extends State<PluginPage> {
         break;
       case 'onReturnGetPinInputResult':
         setState(() {
-          numPinField = int.parse(parameters);
+          numPinField = int.parse(parameters!);
         });
         break;
       default:
@@ -620,15 +636,15 @@ class _MyAppState extends State<PluginPage> {
     _flutterPluginQpos.openUart("/dev/ttyS1");
   }
 
-  Widget _getListDate(BuildContext context, int position) {
+  Future<Widget?> _getListDate(BuildContext context, int position) async {
     if (items != null) {
       return new FlatButton(
-          onPressed: () => connectToDevice(items[position]),
-          child: new Text("text ${items[position]}"));
+          onPressed: () => connectToDevice(items![position]),
+          child: new Text("text ${items![position]}"));
     }
   }
 
-  Widget getListSection() {
+  Future<Widget?> getListSection() async {
     if (items == null) {
       if (scanFinish == 0) {
         return new Text("");
@@ -644,7 +660,7 @@ class _MyAppState extends State<PluginPage> {
           physics: new NeverScrollableScrollPhysics(),
           padding: new EdgeInsets.all(5.0),
           itemExtent: 50.0,
-          itemCount: items == null ? 0 : items.length,
+          itemCount: items == null ? 0 : items!.length,
           itemBuilder: (BuildContext context, int index) {
             return _getListDate(context, index);
           },
@@ -671,15 +687,15 @@ class _MyAppState extends State<PluginPage> {
 
 
   operatUpdateProcess(ByteData value, BuildContext context) async {
-    if(pr != null && pr.isShowing())
-      pr.hide();
+    if(pr != null && pr!.isShowing())
+      pr!.hide();
     pr = new ProgressDialog(context, type: ProgressDialogType.Download);
-    pr.style(message: 'Update Firmware...',);
-    await pr.show();
+    pr!.style(message: 'Update Firmware...',);
+    await pr!.show();
     Uint8List list = value.buffer.asUint8List(0);
     var upContent = Utils.Uint8ListToHexStr(list);
     print("upContent:${upContent}");
-    await _flutterPluginQpos.updatePosFirmware(upContent, _mAddress);
+    await _flutterPluginQpos.updatePosFirmware(upContent!, _mAddress!);
   }
 
   void updatePos(BuildContext context) async {
@@ -709,7 +725,7 @@ class _MyAppState extends State<PluginPage> {
             Uint8List list = onValue.buffer.asUint8List(0);
             var emvcapk = Utils.Uint8ListToHexStr(list);
             print("emvConfig:${emvcapk}");
-            _flutterPluginQpos.updateEmvConfig(emvapp, emvcapk);
+            _flutterPluginQpos.updateEmvConfig(emvapp!, emvcapk!);
           });
         });
         break;
@@ -759,7 +775,7 @@ class _MyAppState extends State<PluginPage> {
   void _showKeyboard(BuildContext context, String parameters) {
     print("_showKeyboard:"+parameters);
 
-    List<String> keyBoardList = new List();
+    List<String> keyBoardList = new List.empty();
     var paras = parameters.split("||");
     String keyMap = paras[0];
 
@@ -812,3 +828,19 @@ class _MyAppState extends State<PluginPage> {
 }
 
 
+// class SecondPage extends StatelessWidget{
+//   @override
+//   Widget build(BuildContext context) {
+//     // TODO: implement build
+//     return Scaffold(
+//       appBar: AppBar(title: Text('The second page'),),
+//       body: Center(child: RaisedButton(
+//         child: Text('Return'),
+//         onPressed: (){
+//           Navigator.pop(context);
+//         },
+//       ),),
+//     );
+//   }
+//
+// }

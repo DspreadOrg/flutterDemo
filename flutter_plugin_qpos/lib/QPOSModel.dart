@@ -1,6 +1,6 @@
 class QPOSModel {
-  String method;
-  String parameters;
+  String? method;
+  String? parameters;
 
   QPOSModel({this.method, this.parameters});
 

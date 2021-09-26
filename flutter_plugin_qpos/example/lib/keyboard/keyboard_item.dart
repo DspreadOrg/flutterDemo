@@ -8,11 +8,11 @@ class KeyboardItem extends StatefulWidget {
   final callback;
   final drowEvent;
   final double keyHeight;
-  final double keyWidth;
+  final double? keyWidth;
   final double parentHeight;
 
   const KeyboardItem(
-      {Key key, this.drowEvent, this.callback, this.text, this.keyHeight,this.keyWidth,this.parentHeight})
+      {Key? key, this.drowEvent, this.callback, required this.text, required this.keyHeight, this.keyWidth,required this.parentHeight})
       : super(key: key);
 
   @override
@@ -24,7 +24,7 @@ class ButtonState extends State<KeyboardItem> {
   double keyHeight = 44;
   double keyWidth = 120;
   double txtSize = 18;
-  String text;
+  late String text;
   GlobalKey anchorKey = GlobalKey();
 
   bool processOnce = false;
@@ -58,13 +58,13 @@ class ButtonState extends State<KeyboardItem> {
 
     var _screenWidth = mediaQuery.size.width;
     // 监听widget渲染完成
-    WidgetsBinding.instance.addPostFrameCallback((duration) {
+    WidgetsBinding.instance!.addPostFrameCallback((duration) {
       if(processOnce){
         return;
       }
       processOnce = true;
-      RenderBox renderBox = anchorKey.currentContext.findRenderObject();
-      var offset = renderBox.localToGlobal(Offset.zero);
+      RenderObject? renderBox = anchorKey.currentContext!.findRenderObject();
+      var offset = renderBox!.localToGlobal(Offset.zero);
       double lx = offset.dx;
       double ly = offset.dy-widget.parentHeight;
       double rx = offset.dx + _screenWidth / 3;
@@ -179,17 +179,17 @@ class ButtonState extends State<KeyboardItem> {
 
   String listAddValue(int value) {
     String reslut = "0000";
-    String string = null;
-    var list = new List<int>();
+    String string = "";
+    var list = new List<int>.empty();
     list.add(value);
     var fromList = null;
     if(value >= 256){
       fromList =  Uint16List.fromList(list);
-      string = Utils.Uint16ListToHexStr(fromList);
+      string = Utils.Uint16ListToHexStr(fromList)!;
       return string;
     }else{
       fromList =  Uint8List.fromList(list);
-      string = Utils.Uint8ListToHexStr(fromList);
+      string = Utils.Uint8ListToHexStr(fromList)!;
       return reslut.substring(4 - string.length, 4) + string;
     }
 
