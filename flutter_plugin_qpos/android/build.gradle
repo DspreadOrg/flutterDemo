@@ -31,7 +31,7 @@ android {
 }
 dependencies {
     implementation files('libs/bcprov-jdk15on-160.jar')
-    implementation files('libs/dspread_pos_sdk_3.3.8.jar')
+    implementation files('libs/dspread_pos_sdk_3.8.7.jar')
     implementation files('libs/sun.misc.BASE64Decoder.jar')
     implementation files('libs/fastjson-1.2.62.jar')
     implementation 'androidx.core:core:1.1.0'
