@@ -44,12 +44,12 @@ void main() {
   });
 }
 
-String? listAddValue(int value) {
+String listAddValue(int value) {
   String reslut = "0000";
-  String? string = null;
-  var list = new List<int>.empty();
+  String string = null;
+  var list = new List<int>();
   list.add(value);
-  dynamic fromList = null;
+  var fromList = null;
   if(value >= 256){
     fromList =  Uint16List.fromList(list);
     string = Uint16ListToHexStr(fromList);
@@ -57,12 +57,12 @@ String? listAddValue(int value) {
   }else{
     fromList =  Uint8List.fromList(list);
     string = Uint8ListToHexStr(fromList);
-    return reslut.substring(4 - string!.length, 4) + string;
+    return reslut.substring(4 - string.length, 4) + string;
   }
 
 }
 
-String? Uint16ListToHexStr(Uint16List list) {
+String Uint16ListToHexStr(Uint16List list) {
   final String HEXES = "0123456789ABCDEF";
   if (list == null) {
     return null;
@@ -77,7 +77,7 @@ String? Uint16ListToHexStr(Uint16List list) {
   return hex.toString();
 }
 
-String? Uint8ListToHexStr(Uint8List list) {
+String Uint8ListToHexStr(Uint8List list) {
   final String HEXES = "0123456789ABCDEF";
   if (list == null) {
     return null;

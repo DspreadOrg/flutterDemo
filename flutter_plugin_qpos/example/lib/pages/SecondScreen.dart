@@ -71,7 +71,7 @@ class SecondScreen extends StatelessWidget {
           onResult: (data) {
             Toast.show("POS onResult" + data, context,
                 duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
-          }, pwdField: null,
+          },
         );
       },
     );

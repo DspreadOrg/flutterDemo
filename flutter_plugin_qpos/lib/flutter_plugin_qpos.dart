@@ -20,7 +20,7 @@ class FlutterPluginQpos {
 
       _instance = FlutterPluginQpos.private(methodChannel, eventChannel);
     }
-    return _instance!;
+    return _instance;
   }
 
   /// This constructor is only used for testing and shouldn't be accessed by
@@ -28,7 +28,7 @@ class FlutterPluginQpos {
   @visibleForTesting
   FlutterPluginQpos.private(this._methodChannel, this._eventChannel);
 
-  static FlutterPluginQpos? _instance;
+  static FlutterPluginQpos _instance;
 
   final MethodChannel _methodChannel;
   final EventChannel _eventChannel;
@@ -36,9 +36,9 @@ class FlutterPluginQpos {
 
 //
 //  /// Fires whenever the battery state changes.
-  Stream<QPOSModel>? _onPosListenerCalled;
+  Stream<QPOSModel> _onPosListenerCalled;
 
-  Stream<QPOSModel>? get onPosListenerCalled {
+  Stream<QPOSModel> get onPosListenerCalled {
     if (_onPosListenerCalled == null) {
       _onPosListenerCalled = _eventChannel
           .receiveBroadcastStream()
@@ -47,39 +47,42 @@ class FlutterPluginQpos {
     return _onPosListenerCalled;
   }
 
+
+
   QPOSModel _parsePosListenerCall(String state) {
     //    {"parameters":"","method":"onRequestWaitingUser"}
     QPOSModel qposModel = QPOSModel.fromJson(json.decode(state));
     return qposModel;
   }
 
-  init(String mode) {
+     init(String mode) {
     Map<String, String> params = Map<String, String>();
     params['CommunicationMode'] = mode;
     _methodChannel.invokeMethod('initPos', params);
   }
 
-  // Future requestPermission(String mode) async {
-  //   // request permission
-  //
-  //   Map<PermissionGroup, PermissionStatus> permissions =
-  //   await PermissionHandler().requestPermissions([PermissionGroup.location]);
-  //
-  //   // request result
-  //   PermissionStatus permission = await PermissionHandler()
-  //       .checkPermissionStatus(PermissionGroup.location);
-  //
-  //   if (permission == PermissionStatus.granted) {
-  //     print("granted");
-  //     init(mode);
-  //     scanQPos2Mode(20);
-  //   } else {
-  //     print("no permission");
-  //   }
-  // }
+  Future requestPermission(String mode) async {
+    // request permission
+    Map<PermissionGroup, PermissionStatus> permissions =
+    await PermissionHandler().requestPermissions([PermissionGroup.location]);
 
-    Future<String?> get posSdkVersion async{
-    String? version = await _methodChannel.invokeMethod('getPosSdkVersion');
+    // request result
+    PermissionStatus permission = await PermissionHandler()
+        .checkPermissionStatus(PermissionGroup.location);
+
+    if (permission == PermissionStatus.granted) {
+      print("granted");
+      init(mode);
+      scanQPos2Mode(20);
+    } else {
+      print("no permission");
+    }
+  }
+
+
+
+    Future<String> get posSdkVersion async{
+    String version = await _methodChannel.invokeMethod('getPosSdkVersion');
     return version;
   }
 
@@ -133,9 +136,9 @@ class FlutterPluginQpos {
 
   }
 
-  Future<HashMap>? getNFCBatchData() async{
-     Future<HashMap>? map =  await _methodChannel.invokeMethod('getNFCBatchData');
-     return map!;
+  Future<HashMap> getNFCBatchData() async{
+     Future<HashMap> map =  await _methodChannel.invokeMethod('getNFCBatchData');
+     return map;
   }
 
   void sendPin(String s) async{
@@ -218,8 +221,8 @@ class FlutterPluginQpos {
 
   }
 
-  Future<int?> getUpdateProgress() async{
-     int? process = await _methodChannel.invokeMethod('getUpdateProgress');
+  Future<int> getUpdateProgress() async{
+     int process = await _methodChannel.invokeMethod('getUpdateProgress');
     return process;
 
   }
