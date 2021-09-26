@@ -63,7 +63,7 @@ class ButtonState extends State<KeyboardItem> {
         return;
       }
       processOnce = true;
-      RenderObject? renderBox = anchorKey.currentContext!.findRenderObject();
+      RenderBox? renderBox = anchorKey.currentContext!.findRenderObject() as RenderBox?;
       var offset = renderBox!.localToGlobal(Offset.zero);
       double lx = offset.dx;
       double ly = offset.dy-widget.parentHeight;

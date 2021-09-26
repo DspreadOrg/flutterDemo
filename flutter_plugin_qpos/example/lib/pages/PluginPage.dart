@@ -242,7 +242,7 @@ class _MyAppState extends State<PluginPage> {
               textSection,
               btnMenuSection,
               btnMenuDeviceInfoSection,
-              getListSection(),
+              getListSection()??Text(''),
               textResultSection,
 
 //              getupdateSection()
@@ -636,15 +636,19 @@ class _MyAppState extends State<PluginPage> {
     _flutterPluginQpos.openUart("/dev/ttyS1");
   }
 
-  Future<Widget?> _getListDate(BuildContext context, int position) async {
+  Widget _getListDate(BuildContext context, int position)  {
     if (items != null) {
       return new FlatButton(
           onPressed: () => connectToDevice(items![position]),
           child: new Text("text ${items![position]}"));
+    }else{
+      return new FlatButton(
+          onPressed: () => connectToDevice(items![position]),
+          child: new Text("No item"));
     }
   }
 
-  Future<Widget?> getListSection() async {
+  Widget? getListSection() {
     if (items == null) {
       if (scanFinish == 0) {
         return new Text("");
