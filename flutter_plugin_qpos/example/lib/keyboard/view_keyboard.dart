@@ -11,18 +11,18 @@ class CustomKeyboard extends StatefulWidget {
   final onResult;
   final autoBack;
   final double keyHeight;
-  final int pwdField;
+  final int? pwdField;
   final List<String> keyList;
 
   const CustomKeyboard(
 
       {this.callback,
-        this.pwdField,
+        required this.pwdField,
       this.initEvent,
       this.onResult,
       this.autoBack = false,
       this.keyHeight = 48,
-      this.keyList});
+      required this.keyList});
 
   @override
   _CustomKeyboardState createState() => _CustomKeyboardState();
@@ -165,7 +165,7 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
             drowEvent: (value) => onDrowKeyMap(value),
             keyHeight: widget.keyHeight,
             text: item,
-            callback: (val) => onKeyDown(context, item),
+            callback: (val) => onKeyDown(context, item)
           );
           return keyboardItem;
         }).toList(),
@@ -252,7 +252,8 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
       Navigator.pop(context);
     }
     StringBuffer result = new StringBuffer();
-    for(int i =0;i< widget.pwdField ;i++){
+    int? pwdfield = widget.pwdField ?? 0;
+    for(int i =0;i< pwdfield ;i++){
       result.write(i);
     }
     return result.toString();

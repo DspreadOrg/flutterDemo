@@ -4,7 +4,7 @@ import 'pages/SecondScreen.dart';
 
 
 void main() => runApp(MyApp());
-Map<String, WidgetBuilder> routes;
+Map<String, WidgetBuilder>? routes;
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
           // '/second': (context) => SecondScreen(),
          },
         onGenerateRoute: (RouteSettings settings) {
-          String routeName = settings.name;
+          String? routeName = settings.name;
           print(routeName);
           return MaterialPageRoute(builder: (context) => PluginPage());
         }

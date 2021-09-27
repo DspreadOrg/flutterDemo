@@ -52,9 +52,12 @@ public class PosPluginHandler {
         mPos = QPOSService.getInstance(mode1);
         mMode = mode1.ordinal();
         mContext = context;
+        TRACE.d("mode:" + mode);
         if(mode.equals("UART")) {
+            TRACE.d("mode11:" + mode);
             mPos.setD20Trade(true);
         } else {
+            TRACE.d("mode2:" + mode);
            mPos.setD20Trade(false);
         }
         mPos.setConext(context);

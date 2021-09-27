@@ -3,7 +3,7 @@ import 'dart:typed_data';
 class Utils {
   static String HEXES = "0123456789ABCDEF";
 
-  static String Uint8ListToHexStr(Uint8List list) {
+  static String? Uint8ListToHexStr(Uint8List list) {
     if (list == null) {
       return null;
     }
@@ -16,7 +16,7 @@ class Utils {
     return hex.toString();
   }
 
-  static String Uint16ListToHexStr(Uint16List list) {
+  static String? Uint16ListToHexStr(Uint16List list) {
     if (list == null) {
       return null;
     }
