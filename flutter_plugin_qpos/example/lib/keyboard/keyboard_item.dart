@@ -89,7 +89,6 @@ class ButtonState extends State<KeyboardItem> {
 
       } else if (text == "cancel") {
         buffer.write(listAddValue(13));
-
       } else {
         buffer.write(listAddValue(int.parse(text)));
       }
@@ -180,7 +179,7 @@ class ButtonState extends State<KeyboardItem> {
   String listAddValue(int value) {
     String reslut = "0000";
     String string = "";
-    var list = new List<int>.empty();
+    var list = new List<int>.empty(growable:true);
     list.add(value);
     var fromList = null;
     if(value >= 256){

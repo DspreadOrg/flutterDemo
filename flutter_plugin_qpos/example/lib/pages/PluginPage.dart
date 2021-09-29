@@ -45,6 +45,7 @@ class _MyAppState extends State<PluginPage> {
   FlutterPluginQpos _flutterPluginQpos = FlutterPluginQpos();
   String _platformVersion = 'Unknown';
   String display = "";
+  String tlvData = "";
   QPOSModel? trasactionData;
   StreamSubscription? _subscription;
   List<String>? items;
@@ -135,10 +136,11 @@ class _MyAppState extends State<PluginPage> {
 
     Widget btnMenuSection = new PopupMenuButton<String>(
         initialValue: "",
-        child: //RaisedButton(
-            // onPressed: () {  },
-            Text("update button"),
-        //),
+        child: TextButton(
+             onPressed: () {  },
+             child : Text("update button"),
+        ),
+
         onSelected: (String string) {
           print("selected:"+string.toString());
           onUpdateButtonSelected(string,context);
@@ -315,7 +317,7 @@ class _MyAppState extends State<PluginPage> {
     switch (method) {
       case 'onRequestTransactionResult':
         setState(() {
-          display = parameters!;
+          display = parameters!+"\n"+display+"\n"+tlvData;
         });
         break;
       case 'onRequestWaitingUser':
@@ -386,7 +388,8 @@ class _MyAppState extends State<PluginPage> {
         }
 
         if (Utils.equals(paras[0], "NFC_ONLINE") || Utils.equals(paras[0], "NFC_OFFLINE")) {
-          Future<HashMap>? map = _flutterPluginQpos.getNFCBatchData();
+          Future<HashMap>? map = _flutterPluginQpos.getNFCBatchData() ;
+          //  Map<String,String> map = _flutterPluginQpos.getNFCBatchData() as Map<String,String>;
           setState(() {
             display = map.toString();
           });
@@ -575,6 +578,7 @@ class _MyAppState extends State<PluginPage> {
       case 'onRequestNoQposDetected':
         break;
       case 'onRequestOnlineProcess':
+        tlvData = parameters!;
         String str = "8A023030"; //Currently the default value,
         _flutterPluginQpos.sendOnlineProcessResult(str); //脚本通知/55域/ICCDATA
 
@@ -828,8 +832,9 @@ class _MyAppState extends State<PluginPage> {
           keyHeight: 46,
           autoBack: false,
           onResult: (data) {
-            Fluttertoast.showToast(msg:"POS onResult" + data,
-                toastLength:Toast.LENGTH_LONG, gravity: ToastGravity.CENTER);
+            // Fluttertoast.showToast(msg:"POS onResult" + data,
+            //     toastLength:Toast.LENGTH_LONG, gravity: ToastGravity.CENTER);
+            print("POS onResult "+data);
           },
         );
       },

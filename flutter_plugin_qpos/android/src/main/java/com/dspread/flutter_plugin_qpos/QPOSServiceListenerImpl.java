@@ -158,7 +158,7 @@ public class QPOSServiceListenerImpl extends CQPOSService   {
 
     @Override
     public void onRequestOnlineProcess(final String tlv) {
-        TRACE.d("onRequestOnlineProcess" + tlv);
+        TRACE.d("onRequestOnlineProcess()" + tlv);
         Map map = new HashMap();
         map.put("method","onRequestOnlineProcess");
         StringBuffer parameters = new StringBuffer();
