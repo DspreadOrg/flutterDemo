@@ -134,66 +134,153 @@ class _MyAppState extends State<PluginPage> {
       ),
     );
 
-    Widget btnMenuSection = new PopupMenuButton<String>(
-        initialValue: "",
-        child: TextButton(
-             onPressed: () {  },
-             child : Text("update button"),
+    // Widget btnMenuSection = new PopupMenuButton<String>(
+    //     initialValue: "",
+    //     child: ListTile(
+    //         leading: Icon(Icons.visibility),
+    //         title: Text('update'),
+    //     ),
+    //
+    //     onSelected: (String string) {
+    //       print("selected:"+string.toString());
+    //       onUpdateButtonSelected(string,context);
+    //     },
+    //     itemBuilder: (BuildContext context) => <PopupMenuItem<String>>[
+    //           PopupMenuItem(
+    //             child: Text("update Emv Config"),
+    //             value: "0",
+    //           ),
+    //           PopupMenuItem(
+    //             child: Text("update Firmware"),
+    //             value: "1",
+    //           ),
+    //           PopupMenuItem(
+    //             child: Text("update IPEK"),
+    //             value: "2",
+    //           ),
+    //           PopupMenuItem(
+    //             child: Text("update Master Key"),
+    //             value: "3",
+    //           )
+    //         ]);
+
+    PopupMenuButton  popMenuUpdate(){
+      return PopupMenuButton<String>(
+          initialValue: "",
+          child:Text("update button"),
+          onSelected: (String string) {
+            print("selected:"+string.toString());
+            onUpdateButtonSelected(string,context);
+          },
+          itemBuilder: (context) => <PopupMenuItem<String>>[
+            PopupMenuItem(
+              child: Text("update Emv Config"),
+              value: "0",
+            ),
+            PopupMenuItem(
+              child: Text("update Firmware"),
+              value: "1",
+            ),
+            PopupMenuItem(
+              child: Text("update IPEK"),
+              value: "2",
+            ),
+            PopupMenuItem(
+              child: Text("update Master Key"),
+              value: "3",
+            )
+          ]
+      );
+    }
+
+    PopupMenuButton  popMenuInfo(){
+      return PopupMenuButton<String>(
+          initialValue: "",
+          child: //RaisedButton(
+          //onPressed: () {  },
+          Text("device_info button")
+          ,
+          onSelected: (String string) {
+            print(string.toString());
+            onDeviceInfoButtonSelected(string,context);
+
+          },
+          itemBuilder: (BuildContext context) => <PopupMenuItem<String>>[
+            PopupMenuItem(
+              child: Text("get Device Id"),
+              value: "0",
+            ),
+            PopupMenuItem(
+              child: Text("get Device Info"),
+              value: "1",
+            ),
+            PopupMenuItem(
+              child: Text("get Device update Key CheckValue"),
+              value: "2",
+            ),
+            PopupMenuItem(
+              child: Text("get Device Key CheckValue"),
+              value: "3",
+            )
+          ]);
+    }
+
+    _showMenu(int type){
+      final RenderBox? button = context.findRenderObject() as RenderBox?;
+      final RenderBox? overlay = Overlay.of(context)!.context.findRenderObject() as RenderBox?;
+      final RelativeRect position = RelativeRect.fromRect(
+        Rect.fromPoints(
+          button!.localToGlobal(Offset(0, 0), ancestor: overlay),
+          button.localToGlobal(button.size.bottomRight(Offset.zero),
+              ancestor: overlay),
         ),
+        Offset.zero & overlay!.size,
+      );
+      var pop;
+      if(type== 1) pop = popMenuUpdate();
+      else pop = popMenuInfo();
+      showMenu<String>(
+          context: context,
+        items: pop.itemBuilder(context) as List<PopupMenuEntry<String>>,
+        position: position,   ).then<void>((String? newValue) {
+        if (!mounted) return null;
+        if (newValue == null) {
+          if (pop.onCanceled != null) pop.onCanceled!();
+          return null;
+        }
+        if (pop.onSelected != null) pop.onSelected!(newValue);
+      });
+    }
 
-        onSelected: (String string) {
-          print("selected:"+string.toString());
-          onUpdateButtonSelected(string,context);
-
-        },
-        itemBuilder: (BuildContext context) => <PopupMenuItem<String>>[
-              PopupMenuItem(
-                child: Text("update Emv Config"),
-                value: "0",
-              ),
-              PopupMenuItem(
-                child: Text("update Firmware"),
-                value: "1",
-              ),
-              PopupMenuItem(
-                child: Text("update IPEK"),
-                value: "2",
-              ),
-              PopupMenuItem(
-                child: Text("update Master Key"),
-                value: "3",
-              )
-            ]);
-
-    Widget btnMenuDeviceInfoSection = new PopupMenuButton<String>(
-        initialValue: "",
-        child: //RaisedButton(
-            //onPressed: () {  },
-            Text("device_info button")
-        ,
-        onSelected: (String string) {
-          print(string.toString());
-          onDeviceInfoButtonSelected(string,context);
-
-        },
-        itemBuilder: (BuildContext context) => <PopupMenuItem<String>>[
-          PopupMenuItem(
-            child: Text("get Device Id"),
-            value: "0",
-          ),
-          PopupMenuItem(
-            child: Text("get Device Info"),
-            value: "1",
-          ),
-          PopupMenuItem(
-            child: Text("get Device update Key CheckValue"),
-            value: "2",
-          ),
-          PopupMenuItem(
-            child: Text("get Device Key CheckValue"),
-            value: "3",
-          )
-        ]);
+    // Widget btnMenuDeviceInfoSection = new PopupMenuButton<String>(
+    //     initialValue: "",
+    //     child: //RaisedButton(
+    //         //onPressed: () {  },
+    //         Text("device_info button")
+    //     ,
+    //     onSelected: (String string) {
+    //       print(string.toString());
+    //       onDeviceInfoButtonSelected(string,context);
+    //
+    //     },
+    //     itemBuilder: (BuildContext context) => <PopupMenuItem<String>>[
+    //       PopupMenuItem(
+    //         child: Text("get Device Id"),
+    //         value: "0",
+    //       ),
+    //       PopupMenuItem(
+    //         child: Text("get Device Info"),
+    //         value: "1",
+    //       ),
+    //       PopupMenuItem(
+    //         child: Text("get Device update Key CheckValue"),
+    //         value: "2",
+    //       ),
+    //       PopupMenuItem(
+    //         child: Text("get Device Key CheckValue"),
+    //         value: "3",
+    //       )
+    //     ]);
 
 
     Widget textSection = new Container(
@@ -244,8 +331,18 @@ class _MyAppState extends State<PluginPage> {
               ),
               buttonSection,
               textSection,
-              btnMenuSection,
-              btnMenuDeviceInfoSection,
+              RaisedButton(onPressed:(){
+                _showMenu(1);
+              } ,
+                  child: Text("update button")
+              ),
+              // btnMenuSection(),
+              // btnMenuDeviceInfoSection,
+              RaisedButton(onPressed:(){
+                _showMenu(2);
+              } ,
+                  child: Text("device info button")
+              ),
               getListSection()??Text(''),
               textResultSection,
 
@@ -390,8 +487,9 @@ class _MyAppState extends State<PluginPage> {
         if (Utils.equals(paras[0], "NFC_ONLINE") || Utils.equals(paras[0], "NFC_OFFLINE")) {
           Future<HashMap>? map = _flutterPluginQpos.getNFCBatchData() ;
           //  Map<String,String> map = _flutterPluginQpos.getNFCBatchData() as Map<String,String>;
+
           setState(() {
-            display = map.toString();
+           display = map.toString();
           });
         }else if(Utils.equals(paras[0], "MCR")){
           setState(() {
