@@ -133,9 +133,10 @@ class FlutterPluginQpos {
 
   }
 
-  Future<HashMap>? getNFCBatchData() async{
-     Future<HashMap>? map =  await _methodChannel.invokeMethod('getNFCBatchData');
-     return map!;
+  Future getNFCBatchData() async{
+    Map<String,String> map1 = new Map.from(await _methodChannel.invokeMethod('getNFCBatchData'));
+     Future map =  new Future(() => map1.toString());
+     return map;
   }
 
   void sendPin(String s) async{

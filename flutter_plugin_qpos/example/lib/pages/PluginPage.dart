@@ -323,12 +323,6 @@ class _MyAppState extends State<PluginPage> {
                 },
                 child: Text("open uart"),
               ),
-              RaisedButton(
-                onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>SecondPage(_flutterPluginQpos)));
-                },
-                child: Text('Go to the second page'),
-              ),
               buttonSection,
               textSection,
               RaisedButton(onPressed:(){
@@ -393,7 +387,7 @@ class _MyAppState extends State<PluginPage> {
   void startDoTrade() {
     Map<String, String> params = Map<String, String>();
     params['keyIndex'] = "0";
-//    params['cardTradeMode'] = "SWIPE_TAP_INSERT_CARD_NOTUP";
+   params['cardTradeMode'] = "SWIPE_TAP_INSERT_CARD_NOTUP";
 //    params['formatId'] = "00";
 //    params['doTradeMode'] = "CHECK_CARD_NO_IPNUT_PIN";
     _flutterPluginQpos.doTrade(params);
@@ -485,12 +479,9 @@ class _MyAppState extends State<PluginPage> {
         }
 
         if (Utils.equals(paras[0], "NFC_ONLINE") || Utils.equals(paras[0], "NFC_OFFLINE")) {
-          Future<HashMap>? map = _flutterPluginQpos.getNFCBatchData() ;
-          //  Map<String,String> map = _flutterPluginQpos.getNFCBatchData() as Map<String,String>;
-
-          setState(() {
-           display = map.toString();
-          });
+          Future map = _flutterPluginQpos.getNFCBatchData().then((value) =>  setState(() {
+            display = value.toString();
+          }));
         }else if(Utils.equals(paras[0], "MCR")){
           setState(() {
             display = paras[1];
@@ -583,7 +574,7 @@ class _MyAppState extends State<PluginPage> {
       case 'onRequestQposConnected':
         setState(() {
                 display = "device connected!";
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>SecondPage(_flutterPluginQpos)));
+                // Navigator.push(context, MaterialPageRoute(builder: (context)=>SecondPage(_flutterPluginQpos)));
             });
         break;
       case 'onUpdatePosFirmwareResult':
