@@ -1,0 +1,50 @@
+stages:
+  # 作业执行时会依次执行下面列出的 stage，为了方便，这里只设置了一个stage
+  - release
+
+release_project:
+  # 如果省略，则会使用 Runner 注册时配置的镜像，否则会使用这里指定的镜像
+  image: cirrusci/flutter:latest
+  stage: release
+  script:
+    # 为了在国内网络下加速 flutter 项目依赖的下载速度，先配置 pub 仓库的中国镜像
+    - export PUB_HOSTED_URL=https://pub.flutter-io.cn
+    - export FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn
+    # 由于Android系统App升级时要求下载的新版本apk文件内的版本号大于已安装的版本号
+    # 所以这里将作业ID写入flutter的版本号配置，用于实现Android客户端正常的版本更新
+    - sed -i "s/\(version.\+\)[0-9]+\([0-9]\)/\1${CI_JOB_ID}+${CI_JOB_ID}/" pubspec.yaml
+    # 打release包所需的签名文件和key.properties用如下方式在流水线中动态添加，参考问题如下：
+    # https://stackoverflow.com/questions/51725339/how-to-manage-signing-keystore-in-gitlab-ci-for-android
+    - echo ${FLUTTER_BUILD_APK_KEY} | base64 -d > app.keystore
+    - echo storePassword=${FLUTTER_BUILD_APK_KEY_PASSWD} > android/key.properties
+    - echo keyPassword=${FLUTTER_BUILD_APK_KEY_PASSWD} >> android/key.properties
+    - echo keyAlias=key >> android/key.properties
+    - echo storeFile=${CI_PROJECT_DIR}/app.keystore >> android/key.properties
+    - flutter pub get
+    - flutter clean
+    # - flutter doctor --android-licenses
+    # 由于项目中使用了intl_utils用于生成多语言资源，所以需要执行下面两句生成i8n代码
+    - flutter pub global activate intl_utils
+    - flutter --no-color pub global run intl_utils:generate
+    # 替换项目默认的仓库为阿里云的maven仓库用于加速android项目的构建速度
+    - sed -i "s/google()/maven { url 'https:\/\/maven.aliyun.com\/repository\/google' }/g" android/build.gradle
+    - sed -i "s/jcenter()/maven { url 'https:\/\/maven.aliyun.com\/repository\/jcenter' }/g" android/build.gradle
+    - sed -i "s/google()/maven { url 'https:\/\/maven.aliyun.com\/repository\/google' }/g" ${FLUTTER_HOME}/packages/flutter_tools/gradle/flutter.gradle
+    - sed -i "s/jcenter()/maven { url 'https:\/\/maven.aliyun.com\/repository\/jcenter' }/g" ${FLUTTER_HOME}/packages/flutter_tools/gradle/flutter.gradle
+    - sed -i "s/https:\/\/storage.googleapis.com/https:\/\/storage.flutter-io.cn\/download.flutter.io/g" ${FLUTTER_HOME}/packages/flutter_tools/gradle/flutter.gradle
+    # 执行flutter编译apk的指令，指定仅编译arm指令的apk，并且禁用代码压缩以避免某些原生插件的异常行为
+    - flutter -v build apk --no-shrink --target-platform=android-arm
+    # 将编译生成的最终产物先移动到根目录下，否则通过下载得到的作业产物将有非常深的目录层级
+    - mv build/app/outputs/apk/release/app-release.apk app-release.apk
+    - echo "build success, uploading..."
+    # 利用curl和python脚本将编译产物、git提交信息、apk的md5值等信息发送到app后台服务器，实现自动发布新测试版
+    # - curl -X 'POST' -F "file=@app-release.apk" http://xxx.xxx.xxx.xx/debugger_api/upload/`md5sum app-release.apk | awk '{print $1}'`.apk
+    # - python3 deploy.py `md5sum app-release.apk | awk '{print $1}'` ${CI_JOB_ID} "${CI_COMMIT_MESSAGE}"
+    # - echo "uploaded, start release..."
+  artifacts:
+    paths:
+      # 这里指定的是作业结束后保留的作业产物，由于上面已经复制到了根目录，所以可以直接给出文件名
+      - app-release.apk
+
+  tags:
+    - flutter
