@@ -143,6 +143,7 @@
 }
 
 -(void) onQposIdResult: (NSDictionary*)posId{
+    NSLog(@"onQposIdResult: %@",posId);
     NSString *aStr = [@"posId:" stringByAppendingString:posId[@"posId"]];
     
     NSString *temp = [@"psamId:" stringByAppendingString:posId[@"psamId"]];
@@ -169,9 +170,20 @@
 }
 
 -(void) onQposInfoResult: (NSDictionary*)posInfoData{
-    NSString *aStr = @"SUB :";
-    aStr = [aStr stringByAppendingString:posInfoData[@"SUB"]];
+    NSLog(@"onQposInfoResult: %@",posInfoData);
+    NSString *aStr = @"ModelInfo: ";
+    aStr = [aStr stringByAppendingString:posInfoData[@"ModelInfo"]];
+    
     aStr = [aStr stringByAppendingString:@"\n"];
+    aStr = [aStr stringByAppendingString:@"PCIHardwareVersion: "];
+    aStr = [aStr stringByAppendingString:posInfoData[@"PCIHardwareVersion"]];
+    
+    aStr = [aStr stringByAppendingString:@"\n"];
+    aStr = [aStr stringByAppendingString:@"SUB: "];
+    aStr = [aStr stringByAppendingString:posInfoData[@"SUB"]];
+    
+    aStr = [aStr stringByAppendingString:@"\n"];
+    aStr = [aStr stringByAppendingString:@"bootloaderVersion: "];
     aStr = [aStr stringByAppendingString:posInfoData[@"bootloaderVersion"]];
     
     aStr = [aStr stringByAppendingString:@"\n"];
