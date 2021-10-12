@@ -17,8 +17,6 @@
     NSMutableArray *allBluetooth;
     NSString *btAddress;
     TransactionType mTransType;
-    UIAlertView *mAlertView;
-    UIActionSheet *mActionSheet;
     PosType     mPosType;
     dispatch_queue_t self_queue;
     NSString *msgStr;
@@ -36,7 +34,6 @@
 }
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
-  NSLog(@"method: %@-----arguments: %@----result: %@",call.method, call.arguments, result);
   if ([@"getPosSdkVersion" isEqualToString:call.method]) {
     result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
   }else if ([@"initPos" isEqualToString:call.method]) {
@@ -73,16 +70,8 @@
       NSString *terminalTime = [call.arguments objectForKey:@"terminalTime"];
       [self.mPos sendTime:terminalTime];
   } else if ([@"getNFCBatchData" isEqualToString:call.method]) {
-      dispatch_async(dispatch_get_main_queue(),  ^{
-          NSDictionary *mDic = [self.mPos getNFCBatchData];
-          NSString *tlv;
-          if(mDic !=nil){
-              tlv= [NSString stringWithFormat:@"NFCBatchData: %@",mDic[@"tlv"]];
-          }else{
-              tlv = @"";
-          }
-          result(tlv);
-      });
+      NSDictionary *mDic = [self.mPos getNFCBatchData];
+      result(mDic);
   } else if ([@"sendPin" isEqualToString:call.method]) {
       NSString *pinContent = [call.arguments objectForKey:@"pinContent"];
       [self.mPos sendPinEntryResult:pinContent];
@@ -176,12 +165,10 @@
     aStr = [aStr stringByAppendingString:@"\n"];
     aStr = [aStr stringByAppendingString:temp];
     
-    NSLog(@"posid == %@",aStr);
     [self sendMessage:@"onQposIdResult" parameter:aStr];
 }
 
 -(void) onQposInfoResult: (NSDictionary*)posInfoData{
-    NSLog(@"onQposInfoResult: %@",posInfoData);
     NSString *aStr = @"SUB :";
     aStr = [aStr stringByAppendingString:posInfoData[@"SUB"]];
     aStr = [aStr stringByAppendingString:@"\n"];
@@ -194,7 +181,6 @@
     aStr = [aStr stringByAppendingString:@"\n"];
     aStr = [aStr stringByAppendingString:@"Hardware Version: "];
     aStr = [aStr stringByAppendingString:posInfoData[@"hardwareVersion"]];
-    
     
     NSString *batteryPercentage = posInfoData[@"batteryPercentage"];
     if (batteryPercentage==nil || [@"" isEqualToString:batteryPercentage]) {
@@ -234,7 +220,6 @@
 -(void)scanBluetooth{
     [self initPos];
     NSInteger delay = 15;
-    NSLog(@"蓝牙状态:%ld",(long)[self.bt getCBCentralManagerState]);
     [self.bt setBluetoothDelegate2Mode:self];
     if ([self.bt getCBCentralManagerState] == CBCentralManagerStateUnknown) {
             while ([self.bt getCBCentralManagerState]!= CBCentralManagerStatePoweredOn) {
@@ -248,21 +233,6 @@
         [self.bt scanQPos2Mode:delay];
 }
 
-#pragma mark - UIActionSheet
--(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex{
-    NSString *aTitle = msgStr;
-    NSInteger cancelIndex = actionSheet.cancelButtonIndex;
-    NSLog(@"selectEmvApp cancelIndex = %d , index = %d",cancelIndex,buttonIndex);
-    if ([aTitle isEqualToString:@"Please select app"]){
-        if (buttonIndex==cancelIndex) {
-            [self.mPos cancelSelectEmvApp];
-        }else{
-            [self.mPos selectEmvApp:buttonIndex];
-        }
-    }
-    [mActionSheet dismissWithClickedButtonIndex:0 animated:YES];
-}
-
 -(void) sleepMs: (NSInteger)msec {
     NSTimeInterval sec = (msec / 1000.0f);
     [NSThread sleepForTimeInterval:sec];
@@ -270,7 +240,6 @@
 
 -(void)onBluetoothName2Mode:(NSString *)bluetoothName{
      if (bluetoothName != nil && ![bluetoothName isEqualToString:@""]) {
-           NSLog(@"蓝牙名: %@",bluetoothName);
          if (![allBluetooth containsObject:bluetoothName]) {
              [allBluetooth addObject:bluetoothName];
              NSString *temp = [NSString stringWithFormat:@"%@//%@",bluetoothName,bluetoothName];
@@ -305,17 +274,6 @@
 //callback of input pin on phone
 -(void) onRequestPinEntry{
     NSLog(@"onRequestPinEntry");
-    NSString *msg = @"";
-    mAlertView = [[UIAlertView new]
-                  initWithTitle:NSLocalizedString(@"Please set pin", nil)
-                  message:msg
-                  delegate:self
-                  cancelButtonTitle:NSLocalizedString(@"Confirm", nil)
-                  otherButtonTitles:NSLocalizedString(@"Cancel", nil),
-                  nil ];
-    [mAlertView setAlertViewStyle:UIAlertViewStyleSecureTextInput];
-    [mAlertView show];
-    msgStr = @"Please set pin";
     [self sendMessage:@"onRequestSetPin" parameter:@""];
 }
 
@@ -351,13 +309,11 @@
         msg = @"Amount out of limit.";
     }
     NSString *error = msg;
-    NSLog(@"onError = %@",msg);
     [self sendMessage:@"onError" parameter:error];
 }
 
 //开始执行start 按钮后返回的结果状态
 -(void) onDoTradeResult: (DoTradeResult)result DecodeData:(NSDictionary*)decodeData{
-    NSLog(@"onDoTradeResult?>> result %ld",(long)result);
     NSString *display = @"";
     if (result == DoTradeResult_NONE) {
         display = @"No card detected. Please insert or swipe card again and press check card.";
@@ -397,7 +353,6 @@
         msg = [msg stringByAppendingString:encPAN];
         display = msg;
         self.inputAmount = @"";
-        NSString *displayAmount = @"";
         [self sendMessage:@"onDoTradeResult" parameter:[NSString stringWithFormat:@"MSR||%@",display]];
     }else if(result==DoTradeResult_NFC_OFFLINE || result == DoTradeResult_NFC_ONLINE){
         NSLog(@"decodeData: %@",decodeData);
@@ -426,8 +381,13 @@
         msg = [msg stringByAppendingString:encTrack3];
         msg = [msg stringByAppendingString:pinBlock];
         msg = [msg stringByAppendingString:encPAN];
-        [self sendMessage:@"onDoTradeResult" parameter:[NSString stringWithFormat:@"NFC||%@",msg]];
-        
+        NSString *str = @"";
+        if(result == DoTradeResult_NFC_ONLINE){
+            str = @"NFC_ONLINE";
+        }else if(result == DoTradeResult_NFC_OFFLINE){
+            str = @"NFC_OFFLINE";
+        }
+        [self sendMessage:@"onDoTradeResult" parameter:[NSString stringWithFormat:@"%@||%@",str,msg]];
     }else if(result==DoTradeResult_NFC_DECLINED){
         NSString *displayStr = @"Tap Card Declined";
         [self sendMessage:@"onDoTradeResult" parameter:[NSString stringWithFormat:@"NFC_DECLINED||%@",displayStr]];
@@ -444,30 +404,16 @@
 }
 
 -(void) onRequestSelectEmvApp: (NSArray*)appList{
-    mActionSheet = [[UIActionSheet new] initWithTitle:@"Please select app" delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil, nil];
     NSMutableString *muStr = [NSMutableString string];
     for (int i=0 ; i<[appList count] ; i++){
         NSString *emvApp = [appList objectAtIndex:i];
-        [mActionSheet addButtonWithTitle:emvApp];
         [muStr appendString:emvApp];
     }
-    [mActionSheet addButtonWithTitle:@"Cancel"];
-    [mActionSheet setCancelButtonIndex:[appList count]];
-    [mActionSheet showInView:[UIApplication sharedApplication].keyWindow];
     [self sendMessage:@"onRequestSelectEmvApp" parameter:muStr];
 }
 
 -(void) onRequestFinalConfirm{
     NSLog(@"onRequestFinalConfirm-------amount = %@",self.inputAmount);
-    NSString *msg = [NSString stringWithFormat:@"Amount: $%@",self.inputAmount];
-    mAlertView = [[UIAlertView new]
-                  initWithTitle:@"Confirm amount"
-                  message:msg
-                  delegate:self
-                  cancelButtonTitle:@"Confirm"
-                  otherButtonTitles:@"Cancel",
-                  nil ];
-    [mAlertView show];
     msgStr = @"Confirm amount";
 }
 
@@ -476,9 +422,7 @@
 }
 
 -(void) onRequestOnlineProcess: (NSString*) tlv{
-    NSLog(@"tlv == %@",tlv);
     NSLog(@"onRequestOnlineProcess = %@",[[QPOSService sharedInstance] anlysEmvIccData:tlv]);
-    NSString *msg = @"Replied success.";
     NSString *displayStr = [@"onRequestOnlineProcess: " stringByAppendingString:tlv];
     msgStr = @"Request data to server.";
     [self sendMessage:@"onRequestOnlineProcess" parameter: displayStr];
@@ -518,15 +462,6 @@
     }else if(transactionResult == TransactionResult_NFC_TERMINATED) {
         messageTextView = @"NFC Terminated";
     }
-    NSString *displayStr = messageTextView;
-    mAlertView = [[UIAlertView new]
-                  initWithTitle:@"Transaction Result"
-                  message:messageTextView
-                  delegate:self
-                  cancelButtonTitle:@"Confirm"
-                  otherButtonTitles:nil,
-                  nil ];
-    [mAlertView show];
     self.inputAmount = @"";
     self.cashbackAmount = @"";
     [self sendMessage:@"onRequestTransactionResult" parameter:messageTextView];
@@ -562,13 +497,11 @@
 
 -(void) onRequestQposDisconnected{
     NSLog(@"onRequestQposDisconnected");
-    NSString *displayStr = @"pos disconnected.";
     [self sendMessage:@"onRequestQposDisconnected" parameter:@""];
 }
 
 -(void) onRequestNoQposDetected{
     NSLog(@"onRequestNoQposDetected");
-    NSString *displayStr = @"No pos detected.";
     [self sendMessage:@"onRequestNoQposDetected" parameter:@""];
 }
 
@@ -595,7 +528,6 @@
     }else if(displayMsg == Display_CARD_REMOVED){
         msg = @"Card Removed";
     }
-    NSString *displayStr = msg;
     [self sendMessage:@"onRequestDisplay" parameter:msg];
 }
 
@@ -613,19 +545,14 @@
 }
 
 -(void) onRequestUpdateWorkKeyResult:(UpdateInformationResult)updateInformationResult{
-    NSLog(@"onRequestUpdateWorkKeyResult %ld",(long)updateInformationResult);
     NSString *updateResult = @"";
     if (updateInformationResult==UpdateInformationResult_UPDATE_SUCCESS) {
-        NSLog(@"Success");
         updateResult = @"Success";
     }else if(updateInformationResult==UpdateInformationResult_UPDATE_FAIL){
-         NSLog(@"Failed");
         updateResult = @"Failed";
     }else if(updateInformationResult==UpdateInformationResult_UPDATE_PACKET_LEN_ERROR){
-         NSLog(@"Packet len error");
         updateResult = @"Packet len error";
     }else if(updateInformationResult==UpdateInformationResult_UPDATE_PACKET_VEFIRY_ERROR){
-         NSLog(@"Packer vefiry error");
         updateResult = @"Packer vefiry error";
     }
     [self sendMessage:@"onUpdatePosFirmwareResult" parameter:updateResult];
@@ -702,20 +629,15 @@
 
 // callback function of updatePosFirmware api.
 -(void) onUpdatePosFirmwareResult:(UpdateInformationResult)updateInformationResult{
-    NSLog(@"%ld",(long)updateInformationResult);
     self.updateFWFlag = false;
     NSString *str = @"";
     if (updateInformationResult==UpdateInformationResult_UPDATE_SUCCESS) {
-        NSLog( @"Success");
         str = @"Success";
     }else if(updateInformationResult==UpdateInformationResult_UPDATE_FAIL){
-        NSLog( @"Failed");
         str = @"Failed";
     }else if(updateInformationResult==UpdateInformationResult_UPDATE_PACKET_LEN_ERROR){
-        NSLog( @"Packet len error");
         str = @"Packet len error";
     }else if(updateInformationResult==UpdateInformationResult_UPDATE_PACKET_VEFIRY_ERROR){
-        NSLog( @"Packer vefiry error");
         str = @"Packer vefiry error";
     }
     [self sendMessage:@"onUpdatePosFirmwareResult" parameter:str];
