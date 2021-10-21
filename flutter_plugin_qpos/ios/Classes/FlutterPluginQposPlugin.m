@@ -135,6 +135,7 @@
     }
     [_mPos setDelegate:self];
     [_mPos setQueue:nil];
+    [_mPos setBTAutoDetecting:true];
     [_mPos setPosType:PosType_BLUETOOTH_2mode];
     if (_bt== nil) {
         _bt = [[BTDeviceFinder alloc]init];
@@ -262,6 +263,15 @@
 
 -(void)finishScanQPos2Mode{
     [self sendMessage:@"onRequestDeviceScanFinished" parameter:@""];
+}
+
+-(void)bluetoothIsPowerOff2Mode{
+    [self sendMessage:@"onRequestQposDisconnected" parameter:@""];
+    NSLog(@"bluetoothIsPowerOff2Mode");
+}
+
+-(void)bluetoothIsPowerOn2Mode{
+    NSLog(@"bluetoothIsPowerOn2Mode");
 }
 
 -(void)doTrade{
