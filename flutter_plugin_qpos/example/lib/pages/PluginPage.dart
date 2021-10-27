@@ -188,6 +188,10 @@ class _MyAppState extends State<PluginPage> {
             PopupMenuItem(
               child: Text("update Master Key"),
               value: "3",
+            ),
+            PopupMenuItem(
+              child: Text("update Session Key"),
+              value: "4",
             )
           ]
       );
@@ -388,7 +392,7 @@ class _MyAppState extends State<PluginPage> {
     Map<String, String> params = Map<String, String>();
     params['keyIndex'] = "0";
    params['cardTradeMode'] = "SWIPE_TAP_INSERT_CARD_NOTUP";
-//    params['formatId'] = "00";
+   params['formatId'] = "02";
 //    params['doTradeMode'] = "CHECK_CARD_NO_IPNUT_PIN";
     _flutterPluginQpos.doTrade(params);
   }
@@ -855,6 +859,11 @@ class _MyAppState extends State<PluginPage> {
             "1A4D672DCA6CB3351FD1B02B237AF9AE", "08D7B4FB629D0885", 0);
 
         break;
+      case "4":
+        _flutterPluginQpos.updateWorkKey("1A4D672DCA6CB3351FD1B02B237AF9AE", "08D7B4FB629D0885",
+            "1A4D672DCA6CB3351FD1B02B237AF9AE", "08D7B4FB629D0885",
+            "1A4D672DCA6CB3351FD1B02B237AF9AE", "08D7B4FB629D0885",
+            0);
     }
   }
 

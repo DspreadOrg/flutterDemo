@@ -208,6 +208,21 @@ class FlutterPluginQpos {
 
   }
 
+  void updateWorkKey(String pik, String pikCheck, String trk,
+      String trkCheck, String mak, String makCheck, int keyIndex) async{
+    Map<String, String> params = Map<String, String>();
+    StringBuffer index = StringBuffer();
+    index.write(keyIndex);
+    params['pik'] = pik;
+    params['pikCheck'] = pikCheck;
+    params['trk'] = trk;
+    params['trkCheck'] = trkCheck;
+    params['mak'] = mak;
+    params['makCheck'] = makCheck;
+    params['keyIndex'] = index.toString();
+    await _methodChannel.invokeMethod('updateWorkKey',params);
+  }
+
   void setMasterKey(String key, String checkValue, int keyIndex) async{
     Map<String, String> params = Map<String, String>();
     params['key'] = key;

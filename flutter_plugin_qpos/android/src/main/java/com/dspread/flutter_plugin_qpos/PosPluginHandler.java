@@ -254,6 +254,10 @@ public class PosPluginHandler {
                 , pinksn, pinipek, pinipekCheckvalue);
     }
 
+    public static void updateWorkKey(String pik, String pikCheck, String trk, String trkCheck, String mak, String makCheck, int keyIndex) {
+        mPos.updateWorkKey(pik, pikCheck, trk, trkCheck, mak, makCheck, keyIndex);
+    }
+
     public static void setMasterKey(String key, String checkValue, int parseInt) {
         mPos.setMasterKey(key, checkValue, parseInt);
     }

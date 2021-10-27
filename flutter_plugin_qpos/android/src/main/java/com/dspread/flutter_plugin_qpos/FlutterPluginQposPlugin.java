@@ -231,7 +231,20 @@ public class FlutterPluginQposPlugin implements FlutterPlugin, MethodCallHandler
                     , emvksn, emvipek, emvipekCheckvalue
                     , pinksn, pinipek, pinipekCheckvalue);
 
-        } else if (call.method.equals("setMasterKey")) {
+        }else if (call.method.equals("updateWorkKey")){
+            String keyIndex = call.argument("keyIndex");
+            String pik = call.argument("pik");
+            String pikCheck = call.argument("pikCheck");
+            String trk = call.argument("trk");
+            String trkCheck = call.argument("trkCheck");
+            String mak = call.argument("mak");
+            String makCheck = call.argument("makCheck");
+            PosPluginHandler.updateWorkKey(
+                    pik, pikCheck,
+                    trk, trkCheck,
+                    mak, makCheck, Integer.parseInt(keyIndex));
+
+        }else if (call.method.equals("setMasterKey")) {
 //
 //      params['key'] = key;
 //      params['checkValue'] = checkValue;

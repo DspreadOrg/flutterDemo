@@ -2,7 +2,6 @@ package com.dspread.flutter_plugin_qpos;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothDevice;
-import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dspread.xpos.CQPOSService;
@@ -374,8 +373,6 @@ public class QPOSServiceListenerImpl extends CQPOSService   {
         map.put("parameters",parameters.toString());
         PosPluginHandler.mEvents.success(JSONObject.toJSONString(map));
     }
-
-
 
     @Override
     public void onReturnSetMasterKeyResult(boolean isSuccess) {
