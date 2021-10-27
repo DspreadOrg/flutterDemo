@@ -99,9 +99,9 @@ public class FlutterPluginQposPlugin implements FlutterPlugin, MethodCallHandler
             PosPluginHandler.getPosSdkVersion(result);
         } else if (call.method.equals("scanQPos2Mode")) {
             TRACE.d("scanQPos2Mode");
-            checkBluePermision();
-//      int scanTime = call.argument("scanTime");
-            PosPluginHandler.scanQPos2Mode(20);
+            int scanTime = call.argument("scanTime");
+            checkBluePermision(scanTime);
+//            PosPluginHandler.scanQPos2Mode(scanTime);
         } else if (call.method.equals("startScanQposBLE")) {
             TRACE.d("startScanQposBLE");
             PosPluginHandler.startScanQposBLE(6);
@@ -277,8 +277,8 @@ public class FlutterPluginQposPlugin implements FlutterPlugin, MethodCallHandler
         }
     }
 
-    private void checkBluePermision() {
-        TRACE.d("checkBluePermision");
+    private void checkBluePermision(int time) {
+        TRACE.d("checkBluePermision:"+time);
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
         if (!adapter.isEnabled()) {//表示蓝牙不可用
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -296,7 +296,7 @@ public class FlutterPluginQposPlugin implements FlutterPlugin, MethodCallHandler
                 ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION}, 1111);
 //                return false;
             } else {
-                PosPluginHandler.scanQPos2Mode(20);
+                PosPluginHandler.scanQPos2Mode(time);
 //                return true;
             }
         } else {
