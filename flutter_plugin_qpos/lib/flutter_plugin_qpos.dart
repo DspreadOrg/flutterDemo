@@ -179,6 +179,13 @@ class FlutterPluginQpos {
 
   }
 
+  void updateEMVConfigByXml(String xmlContent) async{
+    Map<String, String> params = Map<String, String>();
+    params['xmlContent'] = xmlContent;
+    await _methodChannel.invokeMethod('updateEMVConfigByXml',params);
+
+  }
+
   Future<void> updatePosFirmware(String upContent, String mAddress) async{
     Map<String, String> params = Map<String, String>();
     params['upContent'] = upContent;

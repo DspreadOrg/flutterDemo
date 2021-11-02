@@ -207,6 +207,11 @@ public class PosPluginHandler {
         mPos.updateEmvConfig(emvAppCfg, emvCapkCfg);
     }
 
+    public static void updateEMVConfigByXml(String xmlContent){
+     TRACE.d("emv config: " + xmlContent);
+     mPos.updateEMVConfigByXml(xmlContent);
+    }
+
     public static void updatePosFirmware(String upContent, String mAddress) {
         byte[] bytes = Utils.hexStringToByteArray(upContent);
         mPos.updatePosFirmware(bytes, mAddress);

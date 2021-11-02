@@ -174,7 +174,7 @@ class _MyAppState extends State<PluginPage> {
           },
           itemBuilder: (context) => <PopupMenuItem<String>>[
             PopupMenuItem(
-              child: Text("update Emv Config"),
+              child: Text("update Emv Config By bin"),
               value: "0",
             ),
             PopupMenuItem(
@@ -192,6 +192,10 @@ class _MyAppState extends State<PluginPage> {
             PopupMenuItem(
               child: Text("update Session Key"),
               value: "4",
+            ),
+            PopupMenuItem(
+              child: Text("update Emv Config By xml"),
+              value: "5",
             )
           ]
       );
@@ -806,7 +810,7 @@ class _MyAppState extends State<PluginPage> {
   }
 
   void updatePos(BuildContext context) async {
-    DefaultAssetBundle.of(context).load('configs/upgrader.asc').then((value) {
+    DefaultAssetBundle.of(context).load('assets/upgrader.asc').then((value) {
       setState(() {
         _visibility = true;
       });
@@ -822,9 +826,9 @@ class _MyAppState extends State<PluginPage> {
     switch (string) {
       case "0":
         Future<ByteData> future =
-        DefaultAssetBundle.of(context).load('configs/emv_capk.bin');
+        DefaultAssetBundle.of(context).load('assets/emv_capk.bin');
         DefaultAssetBundle.of(context)
-            .load('configs/emv_app.bin')
+            .load('assets/emv_app.bin')
             .then((value) {
           Uint8List list = value.buffer.asUint8List(0);
           var emvapp = Utils.Uint8ListToHexStr(list);
@@ -864,6 +868,13 @@ class _MyAppState extends State<PluginPage> {
             "1A4D672DCA6CB3351FD1B02B237AF9AE", "08D7B4FB629D0885",
             "1A4D672DCA6CB3351FD1B02B237AF9AE", "08D7B4FB629D0885",
             0);
+        break;
+      case "5":
+        DefaultAssetBundle.of(context).loadString('assets/emv_profile_tlv.xml',cache:false).then((value) {
+          print("emvConfig:$value");
+          _flutterPluginQpos.updateEMVConfigByXml(value);
+        });
+        break;
     }
   }
 
