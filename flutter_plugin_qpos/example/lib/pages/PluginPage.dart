@@ -396,7 +396,7 @@ class _MyAppState extends State<PluginPage> {
     Map<String, String> params = Map<String, String>();
     params['keyIndex'] = "0";
    params['cardTradeMode'] = "SWIPE_TAP_INSERT_CARD_NOTUP";
-   params['formatId'] = "02";
+   // params['formatId'] = "02";
 //    params['doTradeMode'] = "CHECK_CARD_NO_IPNUT_PIN";
     _flutterPluginQpos.doTrade(params);
   }
