@@ -810,7 +810,7 @@ class _MyAppState extends State<PluginPage> {
   }
 
   void updatePos(BuildContext context) async {
-    DefaultAssetBundle.of(context).load('assets/upgrader.asc').then((value) {
+    DefaultAssetBundle.of(context).load('configs/upgrader.asc').then((value) {
       setState(() {
         _visibility = true;
       });
@@ -826,9 +826,9 @@ class _MyAppState extends State<PluginPage> {
     switch (string) {
       case "0":
         Future<ByteData> future =
-        DefaultAssetBundle.of(context).load('assets/emv_capk.bin');
+        DefaultAssetBundle.of(context).load('configs/emv_capk.bin');
         DefaultAssetBundle.of(context)
-            .load('assets/emv_app.bin')
+            .load('configs/emv_app.bin')
             .then((value) {
           Uint8List list = value.buffer.asUint8List(0);
           var emvapp = Utils.Uint8ListToHexStr(list);
@@ -870,7 +870,7 @@ class _MyAppState extends State<PluginPage> {
             0);
         break;
       case "5":
-        DefaultAssetBundle.of(context).loadString('assets/emv_profile_tlv.xml',cache:false).then((value) {
+        DefaultAssetBundle.of(context).loadString('configs/emv_profile_tlv.xml',cache:false).then((value) {
           print("emvConfig:$value");
           _flutterPluginQpos.updateEMVConfigByXml(value);
         });

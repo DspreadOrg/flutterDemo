@@ -40,10 +40,10 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/emv_app.bin
-    - assets/emv_capk.bin
-    - assets/upgrader.asc
-    - assets/emv_profile_tlv.xml
+    - configs/emv_app.bin
+    - configs/emv_capk.bin
+    - configs/upgrader.asc
+    - configs/emv_profile_tlv.xml
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
