@@ -14,12 +14,21 @@ code_quality:
 test:
   stage: test
   # image: "cirrusci/flutter:1.22.5"
-  # before_script:
+  before_script:
+    # - git clone https://github.com/flutter/flutter.git
+    - wget --output-document=flutter-sdk.tar.xz https://storage.googleapis.com/flutter_infra/releases/stable/linux/flutter_linux_v1.5.4-hotfix.2-stable.tar.xz
+    - tar -xf flutter-sdk.tar.xz
+    - export PUB_HOSTED_URL=https://pub.flutter-io.cn
+    - export FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn
+    - export PATH=$PATH:$PWD/flutter/bin
+    - cd android
+    - rm -rf android/.gradle
   #   - pub global activate junitreport
   #   - export PATH="$PATH":"$HOME/.pub-cache/bin"
   script:
     # - cd flutter_demo/
     - cd flutter_plugin_qpos/example
+    - flutter doctor
     - flutter build apk
   #   - flutter test --machine --coverage | tojunit -o report.xml
   #   - lcov --summary coverage/lcov.info
