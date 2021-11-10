@@ -1,3 +1,8 @@
+variables:
+  ANDROID_COMPILE_SDK: "28"
+  ANDROID_BUILD_TOOLS: "28.0.3"
+  ANDROID_SDK_TOOLS:   "4333796"
+
 code_quality:
   stage: test
   image: "cirrusci/flutter:1.22.5"
@@ -15,8 +20,17 @@ test:
   stage: test
   # image: "cirrusci/flutter:1.22.5"
   before_script:
-    # - git clone https://github.com/flutter/flutter.git
-    - wget --output-document=flutter-sdk.tar.xz https://storage.googleapis.com/flutter_infra/releases/stable/linux/flutter_linux_v1.5.4-hotfix.2-stable.tar.xz
+    - apt-get --quiet update --yes
+    - apt-get --quiet install --yes wget tar unzip lib32stdc++6 lib32z1
+    - wget --quiet --output-document=android-sdk.zip https://dl.google.com/android/repository/sdk-tools-linux-${ANDROID_SDK_TOOLS}.zip
+    - unzip -d android-sdk-linux android-sdk.zip
+    - echo y | android-sdk-linux/tools/bin/sdkmanager "platforms;android-${ANDROID_COMPILE_SDK}" >/dev/null
+    - echo y | android-sdk-linux/tools/bin/sdkmanager "platform-tools" >/dev/null
+    - echo y | android-sdk-linux/tools/bin/sdkmanager "build-tools;${ANDROID_BUILD_TOOLS}" >/dev/null
+    - export ANDROID_HOME=$PWD/android-sdk-linux
+    - export PATH=$PATH:$PWD/android-sdk-linux/platform-tools/
+    - git clone https://github.com/flutter/flutter.git
+    # - wget --output-document=flutter-sdk.tar.xz https://storage.googleapis.com/flutter_infra/releases/stable/linux/flutter_linux_v1.5.4-hotfix.2-stable.tar.xz
     - tar -xf flutter-sdk.tar.xz
     - export PUB_HOSTED_URL=https://pub.flutter-io.cn
     - export FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn
