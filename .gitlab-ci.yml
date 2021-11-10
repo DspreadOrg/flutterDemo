@@ -6,6 +6,7 @@ code_quality:
     - export PATH="$PATH":"$HOME/.pub-cache/bin"
   script:
     - metrics lib -r codeclimate  > gl-code-quality-report.json
+  allow_failure: true
   artifacts:
     reports:
       codequality: gl-code-quality-report.json
@@ -17,7 +18,7 @@ test:
   #   - pub global activate junitreport
   #   - export PATH="$PATH":"$HOME/.pub-cache/bin"
   script:
-    - cd flutter_demo/
+    # - cd flutter_demo/
     - cd flutter_plugin_qpos/example
     - flutter build apk
   #   - flutter test --machine --coverage | tojunit -o report.xml
