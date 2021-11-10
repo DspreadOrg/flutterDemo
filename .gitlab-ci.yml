@@ -21,8 +21,8 @@ test:
     - export PUB_HOSTED_URL=https://pub.flutter-io.cn
     - export FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn
     - export PATH=$PATH:$PWD/flutter/bin
-    - cd android
-    - rm -rf android/.gradle
+    # - cd android
+    # - rm -rf android/.gradle
   #   - pub global activate junitreport
   #   - export PATH="$PATH":"$HOME/.pub-cache/bin"
   script:
