@@ -3,6 +3,7 @@ code_quality:
   image: "cirrusci/flutter:1.22.5"
   before_script:
     - pub global activate dart_code_metrics
+    - export PATH="$PATH":"$HOME/.pub-cache/bin"
   script:
     - metrics lib -r codeclimate  > gl-code-quality-report.json
   artifacts:
@@ -11,18 +12,21 @@ code_quality:
 
 test:
   stage: test
-  image: "cirrusci/flutter:1.22.5"
-  before_script:
-    - pub global activate junitreport
+  # image: "cirrusci/flutter:1.22.5"
+  # before_script:
+  #   - pub global activate junitreport
+  #   - export PATH="$PATH":"$HOME/.pub-cache/bin"
   script:
     - cd flutter_demo/
-    - flutter test --machine --coverage | tojunit -o report.xml
-    - lcov --summary coverage/lcov.info
-    - genhtml coverage/lcov.info --output=coverage
-  coverage: '/lines\.*: \d+\.\d+\%/'
+    - cd flutter_plugin_qpos/example
+    - flutter build apk
+  #   - flutter test --machine --coverage | tojunit -o report.xml
+  #   - lcov --summary coverage/lcov.info
+  #   - genhtml coverage/lcov.info --output=coverage
+  # coverage: '/lines\.*: \d+\.\d+\%/'
   artifacts:
-    name: coverage
+    # name: coverage
     paths:
-      - /build/app/outputs/apk/debug/app-debug.apk
-    reports:
-      junit: report.xml
+      - /build/app/outputs/flutter-apk/app-release.apk
+    # reports:
+    #   junit: report.xml
