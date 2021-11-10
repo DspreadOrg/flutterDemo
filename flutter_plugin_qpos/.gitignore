@@ -5,6 +5,6 @@
 .pub/
 
 build/
-local.properties
-.idea
-.gradle
+/local.properties
+/.idea
+/.gradle
