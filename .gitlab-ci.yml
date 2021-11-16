@@ -1,12 +1,17 @@
 code_quality:
-  stage: test
-  image: "cirrusci/flutter:1.22.5"
-  before_script:
-    - pub global activate dart_code_metrics
-    - export PATH="$PATH":"$HOME/.pub-cache/bin"
-  script:
-    - metrics lib -r codeclimate  > gl-code-quality-report.json
+  image: docker:stable
+  variables:
+    DOCKER_DRIVER: overlay2
+    SP_VERSION: 0.85.6
   allow_failure: true
+  services:
+    - docker:stable-dind
+  script:
+    - docker run
+        --env SOURCE_CODE="$PWD"
+        --volume "$PWD":/code
+        --volume /var/run/docker.sock:/var/run/docker.sock
+        "registry.gitlab.com/gitlab-org/ci-cd/codequality:$SP_VERSION" /code
   artifacts:
     reports:
       codequality: gl-code-quality-report.json
