@@ -15,6 +15,7 @@ import 'package:flutter_plugin_qpos_example/pages/SecondPage.dart';
 // import 'package:toast/toast.dart';
 
 import '../Utils.dart';
+import '../LogUtil.dart';
 //import 'package:permission_handler/permission_handler.dart';
 //
 import 'package:fluttertoast/fluttertoast.dart';
@@ -676,6 +677,10 @@ class _MyAppState extends State<PluginPage> {
         break;
       case 'onRequestOnlineProcess':
         tlvData = parameters!;
+        Future map = _flutterPluginQpos.anlysEmvIccData(parameters).then((value) =>  setState(() {
+          //print("anlysEmvIccData:"+value.toString());
+          LogUtil.v("anlysEmvIccData:"+value.toString());
+        }));
         String str = "8A023030"; //Currently the default value,
         _flutterPluginQpos.sendOnlineProcessResult(str); //脚本通知/55域/ICCDATA
 

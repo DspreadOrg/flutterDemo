@@ -160,6 +160,14 @@ class FlutterPluginQpos {
 
   }
 
+  Future anlysEmvIccData(String tlv) async{
+    Map<String, String> params = Map<String, String>();
+    params['tlv'] = tlv;
+    Map<String,String> map1 = new Map.from(await _methodChannel.invokeMethod('anlysEmvIccData',params));
+    Future map =  new Future(() => map1.toString());
+    return map;
+  }
+
   void stopScanQPos2Mode() async{
     await _methodChannel.invokeMethod('stopScanQPos2Mode');
   }

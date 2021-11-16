@@ -201,6 +201,10 @@ public class PosPluginHandler {
         mPos.sendOnlineProcessResult(onlineProcessResult);
     }
 
+    public static Hashtable<String, String> anlysEmvIccData(String tlv) {
+        return mPos.anlysEmvIccData(tlv);
+    }
+
     public static void updateEmvConfig(String emvAppCfg, String emvCapkCfg) {
         TRACE.d("emvAppCfg: " + emvAppCfg);
         TRACE.d("emvCapkCfg: " + emvCapkCfg);

@@ -188,7 +188,10 @@ public class FlutterPluginQposPlugin implements FlutterPlugin, MethodCallHandler
         } else if (call.method.equals("sendOnlineProcessResult")) {
             String onlineProcessResult = call.argument("onlineProcessResult");
             PosPluginHandler.sendOnlineProcessResult(onlineProcessResult);
-
+        } else if (call.method.equals("anlysEmvIccData")) {
+            String tlv = call.argument("tlv");
+            Hashtable<String, String> anlysEmvIccData = PosPluginHandler.anlysEmvIccData(tlv);
+            result.success(anlysEmvIccData);
         } else if (call.method.equals("updateEmvConfig")) {
             String emvAppCfg = call.argument("emvApp");
             String emvCapkCfg = call.argument("emvCapk");
