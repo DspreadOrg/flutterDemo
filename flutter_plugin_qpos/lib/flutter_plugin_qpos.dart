@@ -135,8 +135,8 @@ class FlutterPluginQpos {
 
   Future getNFCBatchData() async{
     Map<String,String> map1 = new Map.from(await _methodChannel.invokeMethod('getNFCBatchData'));
-     Future map =  new Future(() => map1.toString());
-     return map;
+     // Future map =  new Future(() => map1.toString());
+     return map1;
   }
 
   void sendPin(String s) async{
@@ -164,8 +164,8 @@ class FlutterPluginQpos {
     Map<String, String> params = Map<String, String>();
     params['tlv'] = tlv;
     Map<String,String> map1 = new Map.from(await _methodChannel.invokeMethod('anlysEmvIccData',params));
-    Future map =  new Future(() => map1.toString());
-    return map;
+    // Future map =  new Future(() => map1.toString());
+    return map1;
   }
 
   void stopScanQPos2Mode() async{

@@ -680,6 +680,9 @@ class _MyAppState extends State<PluginPage> {
         Future map = _flutterPluginQpos.anlysEmvIccData(parameters).then((value) =>  setState(() {
           //print("anlysEmvIccData:"+value.toString());
           LogUtil.v("anlysEmvIccData:"+value.toString());
+          // An example to show how to get the key value
+          var tlvData = value["tlv"];
+          if(tlvData != null) print("tlv= "+tlvData);
         }));
         String str = "8A023030"; //Currently the default value,
         _flutterPluginQpos.sendOnlineProcessResult(str); //脚本通知/55域/ICCDATA
