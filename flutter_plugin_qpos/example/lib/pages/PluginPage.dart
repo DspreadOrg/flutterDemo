@@ -526,6 +526,7 @@ class _MyAppState extends State<PluginPage> {
       case 'onRequestNoQposDetectedUnbond':
         break;
       case 'onRequestBatchData':
+        print("onRequestBatchData:"+parameters!);
         break;
       case 'onReturnGetPinResult':
         break;
@@ -893,6 +894,12 @@ class _MyAppState extends State<PluginPage> {
         break;
       case "1":
         _flutterPluginQpos.getQposInfo();
+
+        //an example to get track2 without doTrade
+        // its callback is onRequestBatchData
+        // the return data's format is length+data
+        // var currentTime = "20211123143010"; //must be yyyyMMddHHmmss
+        // _flutterPluginQpos.getTrack2Ciphertext(currentTime);
         break;
       case "2":
         _flutterPluginQpos.getUpdateCheckValue();

@@ -283,4 +283,8 @@ public class PosPluginHandler {
     public static void pinMapSync(String value) {
         mPos.pinMapSync(value,20);
     }
+
+    public static void getTrack2Ciphertext(String time){
+        mPos.getTrack2Ciphertext(time);
+    }
 }

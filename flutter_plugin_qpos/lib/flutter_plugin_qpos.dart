@@ -267,6 +267,11 @@ class FlutterPluginQpos {
     await _methodChannel.invokeMethod('pinMapSync',params);
   }
 
+  void getTrack2Ciphertext(String time) async{
+    Map<String, String> params = Map<String, String>();
+    params['time'] = time;
+    await _methodChannel.invokeMethod('getTrack2Ciphertext',params);
+  }
 
 
 

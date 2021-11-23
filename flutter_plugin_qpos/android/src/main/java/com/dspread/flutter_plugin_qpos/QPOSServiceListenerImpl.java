@@ -83,6 +83,7 @@ public class QPOSServiceListenerImpl extends CQPOSService   {
     @Override
     public void onRequestBatchData(String tlv) {
         TRACE.d("ICC交易结束");
+        TRACE.d("onRequestBatchData:"+tlv);
         Map map = new HashMap();
         map.put("method","onRequestBatchData");
         StringBuffer parameters = new StringBuffer();

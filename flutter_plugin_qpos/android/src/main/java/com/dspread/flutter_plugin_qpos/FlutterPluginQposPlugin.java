@@ -277,7 +277,10 @@ public class FlutterPluginQposPlugin implements FlutterPlugin, MethodCallHandler
             String value = call.argument("value");
             PosPluginHandler.pinMapSync(value);
 
-        } else {
+        } else if(call.method.equals("getTrack2Ciphertext")) {
+            String time = call.argument("time");
+            PosPluginHandler.getTrack2Ciphertext(time);
+        }  else {
             result.notImplemented();
         }
     }
