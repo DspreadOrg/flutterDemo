@@ -100,9 +100,12 @@ class FlutterPluginQpos {
 
   void getKeyCheckValue(int i, String s) async{
     Map<String, String> params = Map<String, String>();
-    params['keyIndex'] = i.toString();
+    StringBuffer index = StringBuffer();
+    index.write(i);
+    params['keyIndex'] = index.toString();
+    print("keyIndex:"+i.toString());
     params['keyType'] = s;
-    await _methodChannel.invokeMethod('getKeyCheckValue');
+    await _methodChannel.invokeMethod('getKeyCheckValue',params);
   }
 
   Future<void> disconnectBT() async{

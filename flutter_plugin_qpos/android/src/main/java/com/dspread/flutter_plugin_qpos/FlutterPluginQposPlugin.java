@@ -128,8 +128,8 @@ public class FlutterPluginQposPlugin implements FlutterPlugin, MethodCallHandler
         } else if (call.method.equals("getKeyCheckValue")) {
             TRACE.d("getKeyCheckValue");
             String CHECKVALUE_KEYTYPE = call.argument("keyType");
-            int keyIndex = call.argument("keyIndex");
-            PosPluginHandler.getKeyCheckValue(keyIndex, CHECKVALUE_KEYTYPE);
+            String keyIndex = call.argument("keyIndex");
+            PosPluginHandler.getKeyCheckValue(Integer.parseInt(keyIndex), CHECKVALUE_KEYTYPE);
         } else if (call.method.equals("doTrade")) {
             TRACE.d("doTrade");
             String keyIndex = call.argument("keyIndex");

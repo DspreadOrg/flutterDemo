@@ -960,7 +960,7 @@ public class QPOSServiceListenerImpl extends CQPOSService   {
 
     @Override
     public void onGetKeyCheckValue(List<String> checkValue) {
-        TRACE.d("onGetKeyCheckValue():");
+        TRACE.d("onGetKeyCheckValue():"+checkValue);
 
         Map map = new HashMap();
         map.put("method","onGetKeyCheckValue");
