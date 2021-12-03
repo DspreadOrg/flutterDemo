@@ -287,4 +287,6 @@ public class PosPluginHandler {
     public static void getTrack2Ciphertext(String time){
         mPos.getTrack2Ciphertext(time);
     }
+
+    public static boolean resetPosStatus() {return mPos.resetPosStatus();}
 }

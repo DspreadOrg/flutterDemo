@@ -230,6 +230,10 @@ class _MyAppState extends State<PluginPage> {
             PopupMenuItem(
               child: Text("get Device Key CheckValue"),
               value: "3",
+            ),
+            PopupMenuItem(
+              child: Text("reset Pos"),
+              value: "4",
             )
           ]);
     }
@@ -909,6 +913,18 @@ class _MyAppState extends State<PluginPage> {
         _flutterPluginQpos.getKeyCheckValue(0,'DUKPT_MKSK_ALLTYPE');
 
         break;
+      case "4":
+        _flutterPluginQpos.resetPosStatus().then((value) =>  setState(() {
+          if(value!){
+            setState(() {
+              display = "pos reset";
+              // Navigator.push(context, MaterialPageRoute(builder: (context)=>SecondPage(_flutterPluginQpos)));
+            });
+          }
+        }));
+        // bool a = _flutterPluginQpos.resetPosStatus() as bool;
+        // if(a) {
+        // }
     }
   }
   void _showKeyboard(BuildContext context, String parameters) {
