@@ -288,5 +288,5 @@ public class PosPluginHandler {
         mPos.getTrack2Ciphertext(time);
     }
 
-    public static boolean resetPosStatus() {return mPos.resetPosStatus();}
+    public static boolean resetQPosStatus() {return mPos.resetQPosStatus();}
 }

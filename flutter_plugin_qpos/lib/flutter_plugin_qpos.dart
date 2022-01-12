@@ -276,8 +276,8 @@ class FlutterPluginQpos {
     await _methodChannel.invokeMethod('getTrack2Ciphertext',params);
   }
 
-  Future<bool?> resetPosStatus() async{
-    bool? result = await _methodChannel.invokeMethod('resetPosStatus');
+  Future<bool?> resetQPosStatus() async{
+    bool? result = await _methodChannel.invokeMethod('resetQPosStatus');
     return result;
   }
 

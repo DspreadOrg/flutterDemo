@@ -280,8 +280,8 @@ public class FlutterPluginQposPlugin implements FlutterPlugin, MethodCallHandler
         } else if(call.method.equals("getTrack2Ciphertext")) {
             String time = call.argument("time");
             PosPluginHandler.getTrack2Ciphertext(time);
-        } else if(call.method.equals("resetPosStatus")){
-           boolean re = PosPluginHandler.resetPosStatus();
+        } else if(call.method.equals("resetQPosStatus")){
+           boolean re = PosPluginHandler.resetQPosStatus();
            TRACE.d("flutterpluginqposplugin:"+re);
             result.success(re);
         } else {
