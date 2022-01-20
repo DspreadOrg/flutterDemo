@@ -1,4 +1,10 @@
+stages:
+  - test
+  - build
+  - release
+
 code_quality:
+  stage: test
   image: docker:stable
   variables:
     DOCKER_DRIVER: overlay2
@@ -17,7 +23,7 @@ code_quality:
       codequality: gl-code-quality-report.json
 
 test:
-  stage: test
+  stage: build
   image: "cirrusci/flutter:stable"
   script:
     - cd flutter_plugin_qpos/example
