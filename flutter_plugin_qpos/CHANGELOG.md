@@ -1,4 +1,4 @@
-## 0.0.6
+## 0.0.7
 
-* 1. Update flutter SDK to 2.5.1：null safety
-* 2. SDK version to 3.8.7. Add api: updateEMVConfigByXml(), etc.
+* 1. Add dialog to hint transaction type;
+* 2. Add API resetQPosStatus.etc

@@ -661,11 +661,19 @@ class _MyAppState extends State<PluginPage> {
         break;
       case 'onRequestSetAmount':
         Map<String, String> params = Map<String, String>();
-        params['amount'] = "100";
-        params['cashbackAmount'] = "";
-        params['currencyCode'] = "156";
-        params['transactionType'] = "GOODS";
-        _flutterPluginQpos.setAmount(params);
+
+        simpleDialog(context).then((value) {
+          setState(() {
+            print("final type:"+value);
+            params['transactionType'] = value;
+            params['amount'] = "100";
+            params['cashbackAmount'] = "";
+            params['currencyCode'] = "156";
+            // params['transactionType'] = "GOODS";
+            _flutterPluginQpos.setAmount(params);
+          });
+        });
+
         break;
       case 'onReturnGetEMVListResult':
         break;
@@ -982,6 +990,154 @@ class _MyAppState extends State<PluginPage> {
   }
 
 }
+
+  Future simpleDialog(BuildContext context)async{
+    print("simpleDialog");
+    var result=await showDialog(context: context,
+        builder:(context){
+          return SimpleDialog(
+            title: Text("Transcation Type"),
+            children: <Widget>[
+              SimpleDialogOption(
+                child: Text("GOODS"),
+                onPressed: (){
+                  print("GOODS");
+                  Navigator.pop(context,"GOODS");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("SERVICES "),
+                onPressed: (){
+                  print("SERVICES");
+                  Navigator.pop(context,"SERVICES");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("CASH"),
+                onPressed: (){
+                  print("CASH");
+                  Navigator.pop(context,"CASH");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("CASHBACK"),
+                onPressed: (){
+                  print("CASHBACK");
+                  Navigator.pop(context,"CASHBACK");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("INQUIRY"),
+                onPressed: (){
+                  print("INQUIRY");
+                  Navigator.pop(context,"INQUIRY");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("TRANSFER"),
+                onPressed: (){
+                  print("TRANSFER");
+                  Navigator.pop(context,"TRANSFER");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("ADMIN"),
+                onPressed: (){
+                  print("ADMIN");
+                  Navigator.pop(context,"ADMIN");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("CASHDEPOSIT"),
+                onPressed: (){
+                  print("CASHDEPOSIT");
+                  Navigator.pop(context,"CASHDEPOSIT");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("PAYMENT"),
+                onPressed: (){
+                  print("PAYMENT");
+                  Navigator.pop(context,"PAYMENT");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("PBOCLOG||ECQ_INQUIRE_LOG"),
+                onPressed: (){
+                  print("PBOCLOG||ECQ_INQUIRE_LOG");
+                  Navigator.pop(context,"PBOCLOG||ECQ_INQUIRE_LOG");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("SALE"),
+                onPressed: (){
+                  print("SALE");
+                  Navigator.pop(context,"SALE");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("PREAUTH"),
+                onPressed: (){
+                  print("PREAUTH");
+                  Navigator.pop(context,"PREAUTH");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("ECQ_DESIGNATED_LOAD"),
+                onPressed: (){
+                  print("ECQ_DESIGNATED_LOAD");
+                  Navigator.pop(context,"ECQ_DESIGNATED_LOAD");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("ECQ_UNDESIGNATED_LOAD"),
+                onPressed: (){
+                  print("ECQ_UNDESIGNATED_LOAD");
+                  Navigator.pop(context,"ECQ_UNDESIGNATED_LOAD");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("ECQ_CASH_LOAD"),
+                onPressed: (){
+                  print("ECQ_CASH_LOAD");
+                  Navigator.pop(context,"ECQ_CASH_LOAD");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("ECQ_CASH_LOAD_VOID"),
+                onPressed: (){
+                  print("ECQ_CASH_LOAD_VOID");
+                  Navigator.pop(context,"ECQ_CASH_LOAD_VOID");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("CHANGE_PIN"),
+                onPressed: (){
+                  print("CHANGE_PIN");
+                  Navigator.pop(context,"CHANGE_PIN");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("REFOUND"),
+                onPressed: (){
+                  print("REFOUND");
+                  Navigator.pop(context,"REFOUND");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("SALES_NEW"),
+                onPressed: (){
+                  print("SALES_NEW");
+                  Navigator.pop(context,"SALES_NEW");
+                },
+              ),
+            ],
+          );
+        }
+    );
+    print("result --- > "+result);
+    return result;
+  }
 
 
 // class SecondPage extends StatelessWidget{
