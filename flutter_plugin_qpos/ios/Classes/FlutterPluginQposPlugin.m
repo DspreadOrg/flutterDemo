@@ -48,7 +48,7 @@
   } else if ([@"getUpdateCheckValue" isEqualToString:call.method]) {
       [self.mPos getUpdateCheckValueBlock:^(BOOL isSuccess, NSString *stateStr) {
           if (isSuccess) {
-              NSLog(@"%@",stateStr);
+              //NSLog(@"%@",stateStr);
           }
       }];
   } else if ([@"getKeyCheckValue" isEqualToString:call.method]) {
@@ -84,7 +84,8 @@
   }else if ([@"stopScanQPos2Mode" isEqualToString:call.method]) {
       [self.bt stopQPos2Mode];
   }else if ([@"scanQPos2Mode" isEqualToString:call.method]) {
-      [self scanBluetooth];
+      NSInteger scanTime = [[call.arguments objectForKey:@"scanTime"] integerValue];
+      [self scanBluetooth:scanTime];
   }else if ([@"doUpdateIPEKOperation" isEqualToString:call.method]) {
       NSString *keyIndex = [call.arguments objectForKey:@"keyIndex"];
       NSString *trackksn = [call.arguments objectForKey:@"trackksn"];
@@ -97,9 +98,7 @@
       NSString *pinipek = [call.arguments objectForKey:@"pinipek"];
       NSString *pinipekCheckvalue = [call.arguments objectForKey:@"pinipekCheckvalue"];
       [self.mPos doUpdateIPEKOperation:keyIndex tracksn:trackksn trackipek:trackipek trackipekCheckValue:trackipekCheckvalue emvksn:emvksn emvipek:emvipek emvipekcheckvalue:emvipekCheckvalue pinksn:pinksn pinipek:pinipek pinipekcheckValue:pinipekCheckvalue block:^(BOOL isSuccess, NSString *stateStr) {
-         if (isSuccess) {
-             NSLog(@"success: %@",stateStr);
-         }
+          [self sendMessage:@"onReturnUpdateIPEKResult" result:isSuccess];
       }];
   }else if ([@"setMasterKey" isEqualToString:call.method]) {
       NSString *key = [call.arguments objectForKey:@"key"];
@@ -116,6 +115,12 @@
 - (void)sendMessage:(NSString *)methodName parameter:(NSString *)parameter{
     if(self.eventSink != nil){
         self.eventSink([self convertToJsonData:@{@"method":methodName,@"parameters":parameter}]);
+    }
+}
+
+- (void)sendMessage:(NSString *)methodName result:(BOOL)result{
+    if(self.eventSink != nil){
+        self.eventSink([self convertToJsonData:@{@"method":methodName,@"parameters":@(result)}]);
     }
 }
 
@@ -144,7 +149,6 @@
 }
 
 -(void) onQposIdResult: (NSDictionary*)posId{
-    NSLog(@"onQposIdResult: %@",posId);
     NSString *aStr = [@"posId:" stringByAppendingString:posId[@"posId"]];
     
     NSString *temp = [@"psamId:" stringByAppendingString:posId[@"psamId"]];
@@ -171,7 +175,6 @@
 }
 
 -(void) onQposInfoResult: (NSDictionary*)posInfoData{
-    NSLog(@"onQposInfoResult: %@",posInfoData);
     NSString *aStr = @"ModelInfo: ";
     aStr = [aStr stringByAppendingString:posInfoData[@"ModelInfo"]];
     
@@ -230,13 +233,13 @@
     [self sendMessage:@"onQposInfoResult" parameter:posinfo];
 }
 
--(void)scanBluetooth{
+-(void)scanBluetooth:(NSInteger)scanTime{
     [self initPos];
-    NSInteger delay = 15;
+    NSInteger delay = scanTime;
     [self.bt setBluetoothDelegate2Mode:self];
     if ([self.bt getCBCentralManagerState] == CBCentralManagerStateUnknown) {
             while ([self.bt getCBCentralManagerState]!= CBCentralManagerStatePoweredOn) {
-                NSLog(@"Bluetooth state is not power on");
+                //NSLog(@"Bluetooth state is not power on");
                 [self sleepMs:10];
                 if(delay++==10){
                     return;
@@ -267,11 +270,12 @@
 
 -(void)bluetoothIsPowerOff2Mode{
     [self sendMessage:@"onRequestQposDisconnected" parameter:@""];
-    NSLog(@"bluetoothIsPowerOff2Mode");
+    //NSLog(@"bluetoothIsPowerOff2Mode");
 }
 
 -(void)bluetoothIsPowerOn2Mode{
-    NSLog(@"bluetoothIsPowerOn2Mode");
+    //NSLog(@"bluetoothIsPowerOn2Mode");
+    [self sendMessage:@"bluetoothIsPowerOn2Mode" parameter:@""];
 }
 
 -(void)doTrade{
@@ -295,7 +299,7 @@
 
 //callback of input pin on phone
 -(void) onRequestPinEntry{
-    NSLog(@"onRequestPinEntry");
+    //NSLog(@"onRequestPinEntry");
     [self sendMessage:@"onRequestSetPin" parameter:@""];
 }
 
@@ -347,7 +351,7 @@
         display = @"Card Inserted (Not ICC)";
         [self sendMessage:@"onDoTradeResult" parameter:[NSString stringWithFormat:@"NOT_ICC||%@",display]];
     }else if(result==DoTradeResult_MCR){
-        NSLog(@"decodeData: %@",decodeData);
+        //NSLog(@"decodeData: %@",decodeData);
         NSString *formatID = [NSString stringWithFormat:@"Format ID: %@\n",decodeData[@"formatID"]] ;
         NSString *maskedPAN = [NSString stringWithFormat:@"Masked PAN: %@\n",decodeData[@"maskedPAN"]];
         NSString *expiryDate = [NSString stringWithFormat:@"Expiry Date: %@\n",decodeData[@"expiryDate"]];
@@ -377,7 +381,7 @@
         self.inputAmount = @"";
         [self sendMessage:@"onDoTradeResult" parameter:[NSString stringWithFormat:@"MSR||%@",display]];
     }else if(result==DoTradeResult_NFC_OFFLINE || result == DoTradeResult_NFC_ONLINE){
-        NSLog(@"decodeData: %@",decodeData);
+        //NSLog(@"decodeData: %@",decodeData);
         NSString *formatID = [NSString stringWithFormat:@"Format ID: %@\n",decodeData[@"formatID"]] ;
         NSString *maskedPAN = [NSString stringWithFormat:@"Masked PAN: %@\n",decodeData[@"maskedPAN"]];
         NSString *expiryDate = [NSString stringWithFormat:@"Expiry Date: %@\n",decodeData[@"expiryDate"]];
@@ -435,7 +439,7 @@
 }
 
 -(void) onRequestFinalConfirm{
-    NSLog(@"onRequestFinalConfirm-------amount = %@",self.inputAmount);
+    //NSLog(@"onRequestFinalConfirm-------amount = %@",self.inputAmount);
     msgStr = @"Confirm amount";
 }
 
@@ -444,7 +448,7 @@
 }
 
 -(void) onRequestOnlineProcess: (NSString*) tlv{
-    NSLog(@"onRequestOnlineProcess = %@",[[QPOSService sharedInstance] anlysEmvIccData:tlv]);
+    //NSLog(@"onRequestOnlineProcess = %@",[[QPOSService sharedInstance] anlysEmvIccData:tlv]);
     NSString *displayStr = [@"onRequestOnlineProcess: " stringByAppendingString:tlv];
     msgStr = @"Request data to server.";
     [self sendMessage:@"onRequestOnlineProcess" parameter: displayStr];
@@ -453,12 +457,7 @@
 -(void) onRequestTransactionResult: (TransactionResult)transactionResult{
     NSString *messageTextView = @"";
     if (transactionResult==TransactionResult_APPROVED) {
-        NSString *message = [NSString stringWithFormat:@"Approved\nAmount: $%@\n",self.inputAmount];
-        if([self.cashbackAmount isEqualToString:@""]) {
-            message = [message stringByAppendingString:@"Cashback: $"];
-            message = [message stringByAppendingString:self.cashbackAmount];
-        }
-        messageTextView = message;
+        messageTextView = @"Approved";
     }else if(transactionResult == TransactionResult_TERMINATED) {
         messageTextView = @"Terminated";
     } else if(transactionResult == TransactionResult_DECLINED) {
@@ -466,11 +465,11 @@
     } else if(transactionResult == TransactionResult_CANCEL) {
         messageTextView = @"Cancel";
     } else if(transactionResult == TransactionResult_CAPK_FAIL) {
-        messageTextView = @"Fail (CAPK fail)";
+        messageTextView = @"CAPK fail";
     } else if(transactionResult == TransactionResult_NOT_ICC) {
-        messageTextView = @"Fail (Not ICC card)";
+        messageTextView = @"Not ICC card";
     } else if(transactionResult == TransactionResult_SELECT_APP_FAIL) {
-        messageTextView = @"Fail (App fail)";
+        messageTextView = @"App fail";
     } else if(transactionResult == TransactionResult_DEVICE_ERROR) {
         messageTextView = @"Pos Error";
     } else if(transactionResult == TransactionResult_CARD_NOT_SUPPORTED) {
@@ -490,14 +489,12 @@
 }
 
 -(void) onRequestBatchData: (NSString*)tlv{
-    NSLog(@"onBatchData %@",tlv);
     tlv = [@"batch data: " stringByAppendingString:tlv];
     NSString *displayStr = tlv;
     [self sendMessage:@"onRequestBatchData" parameter:displayStr];
 }
 
 -(void) onReturnReversalData: (NSString*)tlv{
-    NSLog(@"onReversalData %@",tlv);
     tlv = [@"reversal data: " stringByAppendingString:tlv];
     NSString *displayStr = tlv;
     [self sendMessage:@"onReturnReversalData" parameter:displayStr];
@@ -505,7 +502,6 @@
 
 //pos 连接成功的回调
 -(void) onRequestQposConnected{
-    NSLog(@"onRequestQposConnected");
     NSString *displayStr =@"";
     if ([self.bluetoothAddress  isEqual: @"audioType"]) {
         displayStr = @"AudioType connected.";
@@ -518,12 +514,10 @@
 }
 
 -(void) onRequestQposDisconnected{
-    NSLog(@"onRequestQposDisconnected");
     [self sendMessage:@"onRequestQposDisconnected" parameter:@""];
 }
 
 -(void) onRequestNoQposDetected{
-    NSLog(@"onRequestNoQposDetected");
     [self sendMessage:@"onRequestNoQposDetected" parameter:@""];
 }
 
@@ -554,7 +548,7 @@
 }
 
 - (void)onGetKeyCheckValue:(NSDictionary *)checkValueResult{
-    NSLog(@"onGetKeyCheckValue: %@",checkValueResult);
+    [self sendMessage:@"onGetKeyCheckValue" parameter:@""];
 }
 
 -(void) onReturnGetPinResult:(NSDictionary*)decodeData{
@@ -590,29 +584,18 @@
 }
 
 -(void) onReturnSetMasterKeyResult: (BOOL)isSuccess{
-    if(isSuccess){
-         NSLog( @"Success");
-    }else{
-         NSLog(@"Failed");
-    }
+    [self sendMessage:@"onReturnSetMasterKeyResult" result:isSuccess];
 }
 
 - (void)updateEMVConfigByXML{
-    NSLog(@"start update emv configure,pls wait");
     NSData *xmlData = [self readLine:@"emv_profile_tlv"];
-    NSLog(@"xmlData; %@",xmlData);
     NSString *xmlStr = [QPOSUtil asciiFormatString:xmlData];
     [self.mPos updateEMVConfigByXml:xmlStr];
 }
 
 // callback function of updateEmvConfig and updateEMVConfigByXml api.
 -(void)onReturnCustomConfigResult:(BOOL)isSuccess config:(NSString*)resutl{
-    if(isSuccess){
-        NSLog( @"Success");
-    }else{
-        NSLog( @"Failed");
-    }
-    NSLog(@"result: %@",resutl);
+    [self sendMessage:@"onReturnCustomConfigResult" result:isSuccess];
 }
 
 // update pos firmware api
@@ -621,7 +604,7 @@
     if (data != nil) {
        NSInteger flag = [[QPOSService sharedInstance] updatePosFirmware:data address:self.bluetoothAddress];
         if (flag==-1) {
-            NSLog(@"Pos is not plugged in");
+            //NSLog(@"Pos is not plugged in");
             return;
         }
         self.updateFWFlag = true;
@@ -634,18 +617,18 @@
                         if (!self.updateFWFlag) {
                             return;
                         }
-                        NSLog(@"Current progress:%ld%%",(long)progress);
+                        //NSLog(@"Current progress:%ld%%",(long)progress);
                     });
                     continue;
                 }
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    NSLog(@"finish upgrader");
+                    //NSLog(@"finish upgrader");
                 });
                 break;
             }
         });
     }else{
-        NSLog( @"pls make sure you have passed the right data");
+        //NSLog( @"pls make sure you have passed the right data");
     }
 }
 
@@ -689,30 +672,22 @@
     return nil;
 }
 
-- (NSString *)convertToJsonData:(NSDictionary *)dict
-{
+- (NSString *)convertToJsonData:(NSDictionary *)dict{
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:&error];
     NSString *jsonString;
 
     if (!jsonData) {
-        NSLog(@"%@",error);
     } else {
         jsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
     }
-
     NSMutableString *mutStr = [NSMutableString stringWithString:jsonString];
-
     NSRange range = {0,jsonString.length};
-
     //去掉字符串中的空格
     [mutStr replaceOccurrencesOfString:@" " withString:@"" options:NSLiteralSearch range:range];
-
     NSRange range2 = {0,mutStr.length};
-
     //去掉字符串中的换行符
     [mutStr replaceOccurrencesOfString:@"\n" withString:@"" options:NSLiteralSearch range:range2];
-
     return mutStr;
 }
 @end
