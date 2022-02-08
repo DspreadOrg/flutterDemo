@@ -21,8 +21,8 @@
     dispatch_queue_t self_queue;
     NSString *msgStr;
     NSTimer* appearTimer;
-
 }
+
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   FlutterMethodChannel* channel = [FlutterMethodChannel
       methodChannelWithName:@"flutter_plugin_pos"
@@ -48,7 +48,6 @@
   } else if ([@"getUpdateCheckValue" isEqualToString:call.method]) {
       [self.mPos getUpdateCheckValueBlock:^(BOOL isSuccess, NSString *stateStr) {
           if (isSuccess) {
-              //NSLog(@"%@",stateStr);
           }
       }];
   } else if ([@"getKeyCheckValue" isEqualToString:call.method]) {
@@ -107,6 +106,15 @@
       [self.mPos setMasterKey:key checkValue:checkValue keyIndex:keyIndex];
   }else if ([@"updatePosFirmware" isEqualToString:call.method]) {
       [self updatePosFirmwareTest];
+  }else if ([@"updateWorkKey" isEqualToString:call.method]) {
+      NSString *pik = [call.arguments objectForKey:@"pik"];
+      NSString *pikCheck = [call.arguments objectForKey:@"pikCheck"];
+      NSString *trk = [call.arguments objectForKey:@"trk"];
+      NSString *trkCheck = [call.arguments objectForKey:@"trkCheck"];
+      NSString *mak = [call.arguments objectForKey:@"mak"];
+      NSString *makCheck = [call.arguments objectForKey:@"makCheck"];
+      NSInteger keyIndex = [[call.arguments objectForKey:@"keyIndex"] integerValue];
+      [self.mPos udpateWorkKey:pik pinKeyCheck:pikCheck trackKey:trk trackKeyCheck:trkCheck macKey:mak macKeyCheck:makCheck keyIndex:keyIndex];
   }else {
       result(FlutterMethodNotImplemented);
   }
@@ -571,7 +579,7 @@
     }else if(updateInformationResult==UpdateInformationResult_UPDATE_PACKET_VEFIRY_ERROR){
         updateResult = @"Packer vefiry error";
     }
-    [self sendMessage:@"onUpdatePosFirmwareResult" parameter:updateResult];
+    [self sendMessage:@"onRequestUpdateWorkKeyResult" parameter:updateResult];
 }
 
 //eg: update TMK api in pos.
