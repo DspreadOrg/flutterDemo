@@ -115,6 +115,10 @@
       NSString *makCheck = [call.arguments objectForKey:@"makCheck"];
       NSInteger keyIndex = [[call.arguments objectForKey:@"keyIndex"] integerValue];
       [self.mPos udpateWorkKey:pik pinKeyCheck:pikCheck trackKey:trk trackKeyCheck:trkCheck macKey:mak macKeyCheck:makCheck keyIndex:keyIndex];
+  }else if ([@"anlysEmvIccData" isEqualToString:call.method]) {
+      NSString *tlv = [call.arguments objectForKey:@"tlv"];
+      NSDictionary * dict = [self.mPos anlysEmvIccData:tlv];
+      result(dict);
   }else {
       result(FlutterMethodNotImplemented);
   }
