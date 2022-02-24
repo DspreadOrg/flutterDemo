@@ -1,4 +1,4 @@
-## 0.0.7
+## 0.0.8
 
-* 1. Add dialog to hint transaction type;
-* 2. Add API resetQPosStatus.etc
+* 1. Add anlysEmvIccData implementation and updateWorkKey Implemented for IOS;
+* 2. fix sendOnlineProcessResult cannot process issue

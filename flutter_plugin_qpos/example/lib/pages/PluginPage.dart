@@ -696,9 +696,10 @@ class _MyAppState extends State<PluginPage> {
           // An example to show how to get the key value
           var tlvData = value["tlv"];
           if(tlvData != null) print("tlv= "+tlvData);
+          String str = "8A023030"; //Currently the default value,
+          _flutterPluginQpos.sendOnlineProcessResult(str); //脚本通知/55域/ICCDATA
         }));
-        String str = "8A023030"; //Currently the default value,
-        _flutterPluginQpos.sendOnlineProcessResult(str); //脚本通知/55域/ICCDATA
+
 
         break;
       case 'onBluetoothBondFailed':
