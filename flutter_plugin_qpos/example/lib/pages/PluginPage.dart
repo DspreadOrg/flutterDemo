@@ -421,7 +421,7 @@ class _MyAppState extends State<PluginPage> {
     switch (method) {
       case 'onRequestTransactionResult':
         setState(() {
-          display = parameters!+"\n"+display+"\n"+tlvData;
+          display = "onRequestTransactionResult: " + parameters!+"\n"+display+"\n"+tlvData;
         });
         break;
       case 'onRequestWaitingUser':
@@ -741,6 +741,12 @@ class _MyAppState extends State<PluginPage> {
       case 'onVerifyMifareCardResult':
         break;
       case 'onGetKeyCheckValue':
+        break;
+      case 'bluetoothIsPowerOff2Mode':
+        print("bluetoothIsPowerOff2Mode");
+        break;
+      case 'bluetoothIsPowerOn2Mode':
+        print("bluetoothIsPowerOn2Mode");
         break;
       case 'onReturnGetPinInputResult':
         setState(() {

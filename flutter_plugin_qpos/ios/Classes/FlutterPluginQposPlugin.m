@@ -281,12 +281,10 @@
 }
 
 -(void)bluetoothIsPowerOff2Mode{
-    [self sendMessage:@"onRequestQposDisconnected" parameter:@""];
-    //NSLog(@"bluetoothIsPowerOff2Mode");
+    [self sendMessage:@"bluetoothIsPowerOff2Mode" parameter:@""];
 }
 
 -(void)bluetoothIsPowerOn2Mode{
-    //NSLog(@"bluetoothIsPowerOn2Mode");
     [self sendMessage:@"bluetoothIsPowerOn2Mode" parameter:@""];
 }
 
@@ -517,7 +515,6 @@
     NSString *displayStr =@"";
     if ([self.bluetoothAddress  isEqual: @"audioType"]) {
         displayStr = @"AudioType connected.";
-       
     }else{
         displayStr = @"Bluetooth connected.";
     }
