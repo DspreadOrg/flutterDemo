@@ -246,8 +246,7 @@
 }
 
 -(void)scanBluetooth:(NSInteger)scanTime{
-    [self initPos];
-    NSInteger delay = scanTime;
+    NSInteger delay = 0;
     [self.bt setBluetoothDelegate2Mode:self];
     if ([self.bt getCBCentralManagerState] == CBCentralManagerStateUnknown) {
             while ([self.bt getCBCentralManagerState]!= CBCentralManagerStatePoweredOn) {
@@ -258,7 +257,7 @@
                 }
             }
         }
-        [self.bt scanQPos2Mode:delay];
+        [self.bt scanQPos2Mode:scanTime];
 }
 
 -(void) sleepMs: (NSInteger)msec {
