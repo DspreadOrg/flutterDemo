@@ -24,6 +24,7 @@ import 'package:sn_progress_dialog/sn_progress_dialog.dart';
 class PluginPage extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
+
 }
 
 final communicationMode = const [
@@ -55,10 +56,12 @@ class _MyAppState extends State<PluginPage> {
   var scanFinish = 0;
   String? _mAddress;
   var _updateValue;
-  bool _visibility = false;
+  bool _visibility = true;
   bool concelFlag = false;
   ProgressDialog? pr;
   int? test;
+  bool offstage = true;
+
 
   @override
   void initState() {
@@ -105,6 +108,7 @@ class _MyAppState extends State<PluginPage> {
 
   @override
   Widget build(BuildContext context) {
+    var content;
     Widget buttonSection = new Container(
       child: new Row(
         children: [
@@ -238,6 +242,34 @@ class _MyAppState extends State<PluginPage> {
           ]);
     }
 
+    PopupMenuButton popMenuOperateMifare(){
+      return PopupMenuButton<String>(
+          initialValue: "",
+          child: //RaisedButton(
+          //onPressed: () {  },
+          Text("MenuOperateMifare")
+          ,
+          onSelected: (String string) {
+            print(string.toString());
+            onOperateMifareButtonSelected(string,context);
+
+          },
+          itemBuilder: (BuildContext context) => <PopupMenuItem<String>>[
+            PopupMenuItem(
+              child: Text("ADD"),
+              value: "0",
+            ),
+            PopupMenuItem(
+              child: Text("REDUCE"),
+              value: "1",
+            ),
+            PopupMenuItem(
+              child: Text("RESTORE"),
+              value: "2",
+            ),
+          ]);
+    }
+
     _showMenu(int type){
       final RenderBox? button = context.findRenderObject() as RenderBox?;
       final RenderBox? overlay = Overlay.of(context)!.context.findRenderObject() as RenderBox?;
@@ -251,7 +283,8 @@ class _MyAppState extends State<PluginPage> {
       );
       var pop;
       if(type== 1) pop = popMenuUpdate();
-      else pop = popMenuInfo();
+      else if(type == 2) pop = popMenuInfo();
+      else if(type == 3) pop = popMenuOperateMifare();
       showMenu<String>(
           context: context,
         items: pop.itemBuilder(context) as List<PopupMenuEntry<String>>,
@@ -312,6 +345,70 @@ class _MyAppState extends State<PluginPage> {
       ),
     );
 
+    // Widget mifareSection(bool offsatge) {
+    Widget mifareSection = new Offstage(
+          offstage: offstage,
+          child: new Container(
+            child: new Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                        child: RaisedButton(
+                            onPressed: () {
+                              _flutterPluginQpos.pollOnMifareCard(10);
+                            },
+                            child: Text('pollOnMifare'))),
+                    Expanded(
+                        child: RaisedButton(
+                          onPressed: () {
+                            //MifareCardOperationType should be "CLASSIC" or "UlTRALIGHT"
+                            //keyType should be "Key A" or "Key B"
+                            _flutterPluginQpos.authenticateMifareCard("CLASSIC", "Key A", "0A", "ffffffffffff", 20);
+
+                          },
+                          child: Text('authenticateMifare'),
+                        )),
+                    Expanded(
+                        child: RaisedButton(
+                            onPressed: () {
+                              // _flutterPluginQpos.operateMifareCardData("CLASSIC", "Key A", "0A", "ffffffffffff", 20);
+                              _showMenu(3);
+                            },
+                            child: Text('operateMifareData')))
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                        child: RaisedButton(
+                            onPressed: () {
+                              _flutterPluginQpos.readMifareCard("CLASSIC", "0A", 20);
+                            },
+                            child: Text('readMifare'))),
+                    Expanded(
+                        child: RaisedButton(
+                          onPressed: () {
+                            _flutterPluginQpos.writeMifareCard("CLASSIC", "0A", "0002",20);
+                          },
+                          child: Text('writeMifare'),
+                        )),
+                    Expanded(
+                        child: RaisedButton(
+                            onPressed: () {
+                              _flutterPluginQpos.finishMifareCard(10);
+                            },
+                            child: Text('finishMifare')))
+                  ],
+                ),
+              ],
+            ),
+
+          ),
+
+
+        );
+
     Widget textResultSection = new Container(
       child: new Column(
         children: [
@@ -329,7 +426,6 @@ class _MyAppState extends State<PluginPage> {
           ),
           body: new ListView(
             children: [
-
               RaisedButton(
                 onPressed: () async {
                   openUart();
@@ -350,8 +446,19 @@ class _MyAppState extends State<PluginPage> {
               } ,
                   child: Text("device info button")
               ),
+              RaisedButton(onPressed:(){
+                 setState(() {
+                  offstage = !offstage;
+                });
+
+              } ,
+                  child: Text("operate mifare")
+              ),
+
               getListSection()??Text(''),
               textResultSection,
+              mifareSection,
+
 
 //              getupdateSection()
             ],
@@ -564,6 +671,9 @@ class _MyAppState extends State<PluginPage> {
       case 'onQposIsCardExist':
         break;
       case 'onSearchMifareCardResult':
+        setState(() {
+          display = parameters!;
+        });
         break;
       case 'onReturnBatchSendAPDUResult':
         break;
@@ -705,6 +815,9 @@ class _MyAppState extends State<PluginPage> {
       case 'onBluetoothBondFailed':
         break;
       case 'onWriteMifareCardResult':
+        setState(() {
+          display = parameters!;
+        });
         break;
       case 'onQposIsCardExistInOnlineProcess':
         break;
@@ -719,8 +832,14 @@ class _MyAppState extends State<PluginPage> {
       case 'onReturnSignature':
         break;
       case 'onReadMifareCardResult':
+        setState(() {
+          display = parameters!;
+        });
         break;
       case 'onOperateMifareCardResult':
+        setState(() {
+          display = parameters!;
+        });
         break;
       case 'getMifareFastReadData':
         break;
@@ -729,6 +848,9 @@ class _MyAppState extends State<PluginPage> {
       case 'getMifareCardVersion':
         break;
       case 'onFinishMifareCardResult':
+        setState(() {
+          display = parameters!;
+        });
         break;
       case 'onQposDoGetTradeLog':
         break;
@@ -739,6 +861,9 @@ class _MyAppState extends State<PluginPage> {
       case 'onReturnAESTransmissonKeyResult':
         break;
       case 'onVerifyMifareCardResult':
+        setState(() {
+          display = parameters!;
+        });
         break;
       case 'onGetKeyCheckValue':
         break;
@@ -941,6 +1066,24 @@ class _MyAppState extends State<PluginPage> {
         // if(a) {
         // }
     }
+  }
+
+  void onOperateMifareButtonSelected(String string, BuildContext context) {
+    var mifareCardOperationType = "ADD";
+    switch (string) {
+      case "0":
+        mifareCardOperationType = "ADD";
+        break;
+      case "1":
+        mifareCardOperationType = "REDUCE";
+        break;
+      case "2":
+        mifareCardOperationType = "RESTORE";
+        break;
+      default:
+        break;
+    }
+    _flutterPluginQpos.operateMifareCardData(mifareCardOperationType, "0A", "01", 20);
   }
   void _showKeyboard(BuildContext context, String parameters) {
     print("_showKeyboard:"+parameters);
