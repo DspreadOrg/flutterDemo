@@ -271,8 +271,7 @@ public class FlutterPluginQposPlugin implements FlutterPlugin, MethodCallHandler
           String path = call.argument("path");
           PosPluginHandler.openUart(path);
 
-        }
-        else if (call.method.equals("pinMapSync")) {
+        } else if (call.method.equals("pinMapSync")) {
 
             String value = call.argument("value");
             PosPluginHandler.pinMapSync(value);
@@ -284,7 +283,44 @@ public class FlutterPluginQposPlugin implements FlutterPlugin, MethodCallHandler
            boolean re = PosPluginHandler.resetQPosStatus();
            TRACE.d("flutterpluginqposplugin:"+re);
             result.success(re);
-        } else {
+        } else if(call.method.equals("pollOnMifareCard")){
+            int timeout = call.argument("timeout");
+            PosPluginHandler.pollOnMifareCard(timeout);
+
+        } else if(call.method.equals("authenticateMifareCard")){
+            String mifareCardType = call.argument("MifareCardType");
+            String keyType = call.argument("keyType");
+            String block = call.argument("block");
+            String keyValue = call.argument("keyValue");
+            String timeout =call.argument("timeout");
+            PosPluginHandler.authenticateMifareCard(mifareCardType,keyType,block,keyValue, Integer.parseInt(timeout));
+
+        } else if(call.method.equals("operateMifareCardData")){
+            String mifareCardOperationType = call.argument("MifareCardOperationType");
+            String block = call.argument("block");
+            String data = call.argument("data");
+            String timeout =call.argument("timeout");
+            PosPluginHandler.operateMifareCardData(mifareCardOperationType,block,data,Integer.parseInt(timeout));
+
+        } else if(call.method.equals("readMifareCard")){
+            String mifareCardType = call.argument("MifareCardType");
+            String block = call.argument("block");
+            String timeout =call.argument("timeout");
+            PosPluginHandler.readMifareCard(mifareCardType,block,Integer.parseInt(timeout));
+
+        } else if(call.method.equals("writeMifareCard")){
+            String mifareCardType = call.argument("MifareCardType");
+            String block = call.argument("block");
+            String data = call.argument("data");
+            String timeout =call.argument("timeout");
+            PosPluginHandler.writeMifareCard(mifareCardType,block,data,Integer.parseInt(timeout));
+
+        } else if(call.method.equals("finishMifareCard")){
+            int timeout = call.argument("timeout");
+            PosPluginHandler.finishMifareCard(timeout);
+        }
+
+        else {
             result.notImplemented();
         }
     }

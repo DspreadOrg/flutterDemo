@@ -281,7 +281,53 @@ class FlutterPluginQpos {
     return result;
   }
 
+  void pollOnMifareCard(int timeout) async{
+    Map<String, int> params = Map<String, int>();
+    params['timeout'] = timeout;
+    await _methodChannel.invokeMethod('pollOnMifareCard',params);
+  }
 
+  void authenticateMifareCard(String mifareCardType,String keyType,String block,String keyValue,int timeout) async{
+    Map<String, String> params = Map<String, String>();
+    params['MifareCardType'] = mifareCardType;
+    params['keyType'] = keyType;
+    params['block'] = block;
+    params['keyValue'] = keyValue;
+    params['timeout'] = timeout.toString();
+    await _methodChannel.invokeMethod('authenticateMifareCard',params);
+  }
+
+  void operateMifareCardData(String mifareCardOperationType,String block,String data,int timeout) async{
+    Map<String, String> params = Map<String, String>();
+    params['MifareCardOperationType'] = mifareCardOperationType;
+    params['block'] = block;
+    params['data'] = data;
+    params['timeout'] = timeout.toString();
+    await _methodChannel.invokeMethod('operateMifareCardData',params);
+  }
+
+  void readMifareCard(String mifareCardType,String block,int timeout) async{
+    Map<String, String> params = Map<String, String>();
+    params['MifareCardType'] = mifareCardType;
+    params['block'] = block;
+    params['timeout'] = timeout.toString();
+    await _methodChannel.invokeMethod('readMifareCard',params);
+  }
+
+  void writeMifareCard(String mifareCardType,String block,String data,int timeout) async{
+    Map<String, String> params = Map<String, String>();
+    params['MifareCardType'] = mifareCardType;
+    params['block'] = block;
+    params['data'] = data;
+    params['timeout'] = timeout.toString();
+    await _methodChannel.invokeMethod('writeMifareCard',params);
+  }
+
+  void finishMifareCard(int timeout) async{
+    Map<String, int> params = Map<String, int>();
+    params['timeout'] = timeout;
+    await _methodChannel.invokeMethod('finishMifareCard',params);
+  }
 
 
 }

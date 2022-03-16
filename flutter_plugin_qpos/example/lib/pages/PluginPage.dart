@@ -24,6 +24,7 @@ import 'package:sn_progress_dialog/sn_progress_dialog.dart';
 class PluginPage extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
+
 }
 
 final communicationMode = const [
@@ -55,10 +56,12 @@ class _MyAppState extends State<PluginPage> {
   var scanFinish = 0;
   String? _mAddress;
   var _updateValue;
-  bool _visibility = false;
+  bool _visibility = true;
   bool concelFlag = false;
   ProgressDialog? pr;
   int? test;
+  bool offstage = true;
+
 
   @override
   void initState() {
@@ -105,6 +108,7 @@ class _MyAppState extends State<PluginPage> {
 
   @override
   Widget build(BuildContext context) {
+    var content;
     Widget buttonSection = new Container(
       child: new Row(
         children: [
@@ -238,6 +242,34 @@ class _MyAppState extends State<PluginPage> {
           ]);
     }
 
+    PopupMenuButton popMenuOperateMifare(){
+      return PopupMenuButton<String>(
+          initialValue: "",
+          child: //RaisedButton(
+          //onPressed: () {  },
+          Text("MenuOperateMifare")
+          ,
+          onSelected: (String string) {
+            print(string.toString());
+            onOperateMifareButtonSelected(string,context);
+
+          },
+          itemBuilder: (BuildContext context) => <PopupMenuItem<String>>[
+            PopupMenuItem(
+              child: Text("ADD"),
+              value: "0",
+            ),
+            PopupMenuItem(
+              child: Text("REDUCE"),
+              value: "1",
+            ),
+            PopupMenuItem(
+              child: Text("RESTORE"),
+              value: "2",
+            ),
+          ]);
+    }
+
     _showMenu(int type){
       final RenderBox? button = context.findRenderObject() as RenderBox?;
       final RenderBox? overlay = Overlay.of(context)!.context.findRenderObject() as RenderBox?;
@@ -251,7 +283,8 @@ class _MyAppState extends State<PluginPage> {
       );
       var pop;
       if(type== 1) pop = popMenuUpdate();
-      else pop = popMenuInfo();
+      else if(type == 2) pop = popMenuInfo();
+      else if(type == 3) pop = popMenuOperateMifare();
       showMenu<String>(
           context: context,
         items: pop.itemBuilder(context) as List<PopupMenuEntry<String>>,
@@ -312,6 +345,70 @@ class _MyAppState extends State<PluginPage> {
       ),
     );
 
+    // Widget mifareSection(bool offsatge) {
+    Widget mifareSection = new Offstage(
+          offstage: offstage,
+          child: new Container(
+            child: new Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                        child: RaisedButton(
+                            onPressed: () {
+                              _flutterPluginQpos.pollOnMifareCard(10);
+                            },
+                            child: Text('pollOnMifare'))),
+                    Expanded(
+                        child: RaisedButton(
+                          onPressed: () {
+                            //MifareCardOperationType should be "CLASSIC" or "UlTRALIGHT"
+                            //keyType should be "Key A" or "Key B"
+                            _flutterPluginQpos.authenticateMifareCard("CLASSIC", "Key A", "0A", "ffffffffffff", 20);
+
+                          },
+                          child: Text('authenticateMifare'),
+                        )),
+                    Expanded(
+                        child: RaisedButton(
+                            onPressed: () {
+                              // _flutterPluginQpos.operateMifareCardData("CLASSIC", "Key A", "0A", "ffffffffffff", 20);
+                              _showMenu(3);
+                            },
+                            child: Text('operateMifareData')))
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                        child: RaisedButton(
+                            onPressed: () {
+                              _flutterPluginQpos.readMifareCard("CLASSIC", "0A", 20);
+                            },
+                            child: Text('readMifare'))),
+                    Expanded(
+                        child: RaisedButton(
+                          onPressed: () {
+                            _flutterPluginQpos.writeMifareCard("CLASSIC", "0A", "0002",20);
+                          },
+                          child: Text('writeMifare'),
+                        )),
+                    Expanded(
+                        child: RaisedButton(
+                            onPressed: () {
+                              _flutterPluginQpos.finishMifareCard(10);
+                            },
+                            child: Text('finishMifare')))
+                  ],
+                ),
+              ],
+            ),
+
+          ),
+
+
+        );
+
     Widget textResultSection = new Container(
       child: new Column(
         children: [
@@ -329,7 +426,6 @@ class _MyAppState extends State<PluginPage> {
           ),
           body: new ListView(
             children: [
-
               RaisedButton(
                 onPressed: () async {
                   openUart();
@@ -350,8 +446,19 @@ class _MyAppState extends State<PluginPage> {
               } ,
                   child: Text("device info button")
               ),
+              RaisedButton(onPressed:(){
+                 setState(() {
+                  offstage = !offstage;
+                });
+
+              } ,
+                  child: Text("operate mifare")
+              ),
+
               getListSection()??Text(''),
               textResultSection,
+              mifareSection,
+
 
 //              getupdateSection()
             ],
@@ -421,7 +528,7 @@ class _MyAppState extends State<PluginPage> {
     switch (method) {
       case 'onRequestTransactionResult':
         setState(() {
-          display = parameters!+"\n"+display+"\n"+tlvData;
+          display = "onRequestTransactionResult: " + parameters!+"\n"+display+"\n"+tlvData;
         });
         break;
       case 'onRequestWaitingUser':
@@ -564,6 +671,9 @@ class _MyAppState extends State<PluginPage> {
       case 'onQposIsCardExist':
         break;
       case 'onSearchMifareCardResult':
+        setState(() {
+          display = parameters!;
+        });
         break;
       case 'onReturnBatchSendAPDUResult':
         break;
@@ -661,11 +771,19 @@ class _MyAppState extends State<PluginPage> {
         break;
       case 'onRequestSetAmount':
         Map<String, String> params = Map<String, String>();
-        params['amount'] = "100";
-        params['cashbackAmount'] = "";
-        params['currencyCode'] = "156";
-        params['transactionType'] = "GOODS";
-        _flutterPluginQpos.setAmount(params);
+
+        simpleDialog(context).then((value) {
+          setState(() {
+            print("final type:"+value);
+            params['transactionType'] = value;
+            params['amount'] = "100";
+            params['cashbackAmount'] = "";
+            params['currencyCode'] = "156";
+            // params['transactionType'] = "GOODS";
+            _flutterPluginQpos.setAmount(params);
+          });
+        });
+
         break;
       case 'onReturnGetEMVListResult':
         break;
@@ -688,14 +806,18 @@ class _MyAppState extends State<PluginPage> {
           // An example to show how to get the key value
           var tlvData = value["tlv"];
           if(tlvData != null) print("tlv= "+tlvData);
+          String str = "8A023030"; //Currently the default value,
+          _flutterPluginQpos.sendOnlineProcessResult(str); //脚本通知/55域/ICCDATA
         }));
-        String str = "8A023030"; //Currently the default value,
-        _flutterPluginQpos.sendOnlineProcessResult(str); //脚本通知/55域/ICCDATA
+
 
         break;
       case 'onBluetoothBondFailed':
         break;
       case 'onWriteMifareCardResult':
+        setState(() {
+          display = parameters!;
+        });
         break;
       case 'onQposIsCardExistInOnlineProcess':
         break;
@@ -710,8 +832,14 @@ class _MyAppState extends State<PluginPage> {
       case 'onReturnSignature':
         break;
       case 'onReadMifareCardResult':
+        setState(() {
+          display = parameters!;
+        });
         break;
       case 'onOperateMifareCardResult':
+        setState(() {
+          display = parameters!;
+        });
         break;
       case 'getMifareFastReadData':
         break;
@@ -720,6 +848,9 @@ class _MyAppState extends State<PluginPage> {
       case 'getMifareCardVersion':
         break;
       case 'onFinishMifareCardResult':
+        setState(() {
+          display = parameters!;
+        });
         break;
       case 'onQposDoGetTradeLog':
         break;
@@ -730,8 +861,17 @@ class _MyAppState extends State<PluginPage> {
       case 'onReturnAESTransmissonKeyResult':
         break;
       case 'onVerifyMifareCardResult':
+        setState(() {
+          display = parameters!;
+        });
         break;
       case 'onGetKeyCheckValue':
+        break;
+      case 'bluetoothIsPowerOff2Mode':
+        print("bluetoothIsPowerOff2Mode");
+        break;
+      case 'bluetoothIsPowerOn2Mode':
+        print("bluetoothIsPowerOn2Mode");
         break;
       case 'onReturnGetPinInputResult':
         setState(() {
@@ -927,6 +1067,24 @@ class _MyAppState extends State<PluginPage> {
         // }
     }
   }
+
+  void onOperateMifareButtonSelected(String string, BuildContext context) {
+    var mifareCardOperationType = "ADD";
+    switch (string) {
+      case "0":
+        mifareCardOperationType = "ADD";
+        break;
+      case "1":
+        mifareCardOperationType = "REDUCE";
+        break;
+      case "2":
+        mifareCardOperationType = "RESTORE";
+        break;
+      default:
+        break;
+    }
+    _flutterPluginQpos.operateMifareCardData(mifareCardOperationType, "0A", "01", 20);
+  }
   void _showKeyboard(BuildContext context, String parameters) {
     print("_showKeyboard:"+parameters);
 
@@ -982,6 +1140,154 @@ class _MyAppState extends State<PluginPage> {
   }
 
 }
+
+  Future simpleDialog(BuildContext context)async{
+    print("simpleDialog");
+    var result=await showDialog(context: context,
+        builder:(context){
+          return SimpleDialog(
+            title: Text("Transcation Type"),
+            children: <Widget>[
+              SimpleDialogOption(
+                child: Text("GOODS"),
+                onPressed: (){
+                  print("GOODS");
+                  Navigator.pop(context,"GOODS");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("SERVICES "),
+                onPressed: (){
+                  print("SERVICES");
+                  Navigator.pop(context,"SERVICES");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("CASH"),
+                onPressed: (){
+                  print("CASH");
+                  Navigator.pop(context,"CASH");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("CASHBACK"),
+                onPressed: (){
+                  print("CASHBACK");
+                  Navigator.pop(context,"CASHBACK");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("INQUIRY"),
+                onPressed: (){
+                  print("INQUIRY");
+                  Navigator.pop(context,"INQUIRY");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("TRANSFER"),
+                onPressed: (){
+                  print("TRANSFER");
+                  Navigator.pop(context,"TRANSFER");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("ADMIN"),
+                onPressed: (){
+                  print("ADMIN");
+                  Navigator.pop(context,"ADMIN");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("CASHDEPOSIT"),
+                onPressed: (){
+                  print("CASHDEPOSIT");
+                  Navigator.pop(context,"CASHDEPOSIT");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("PAYMENT"),
+                onPressed: (){
+                  print("PAYMENT");
+                  Navigator.pop(context,"PAYMENT");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("PBOCLOG||ECQ_INQUIRE_LOG"),
+                onPressed: (){
+                  print("PBOCLOG||ECQ_INQUIRE_LOG");
+                  Navigator.pop(context,"PBOCLOG||ECQ_INQUIRE_LOG");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("SALE"),
+                onPressed: (){
+                  print("SALE");
+                  Navigator.pop(context,"SALE");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("PREAUTH"),
+                onPressed: (){
+                  print("PREAUTH");
+                  Navigator.pop(context,"PREAUTH");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("ECQ_DESIGNATED_LOAD"),
+                onPressed: (){
+                  print("ECQ_DESIGNATED_LOAD");
+                  Navigator.pop(context,"ECQ_DESIGNATED_LOAD");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("ECQ_UNDESIGNATED_LOAD"),
+                onPressed: (){
+                  print("ECQ_UNDESIGNATED_LOAD");
+                  Navigator.pop(context,"ECQ_UNDESIGNATED_LOAD");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("ECQ_CASH_LOAD"),
+                onPressed: (){
+                  print("ECQ_CASH_LOAD");
+                  Navigator.pop(context,"ECQ_CASH_LOAD");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("ECQ_CASH_LOAD_VOID"),
+                onPressed: (){
+                  print("ECQ_CASH_LOAD_VOID");
+                  Navigator.pop(context,"ECQ_CASH_LOAD_VOID");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("CHANGE_PIN"),
+                onPressed: (){
+                  print("CHANGE_PIN");
+                  Navigator.pop(context,"CHANGE_PIN");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("REFOUND"),
+                onPressed: (){
+                  print("REFOUND");
+                  Navigator.pop(context,"REFOUND");
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("SALES_NEW"),
+                onPressed: (){
+                  print("SALES_NEW");
+                  Navigator.pop(context,"SALES_NEW");
+                },
+              ),
+            ],
+          );
+        }
+    );
+    print("result --- > "+result);
+    return result;
+  }
 
 
 // class SecondPage extends StatelessWidget{

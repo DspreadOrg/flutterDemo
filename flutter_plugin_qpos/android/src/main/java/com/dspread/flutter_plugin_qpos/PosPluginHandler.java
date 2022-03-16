@@ -289,4 +289,53 @@ public class PosPluginHandler {
     }
 
     public static boolean resetQPosStatus() {return mPos.resetQPosStatus();}
+
+    public static void pollOnMifareCard(int timeout) {mPos.pollOnMifareCard(timeout);}
+
+    public static void authenticateMifareCard(String mifareCardType,String keyType,String block,String keyValue,int timeout) {
+        QPOSService.MifareCardType cardType = QPOSService.MifareCardType.CLASSIC;
+        if(mifareCardType.equals("CLASSIC")){
+            cardType = QPOSService.MifareCardType.CLASSIC;
+        } else if(mifareCardType.equals("UlTRALIGHT")){
+            cardType = QPOSService.MifareCardType.UlTRALIGHT;
+        }
+        mPos.authenticateMifareCard(cardType,keyType,block,keyValue,timeout);
+    }
+
+    public static void operateMifareCardData(String mifareCardOperationType,String block,String data,int timeout){
+        QPOSService.MifareCardOperationType operationType = QPOSService.MifareCardOperationType.ADD;
+        if(mifareCardOperationType.equals("ADD")){
+            operationType = QPOSService.MifareCardOperationType.ADD;
+        } else if(mifareCardOperationType.equals("REDUCE")){
+            operationType = QPOSService.MifareCardOperationType.REDUCE;
+        } else if(mifareCardOperationType.equals("RESTORE")){
+            operationType = QPOSService.MifareCardOperationType.RESTORE;
+        }
+        mPos.operateMifareCardData(operationType,block,data,timeout);
+    }
+
+    public static void readMifareCard(String mifareCardType,String block,int timeout){
+        QPOSService.MifareCardType cardType = QPOSService.MifareCardType.CLASSIC;
+        if(mifareCardType.equals("CLASSIC")){
+            cardType = QPOSService.MifareCardType.CLASSIC;
+        } else if(mifareCardType.equals("UlTRALIGHT")){
+            cardType = QPOSService.MifareCardType.UlTRALIGHT;
+        }
+        mPos.readMifareCard(cardType,block,timeout);
+    }
+
+    public static void writeMifareCard(String mifareCardType,String block,String data,int timeout){
+        QPOSService.MifareCardType cardType = QPOSService.MifareCardType.CLASSIC;
+        if(mifareCardType.equals("CLASSIC")){
+            cardType = QPOSService.MifareCardType.CLASSIC;
+        } else if(mifareCardType.equals("UlTRALIGHT")){
+            cardType = QPOSService.MifareCardType.UlTRALIGHT;
+        }
+        mPos.writeMifareCard(cardType,block,data,timeout);
+    }
+
+    public static void finishMifareCard(int timeout){
+        mPos.finishMifareCard(timeout);
+    }
+
 }
