@@ -1034,11 +1034,14 @@ class _MyAppState extends State<PluginPage> {
   void onDeviceInfoButtonSelected(String string, BuildContext context) {
     switch (string) {
       case "0":
-            _flutterPluginQpos.getQposId();
+        _flutterPluginQpos.getQposId();
+
+        // _flutterPluginQpos.setBuzzerStatus(0);
+        // _flutterPluginQpos.doSetBuzzerOperation(3);
+
         break;
       case "1":
         _flutterPluginQpos.getQposInfo();
-
         //an example to get track2 without doTrade
         // its callback is onRequestBatchData
         // the return data's format is length+data

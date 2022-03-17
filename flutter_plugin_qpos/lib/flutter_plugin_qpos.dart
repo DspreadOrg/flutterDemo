@@ -329,6 +329,17 @@ class FlutterPluginQpos {
     await _methodChannel.invokeMethod('finishMifareCard',params);
   }
 
+  void setBuzzerStatus(int status) async{
+    Map<String, int> params = Map<String, int>();
+    params['status'] = status;
+    await _methodChannel.invokeMethod('setBuzzerStatus',params);
+  }
+
+  void doSetBuzzerOperation(int times) async{
+    Map<String, int> params = Map<String, int>();
+    params['times'] = times;
+    await _methodChannel.invokeMethod('doSetBuzzerOperation',params);
+  }
 
 }
 

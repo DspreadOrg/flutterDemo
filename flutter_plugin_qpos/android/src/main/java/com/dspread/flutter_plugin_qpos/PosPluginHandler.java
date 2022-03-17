@@ -338,4 +338,12 @@ public class PosPluginHandler {
         mPos.finishMifareCard(timeout);
     }
 
+    public static void setBuzzerStatus(int status){
+        mPos.setBuzzerStatus(status);
+    }
+
+    public static void doSetBuzzerOperation(int times){
+        mPos.doSetBuzzerOperation(times);
+    }
+
 }

@@ -318,8 +318,13 @@ public class FlutterPluginQposPlugin implements FlutterPlugin, MethodCallHandler
         } else if(call.method.equals("finishMifareCard")){
             int timeout = call.argument("timeout");
             PosPluginHandler.finishMifareCard(timeout);
+        } else if(call.method.equals("setBuzzerStatus")){
+            int status = call.argument("status");
+            PosPluginHandler.setBuzzerStatus(status);
+        } else if(call.method.equals("doSetBuzzerOperation")){
+            int times = call.argument("times");
+            PosPluginHandler.doSetBuzzerOperation(times);
         }
-
         else {
             result.notImplemented();
         }
