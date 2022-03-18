@@ -119,6 +119,14 @@
       NSString *tlv = [call.arguments objectForKey:@"tlv"];
       NSDictionary * dict = [self.mPos anlysEmvIccData:tlv];
       result(dict);
+  }else if ([@"setBuzzerStatus" isEqualToString:call.method]) {
+      NSInteger status = [[call.arguments objectForKey:@"status"] integerValue];
+      [self.mPos setBuzzerStatus:0];
+  }else if ([@"doSetBuzzerOperation" isEqualToString:call.method]) {
+      NSInteger times = [[call.arguments objectForKey:@"times"] integerValue];
+      [self.mPos doSetBuzzerOperation:times block:^(BOOL isSuccess, NSString *stateStr) {
+          [self sendMessage:@"onSetBuzzerResult" result:isSuccess];
+      }];
   }else {
       result(FlutterMethodNotImplemented);
   }
@@ -132,7 +140,7 @@
 
 - (void)sendMessage:(NSString *)methodName result:(BOOL)result{
     if(self.eventSink != nil){
-        self.eventSink([self convertToJsonData:@{@"method":methodName,@"parameters":@(result)}]);
+        self.eventSink([self convertToJsonData:@{@"method":methodName,@"parameters":[NSString stringWithFormat:@"%d",result]}]);
     }
 }
 
@@ -654,6 +662,10 @@
         str = @"Packer vefiry error";
     }
     [self sendMessage:@"onUpdatePosFirmwareResult" parameter:str];
+}
+
+- (void)onReturnBuzzerStatusResult:(BOOL)isSuccess{
+    [self sendMessage:@"onSetBuzzerStatusResult" result:isSuccess];
 }
 
 - (NSData*)readLine:(NSString*)name{
