@@ -21,14 +21,12 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
-ext.kotlin_version = '1.6.10'
-
 apply plugin: 'com.android.application'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdkVersion 28
-
+    compileSdkVersion 31
+    
     lintOptions {
         disable 'InvalidPackage'
     }
