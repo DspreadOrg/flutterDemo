@@ -130,24 +130,23 @@ public class FlutterPluginQposPlugin implements FlutterPlugin, MethodCallHandler
             String CHECKVALUE_KEYTYPE = call.argument("keyType");
             String keyIndex = call.argument("keyIndex");
             PosPluginHandler.getKeyCheckValue(Integer.parseInt(keyIndex), CHECKVALUE_KEYTYPE);
+        } else if (call.method.equals("setCardTradeMode")){
+            String cardTradeMode = call.argument("cardTradeMode");
+            TRACE.d("setCardTradeMode"+cardTradeMode);
+            PosPluginHandler.setCardTradeMode(cardTradeMode);
+        } else if (call.method.equals("setFormatId")){
+            String formatId = call.argument("formatId");
+            TRACE.d("setFormatId"+formatId);
+            PosPluginHandler.setFormatId(formatId);
+        } else if (call.method.equals("setDoTradeMode")){
+            String doTradeMode = call.argument("doTradeMode");
+            TRACE.d("doTradeMode"+doTradeMode);
+            PosPluginHandler.setDoTradeMode(doTradeMode);
         } else if (call.method.equals("doTrade")) {
             TRACE.d("doTrade");
-            String keyIndex = call.argument("keyIndex");
-            int i = Integer.parseInt(keyIndex);
-            String cardTradeMode = call.argument("cardTradeMode");
-            if (!TextUtils.isEmpty(cardTradeMode)) {
-                PosPluginHandler.setCardTradeMode(cardTradeMode);
-            }
-            String formatId = call.argument("formatId");
-            if (!TextUtils.isEmpty(formatId)) {
-                PosPluginHandler.setFormatId(formatId);
-            }
-            String doTradeMode = call.argument("doTradeMode");
-            if (!TextUtils.isEmpty(doTradeMode)) {
-                PosPluginHandler.setDoTradeMode(cardTradeMode);
-            }
-
-            PosPluginHandler.doTrade(i, 30);
+            int keyIndex = call.argument("keyIndex");
+            TRACE.d("keyindex:"+keyIndex);
+            PosPluginHandler.doTrade(keyIndex, 40);
         } else if (call.method.equals("setAmount")) {
             TRACE.d("setAmount");
             String amount = call.argument("amount");

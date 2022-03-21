@@ -43,6 +43,7 @@ final communicationMode = const [
   'UNKNOW',
 ];
 
+
 class _MyAppState extends State<PluginPage> {
   FlutterPluginQpos _flutterPluginQpos = FlutterPluginQpos();
   String _platformVersion = 'Unknown';
@@ -504,13 +505,15 @@ class _MyAppState extends State<PluginPage> {
     await _flutterPluginQpos.disconnectBT();
   }
 
+
+
   void startDoTrade() {
-    Map<String, String> params = Map<String, String>();
-    params['keyIndex'] = "0";
-   params['cardTradeMode'] = "SWIPE_TAP_INSERT_CARD_NOTUP";
-   // params['formatId'] = "00";
-//    params['doTradeMode'] = "CHECK_CARD_NO_IPNUT_PIN";
-    _flutterPluginQpos.doTrade(params);
+    int keyIndex = 0;
+    // params['keyIndex'] = 0;
+    _flutterPluginQpos.setFormatId(FormatID.DUKPT);
+    // _flutterPluginQpos.setCardTradeMode(CardTradeMode.SWIPE_TAP_INSERT_CARD);
+    // _flutterPluginQpos.setDoTradeMode(DoTradeMode.COMMON);
+    _flutterPluginQpos.doTrade(keyIndex);
   }
 
   void parasListener(QPOSModel datas) {

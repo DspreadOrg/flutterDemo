@@ -161,7 +161,7 @@ public class PosPluginHandler {
     }
 
     public static void setFormatId(String formatId) {
-        mPos.setFormatId(formatId);
+        mPos.setFormatId(QPOSService.FORMATID.valueOf(formatId));
     }
 
     public static void setDoTradeMode(String doTradeMode) {

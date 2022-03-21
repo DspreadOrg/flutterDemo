@@ -8,6 +8,24 @@ import 'package:meta/meta.dart' show visibleForTesting;
 import 'package:permission_handler/permission_handler.dart';
 
 
+enum CardTradeMode {
+  ONLY_INSERT_CARD, ONLY_SWIPE_CARD,
+  TAP_INSERT_CARD, TAP_INSERT_CARD_NOTUP,
+  SWIPE_TAP_INSERT_CARD, UNALLOWED_LOW_TRADE,
+  SWIPE_INSERT_CARD, SWIPE_TAP_INSERT_CARD_UNALLOWED_LOW_TRADE,
+  SWIPE_TAP_INSERT_CARD_NOTUP_UNALLOWED_LOW_TRADE, ONLY_TAP_CARD,
+  ONLY_TAP_CARD_QF, SWIPE_TAP_INSERT_CARD_NOTUP,
+  SWIPE_TAP_INSERT_CARD_DOWN, SWIPE_INSERT_CARD_UNALLOWED_LOW_TRADE,
+  SWIPE_TAP_INSERT_CARD_UNALLOWED_LOW_TRADE_NEW, ONLY_INSERT_CARD_NOPIN, SWIPE_TAP_INSERT_CARD_NOTUP_DELAY }
+
+enum FormatID {
+  MKSK, MKSK_PLAIN, DUKPT
+}
+
+enum DoTradeMode{
+  COMMON,CHECK_CARD_NO_IPNUT_PIN,IS_DEBIT_OR_CREDIT
+}
+
 class FlutterPluginQpos {
 
   /// Initializes the plugin and starts listening for potential platform events.
@@ -112,9 +130,30 @@ class FlutterPluginQpos {
     await _methodChannel.invokeMethod('disconnectBT');
   }
 
-  Future<void> doTrade(Map map) async{
+  void setCardTradeMode(CardTradeMode cardTradeMode){
+    Map<String, String> params = Map<String, String>();
+    params['cardTradeMode'] = cardTradeMode.toString().split(".")[1];
+    print("dart:cardtrademode "+cardTradeMode.toString().split(".")[1]);
+    _methodChannel.invokeMethod('setCardTradeMode',params);
+  }
 
-    await _methodChannel.invokeMethod('doTrade',map);
+  void setFormatId(FormatID formatId){
+    Map<String, String> params = Map<String, String>();
+    params['formatId'] = formatId.toString().split(".")[1];
+    _methodChannel.invokeMethod('setFormatId',params);
+  }
+
+  void setDoTradeMode(DoTradeMode doTradeMode){
+    Map<String, String> params = Map<String, String>();
+    params['doTradeMode'] = doTradeMode.toString().split(".")[1];
+    print("dart:doTradeMode "+doTradeMode.toString().split(".")[1]);
+    _methodChannel.invokeMethod('setDoTradeMode',params);
+  }
+
+  Future<void> doTrade(int keyIndex) async{
+    Map<String, int> params = Map<String, int>();
+    params['keyIndex'] = keyIndex;
+    await _methodChannel.invokeMethod('doTrade',params);
   }
 
   void setAmount(Map<String, String> params) async{
@@ -342,6 +381,7 @@ class FlutterPluginQpos {
   }
 
 }
+
 
 //onQposInfoResult(java.util.Hashtable);
 //onRequestTime();
