@@ -24,7 +24,7 @@ code_quality:
 
 test:
   stage: build
-  image: "fischerscode/flutter:stable"
+  image: "cirrusci/flutter:stable"
   script:
     - cd flutter_plugin_qpos/example
     - flutter build apk
