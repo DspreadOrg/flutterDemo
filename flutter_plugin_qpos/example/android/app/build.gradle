@@ -24,8 +24,6 @@ if (flutterVersionName == null) {
 apply plugin: 'com.android.application'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
-ext.kotlin_version = '1.6.10'
-
 android {
     compileSdkVersion 31
     buildToolsVersion "31.0.0"
