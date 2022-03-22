@@ -1,3 +1,3 @@
-## 0.1.0
+## 0.1.0+1
 
-* 1. Add function setFormatId(),setCardTradeMode(),setDoTradeMode().If need ,they should be called before doTrade()
+* 1. update Gradle version and compile version
