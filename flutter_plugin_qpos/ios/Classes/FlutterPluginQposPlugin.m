@@ -121,11 +121,85 @@
       result(dict);
   }else if ([@"setBuzzerStatus" isEqualToString:call.method]) {
       NSInteger status = [[call.arguments objectForKey:@"status"] integerValue];
-      [self.mPos setBuzzerStatus:0];
+      [self.mPos setBuzzerStatus:status];
   }else if ([@"doSetBuzzerOperation" isEqualToString:call.method]) {
       NSInteger times = [[call.arguments objectForKey:@"times"] integerValue];
       [self.mPos doSetBuzzerOperation:times block:^(BOOL isSuccess, NSString *stateStr) {
           [self sendMessage:@"onSetBuzzerResult" result:isSuccess];
+      }];
+  }else if ([@"pollOnMifareCard" isEqualToString:call.method]) {
+      NSInteger timeout = [[call.arguments objectForKey:@"timeout"] integerValue];
+      [self.mPos pollOnMifareCard:timeout dataBlock:^(NSDictionary *dict) {
+          [self sendMessage:@"onSearchMifareCardResult" parameter:[self convertToJsonData:dict]];
+      }];
+  }else if ([@"authenticateMifareCard" isEqualToString:call.method]) {
+      NSString *mifareCardType = [call.arguments objectForKey:@"MifareCardType"];
+      NSString *keyType = [call.arguments objectForKey:@"keyType"];
+      NSString *block = [call.arguments objectForKey:@"block"];
+      NSString *keyValue = [call.arguments objectForKey:@"keyValue"];
+      NSInteger timeout = [[call.arguments objectForKey:@"timeout"] integerValue];
+      MifareCardType cardType = MifareCardType_CLASSIC;
+      if ([@"CLASSIC" isEqualToString:mifareCardType]) {
+          cardType = MifareCardType_CLASSIC;
+      }else if ([@"ULTRALIGHT" isEqualToString:mifareCardType]){
+          cardType = MifareCardType_ULTRALIGHT;
+      }
+      MifareKeyType type = MifareKeyType_KEY_A;
+      if ([@"Key A" isEqualToString:keyType]) {
+          type = MifareKeyType_KEY_A;
+      }else if ([@"Key B" isEqualToString:keyType]){
+          type = MifareKeyType_KEY_B;
+      }
+      [self.mPos authenticateMifareCard:cardType keyType:type block:block keyValue:keyValue timeout:timeout resultBlock:^(BOOL isSuccess) {
+          [self sendMessage:@"onVerifyMifareCardResult" result:isSuccess];
+      }];
+  }else if ([@"operateMifareCardData" isEqualToString:call.method]) {
+      NSString *mifareCardOperationType = [call.arguments objectForKey:@"mifareCardOperationType"];
+      NSString *block = [call.arguments objectForKey:@"block"];
+      NSString *data = [call.arguments objectForKey:@"data"];
+      NSInteger timeout = [[call.arguments objectForKey:@"timeout"] integerValue];
+      MifareCardOperationType type = MifareCardOperationType_ADD;
+      if ([@"ADD" isEqualToString:mifareCardOperationType]) {
+          type = MifareCardOperationType_ADD;
+      }else if ([@"REDUCE" isEqualToString:mifareCardOperationType]){
+          type = MifareCardOperationType_REDUCE;
+      }else if ([@"RESTORE" isEqualToString:mifareCardOperationType]){
+          type = MifareCardOperationType_RESTORE;
+      }
+      [self.mPos operateMifareCardData:type block:block data:data timeout:timeout dataBlock:^(NSDictionary *dict) {
+          [self sendMessage:@"onOperateMifareCardResult" parameter:[self convertToJsonData:dict]];
+      }];
+  }else if ([@"readMifareCard" isEqualToString:call.method]) {
+      NSString *mifareCardType = [call.arguments objectForKey:@"MifareCardType"];
+      NSString *block = [call.arguments objectForKey:@"block"];
+      NSInteger timeout = [[call.arguments objectForKey:@"timeout"] integerValue];
+      MifareCardType cardType = MifareCardType_CLASSIC;
+      if ([@"CLASSIC" isEqualToString:mifareCardType]) {
+          cardType = MifareCardType_CLASSIC;
+      }else if ([@"ULTRALIGHT" isEqualToString:mifareCardType]){
+          cardType = MifareCardType_ULTRALIGHT;
+      }
+      [self.mPos readMifareCard:cardType block:block timeout:timeout dataBlock:^(NSDictionary *dict) {
+          [self sendMessage:@"onReadMifareCardResult" parameter:[self convertToJsonData:dict]];
+      }];
+  }else if ([@"writeMifareCard" isEqualToString:call.method]) {
+      NSString *mifareCardType = [call.arguments objectForKey:@"MifareCardType"];
+      NSString *block = [call.arguments objectForKey:@"block"];
+      NSString *data = [call.arguments objectForKey:@"data"];
+      NSInteger timeout = [[call.arguments objectForKey:@"timeout"] integerValue];
+      MifareCardType cardType = MifareCardType_CLASSIC;
+      if ([@"CLASSIC" isEqualToString:mifareCardType]) {
+          cardType = MifareCardType_CLASSIC;
+      }else if ([@"ULTRALIGHT" isEqualToString:mifareCardType]){
+          cardType = MifareCardType_ULTRALIGHT;
+      }
+      [self.mPos writeMifareCard:cardType block:block data:data timeout:timeout resultBlock:^(BOOL isSuccess) {
+          [self sendMessage:@"onWriteMifareCardResult" result:isSuccess];
+      }];
+  }else if ([@"finishMifareCard" isEqualToString:call.method]) {
+      NSInteger timeout = [[call.arguments objectForKey:@"timeout"] integerValue];
+      [self.mPos finishMifareCard:timeout resultBlock:^(BOOL isSuccess) {
+          [self sendMessage:@"onFinishMifareCardResult" result:isSuccess];
       }];
   }else {
       result(FlutterMethodNotImplemented);
