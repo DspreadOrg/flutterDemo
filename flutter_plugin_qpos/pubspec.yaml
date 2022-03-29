@@ -1,6 +1,6 @@
 name: flutter_plugin_qpos
 description: A new Flutter plugin that development by Dspread.
-version: 0.1.0+1
+version: 0.1.1
 homepage: "https://gitlab.com/dspread/flutter_demo/-/tree/master/flutter_plugin_qpos"
 
 environment:

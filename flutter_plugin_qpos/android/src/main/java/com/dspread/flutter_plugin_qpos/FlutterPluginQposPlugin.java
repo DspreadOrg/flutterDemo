@@ -11,6 +11,8 @@ import android.location.LocationManager;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -37,6 +39,8 @@ public class FlutterPluginQposPlugin implements FlutterPlugin, MethodCallHandler
     private EventChannel eventChannel;
     private Activity mActivity;
 
+    private static final int BLUETOOTH_CODE = 100;
+    private static final int LOCATION_CODE = 101;
     public FlutterPluginQposPlugin(Activity mainActivity) {
         mActivity = mainActivity;
     }
@@ -345,13 +349,34 @@ public class FlutterPluginQposPlugin implements FlutterPlugin, MethodCallHandler
         if (ok) {//开了定位服务
             if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 Log.e("POS_SDK", "没有权限");
-                ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION}, 1111);
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+                    if(ContextCompat.checkSelfPermission(mContext, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED
+                            ||ContextCompat.checkSelfPermission(mContext, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED
+                            ||ContextCompat.checkSelfPermission(mContext, Manifest.permission.BLUETOOTH_ADVERTISE) != PackageManager.PERMISSION_GRANTED){
+                        String[] list = new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_ADVERTISE};
+                        ActivityCompat.requestPermissions(mActivity, list, BLUETOOTH_CODE);
+
+                    }
+                } else {
+                    ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_CODE);
+                }
+
+//                ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION}, 1111);
 //                return false;
             } else {
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+                    if(ContextCompat.checkSelfPermission(mContext, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED
+                            ||ContextCompat.checkSelfPermission(mContext, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED
+                            ||ContextCompat.checkSelfPermission(mContext, Manifest.permission.BLUETOOTH_ADVERTISE) != PackageManager.PERMISSION_GRANTED) {
+                        String[] list = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_ADVERTISE};
+                        ActivityCompat.requestPermissions(mActivity, list, BLUETOOTH_CODE);
+                    }
+                }
                 PosPluginHandler.scanQPos2Mode(time);
 //                return true;
             }
         } else {
+            Log.e("BRG", "System detects that the GPS location service is not turned on");
 //            return false;
         }
     }
