@@ -335,12 +335,20 @@ public class FlutterPluginQposPlugin implements FlutterPlugin, MethodCallHandler
 
     private void checkBluePermision(int time) {
         TRACE.d("checkBluePermision:"+time);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+            if(ContextCompat.checkSelfPermission(mContext, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED
+                    ||ContextCompat.checkSelfPermission(mContext, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED
+                    ||ContextCompat.checkSelfPermission(mContext, Manifest.permission.BLUETOOTH_ADVERTISE) != PackageManager.PERMISSION_GRANTED){
+                String[] list = new String[]{Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_ADVERTISE};
+                ActivityCompat.requestPermissions(mActivity, list, BLUETOOTH_CODE);
+
+            }
+        }
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+
         if (!adapter.isEnabled()) {//表示蓝牙不可用
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-
             enableBtIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
             mContext.startActivity(enableBtIntent);
             return;
         }
@@ -349,29 +357,10 @@ public class FlutterPluginQposPlugin implements FlutterPlugin, MethodCallHandler
         if (ok) {//开了定位服务
             if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 Log.e("POS_SDK", "没有权限");
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
-                    if(ContextCompat.checkSelfPermission(mContext, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED
-                            ||ContextCompat.checkSelfPermission(mContext, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED
-                            ||ContextCompat.checkSelfPermission(mContext, Manifest.permission.BLUETOOTH_ADVERTISE) != PackageManager.PERMISSION_GRANTED){
-                        String[] list = new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_ADVERTISE};
-                        ActivityCompat.requestPermissions(mActivity, list, BLUETOOTH_CODE);
-
-                    }
-                } else {
                     ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_CODE);
-                }
 
-//                ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION}, 1111);
 //                return false;
             } else {
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
-                    if(ContextCompat.checkSelfPermission(mContext, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED
-                            ||ContextCompat.checkSelfPermission(mContext, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED
-                            ||ContextCompat.checkSelfPermission(mContext, Manifest.permission.BLUETOOTH_ADVERTISE) != PackageManager.PERMISSION_GRANTED) {
-                        String[] list = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_ADVERTISE};
-                        ActivityCompat.requestPermissions(mActivity, list, BLUETOOTH_CODE);
-                    }
-                }
                 PosPluginHandler.scanQPos2Mode(time);
 //                return true;
             }

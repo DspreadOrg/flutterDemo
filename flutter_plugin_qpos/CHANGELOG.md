@@ -1,5 +1,3 @@
-## 0.1.1
+## 0.1.1+1
 
-* 1. Add mifare card operation on the ios
-* 2. Update Bluetooth permission for android 12
-* 3. Update SDK version to 4.0.0
+* 1. Update bluetooth permission, to support active bluetooth open for android12 
