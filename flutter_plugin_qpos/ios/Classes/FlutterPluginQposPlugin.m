@@ -201,6 +201,14 @@
       [self.mPos finishMifareCard:timeout resultBlock:^(BOOL isSuccess) {
           [self sendMessage:@"onFinishMifareCardResult" result:isSuccess];
       }];
+  }else if ([@"setSleepModeTime" isEqualToString:call.method]) {
+      NSString *timeout = [[call.arguments objectForKey:@"time"] stringValue];
+      [self.mPos doSetSleepModeTime:timeout block:^(BOOL isSuccess, NSString *stateStr) {
+          [self sendMessage:@"onSetSleepModeTime" result:isSuccess];
+      }];
+  }else if ([@"setShutDownTime" isEqualToString:call.method]) {
+      NSString *timeout = [[call.arguments objectForKey:@"time"] stringValue];
+      [self.mPos doSetShutDownTime:timeout];
   }else {
       result(FlutterMethodNotImplemented);
   }
@@ -642,12 +650,12 @@
 }
 
 -(void) onReturnGetPinResult:(NSDictionary*)decodeData{
-    NSString *aStr = @"pinKsn: ";
-    aStr = [aStr stringByAppendingString:decodeData[@"pinKsn"]];
-    aStr = [aStr stringByAppendingString:@"\n"];
-    aStr = [aStr stringByAppendingString:@"pinBlock: "];
-    aStr = [aStr stringByAppendingString:decodeData[@"pinBlock"]];
-    NSString *displayStr = aStr;
+//    NSString *aStr = @"pinKsn: ";
+//    aStr = [aStr stringByAppendingString:decodeData[@"pinKsn"]];
+//    aStr = [aStr stringByAppendingString:@"\n"];
+//    aStr = [aStr stringByAppendingString:@"pinBlock: "];
+//    aStr = [aStr stringByAppendingString:decodeData[@"pinBlock"]];
+//    NSString *displayStr = aStr;
 }
 
 -(void) onRequestUpdateWorkKeyResult:(UpdateInformationResult)updateInformationResult{
@@ -736,6 +744,10 @@
         str = @"Packer vefiry error";
     }
     [self sendMessage:@"onUpdatePosFirmwareResult" parameter:str];
+}
+
+- (void)onReturnSetSleepTimeResult:(BOOL)isSuccess{
+    [self sendMessage:@"onReturnSetSleepTimeResult" result:isSuccess];
 }
 
 - (void)onReturnBuzzerStatusResult:(BOOL)isSuccess{
