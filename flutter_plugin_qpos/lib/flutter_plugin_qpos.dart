@@ -380,6 +380,18 @@ class FlutterPluginQpos {
     await _methodChannel.invokeMethod('doSetBuzzerOperation',params);
   }
 
+  void setSleepModeTime(int time) async{
+    Map<String, int> params = Map<String, int>();
+    params['time'] = time;
+    await _methodChannel.invokeMethod('setSleepModeTime',params);
+  }
+
+  void setShutDownTime(int time) async{
+    Map<String, int> params = Map<String, int>();
+    params['time'] = time;
+    await _methodChannel.invokeMethod('setShutDownTime',params);
+  }
+
 }
 
 

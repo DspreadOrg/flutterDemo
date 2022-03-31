@@ -346,4 +346,12 @@ public class PosPluginHandler {
         mPos.doSetBuzzerOperation(times);
     }
 
+    public static void setSleepModeTime(int time){
+        mPos.setSleepModeTime(time);
+    }
+
+    public static void setShutDownTime(int time){
+        mPos.setShutDownTime(time);
+    }
+
 }

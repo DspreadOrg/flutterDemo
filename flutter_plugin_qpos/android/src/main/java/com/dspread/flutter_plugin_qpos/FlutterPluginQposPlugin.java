@@ -327,6 +327,12 @@ public class FlutterPluginQposPlugin implements FlutterPlugin, MethodCallHandler
         } else if(call.method.equals("doSetBuzzerOperation")){
             int times = call.argument("times");
             PosPluginHandler.doSetBuzzerOperation(times);
+        } else if(call.method.equals("setSleepModeTime")){
+            int time = call.argument("time");
+            PosPluginHandler.setSleepModeTime(time);
+        } else if(call.method.equals("setShutDownTime")){
+            int time = call.argument("time");
+            PosPluginHandler.setShutDownTime(time);
         }
         else {
             result.notImplemented();

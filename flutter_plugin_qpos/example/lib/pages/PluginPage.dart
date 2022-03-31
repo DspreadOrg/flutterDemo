@@ -1041,6 +1041,8 @@ class _MyAppState extends State<PluginPage> {
 
         // _flutterPluginQpos.setBuzzerStatus(0);
         // _flutterPluginQpos.doSetBuzzerOperation(3);
+        // _flutterPluginQpos.setShutDownTime(20);
+        // _flutterPluginQpos.setSleepModeTime(10);
 
         break;
       case "1":
