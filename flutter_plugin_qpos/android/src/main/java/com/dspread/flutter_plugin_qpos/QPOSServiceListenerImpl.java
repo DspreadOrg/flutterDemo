@@ -658,11 +658,16 @@ public class QPOSServiceListenerImpl extends CQPOSService   {
 
     @Override
     public void onSearchMifareCardResult(Hashtable<String, String> arg0) {
-            TRACE.d("onSearchMifareCardResult(Hashtable<String, String> arg0):" + arg0.toString());
         Map map = new HashMap();
         map.put("method","onSearchMifareCardResult");
         StringBuffer parameters = new StringBuffer();
-        parameters.append(arg0.toString());
+        if(arg0 != null) {
+            TRACE.d("onSearchMifareCardResult(Hashtable<String, String> arg0):" + arg0.toString());
+            parameters.append(arg0.toString());
+        } else {
+            TRACE.d("onSearchMifareCardResult(Hashtable<String, String> arg0): null" );
+            parameters.append("poll card fail");
+        }
         map.put("parameters",parameters.toString());
         PosPluginHandler.mEvents.success(JSONObject.toJSONString(map));
     }
@@ -1111,11 +1116,17 @@ public class QPOSServiceListenerImpl extends CQPOSService   {
     @Override
     public void onReadMifareCardResult(Hashtable<String, String> arg0) {
         // TODO Auto-generated method stub
-            TRACE.d("onReadMifareCardResult(Hashtable<String, String> arg0):" + arg0.toString());
         Map map = new HashMap();
         map.put("method","onReadMifareCardResult");
         StringBuffer parameters = new StringBuffer();
-        parameters.append(arg0.toString());
+        if(arg0 != null){
+            TRACE.d("onReadMifareCardResult(Hashtable<String, String> arg0):" + arg0.toString());
+            parameters.append(arg0.toString());
+        } else {
+            TRACE.d("onReadWriteMifareCardResult fail" );
+            parameters.append("onReadWriteMifareCardResult fail");
+        }
+
         map.put("parameters",parameters.toString());
         PosPluginHandler.mEvents.success(JSONObject.toJSONString(map));
     }
@@ -1135,12 +1146,16 @@ public class QPOSServiceListenerImpl extends CQPOSService   {
     @Override
     public void onOperateMifareCardResult(Hashtable<String, String> arg0) {
         // TODO Auto-generated method stub
-
-            TRACE.d("onOperateMifareCardResult(Hashtable<String, String> arg0):" + arg0.toString());
         Map map = new HashMap();
         map.put("method","onOperateMifareCardResult");
         StringBuffer parameters = new StringBuffer();
-        parameters.append(arg0.toString());
+        if(arg0!=null){
+            TRACE.d("onOperateMifareCardResult(Hashtable<String, String> arg0):" + arg0.toString());
+            parameters.append(arg0.toString());
+        } else {
+            TRACE.d("onOperateMifareCardResult(Hashtable<String, String> arg0): null");
+            parameters.append("operate failed");
+        }
         map.put("parameters",parameters.toString());
         PosPluginHandler.mEvents.success(JSONObject.toJSONString(map));
     }
