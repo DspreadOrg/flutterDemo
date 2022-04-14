@@ -62,6 +62,7 @@ class _MyAppState extends State<PluginPage> {
   ProgressDialog? pr;
   int? test;
   bool offstage = true;
+  var _mifareBlockAddrTxt = new TextEditingController();
 
 
   @override
@@ -139,36 +140,6 @@ class _MyAppState extends State<PluginPage> {
         ],
       ),
     );
-
-    // Widget btnMenuSection = new PopupMenuButton<String>(
-    //     initialValue: "",
-    //     child: ListTile(
-    //         leading: Icon(Icons.visibility),
-    //         title: Text('update'),
-    //     ),
-    //
-    //     onSelected: (String string) {
-    //       print("selected:"+string.toString());
-    //       onUpdateButtonSelected(string,context);
-    //     },
-    //     itemBuilder: (BuildContext context) => <PopupMenuItem<String>>[
-    //           PopupMenuItem(
-    //             child: Text("update Emv Config"),
-    //             value: "0",
-    //           ),
-    //           PopupMenuItem(
-    //             child: Text("update Firmware"),
-    //             value: "1",
-    //           ),
-    //           PopupMenuItem(
-    //             child: Text("update IPEK"),
-    //             value: "2",
-    //           ),
-    //           PopupMenuItem(
-    //             child: Text("update Master Key"),
-    //             value: "3",
-    //           )
-    //         ]);
 
     PopupMenuButton  popMenuUpdate(){
       return PopupMenuButton<String>(
@@ -299,37 +270,6 @@ class _MyAppState extends State<PluginPage> {
       });
     }
 
-    // Widget btnMenuDeviceInfoSection = new PopupMenuButton<String>(
-    //     initialValue: "",
-    //     child: //RaisedButton(
-    //         //onPressed: () {  },
-    //         Text("device_info button")
-    //     ,
-    //     onSelected: (String string) {
-    //       print(string.toString());
-    //       onDeviceInfoButtonSelected(string,context);
-    //
-    //     },
-    //     itemBuilder: (BuildContext context) => <PopupMenuItem<String>>[
-    //       PopupMenuItem(
-    //         child: Text("get Device Id"),
-    //         value: "0",
-    //       ),
-    //       PopupMenuItem(
-    //         child: Text("get Device Info"),
-    //         value: "1",
-    //       ),
-    //       PopupMenuItem(
-    //         child: Text("get Device update Key CheckValue"),
-    //         value: "2",
-    //       ),
-    //       PopupMenuItem(
-    //         child: Text("get Device Key CheckValue"),
-    //         value: "3",
-    //       )
-    //     ]);
-
-
     Widget textSection = new Container(
       child: new Column(
         children: [
@@ -346,7 +286,6 @@ class _MyAppState extends State<PluginPage> {
       ),
     );
 
-    // Widget mifareSection(bool offsatge) {
     Widget mifareSection = new Offstage(
           offstage: offstage,
           child: new Container(
@@ -365,7 +304,10 @@ class _MyAppState extends State<PluginPage> {
                           onPressed: () {
                             //MifareCardOperationType should be "CLASSIC" or "UlTRALIGHT"
                             //keyType should be "Key A" or "Key B"
-                            _flutterPluginQpos.authenticateMifareCard("CLASSIC", "Key A", "0A", "ffffffffffff", 20);
+                            var blockAddress = _mifareBlockAddrTxt.text;
+                            print("address:"+blockAddress);
+                            if(blockAddress.length == 0) blockAddress = "0A";
+                            _flutterPluginQpos.authenticateMifareCard("CLASSIC", "Key A", blockAddress, "ffffffffffff", 20);
 
                           },
                           child: Text('authenticateMifare'),
@@ -384,13 +326,19 @@ class _MyAppState extends State<PluginPage> {
                     Expanded(
                         child: RaisedButton(
                             onPressed: () {
-                              _flutterPluginQpos.readMifareCard("CLASSIC", "0A", 20);
+                              var blockAddress = _mifareBlockAddrTxt.text;
+                              print("address:"+blockAddress);
+                              if(blockAddress.length == 0) blockAddress = "0A";
+                              _flutterPluginQpos.readMifareCard("CLASSIC", blockAddress, 20);
                             },
                             child: Text('readMifare'))),
                     Expanded(
                         child: RaisedButton(
                           onPressed: () {
-                            _flutterPluginQpos.writeMifareCard("CLASSIC", "0A", "0002",20);
+                            var blockAddress = _mifareBlockAddrTxt.text;
+                            print("address:"+blockAddress);
+                            if(blockAddress.length == 0) blockAddress = "0A";
+                            _flutterPluginQpos.writeMifareCard("CLASSIC", blockAddress, "0002",20);
                           },
                           child: Text('writeMifare'),
                         )),
@@ -402,6 +350,20 @@ class _MyAppState extends State<PluginPage> {
                             child: Text('finishMifare')))
                   ],
                 ),
+                Row(
+                  children:[
+                    Expanded(
+                      child: new TextField(
+                          controller: _mifareBlockAddrTxt,//把 TextEditingController 对象应用到 TextField 上
+                          keyboardType: TextInputType.text,
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.all(10.0),
+                            labelText: 'mifare block address',
+                            border: OutlineInputBorder(),
+                          ),
+                      )),
+                  ],
+                )
               ],
             ),
 
@@ -1091,7 +1053,10 @@ class _MyAppState extends State<PluginPage> {
       default:
         break;
     }
-    _flutterPluginQpos.operateMifareCardData(mifareCardOperationType, "0A", "01", 20);
+    var blockAddress = _mifareBlockAddrTxt.text;
+    print("address:"+blockAddress);
+    if(blockAddress.length == 0) blockAddress = "0A";
+    _flutterPluginQpos.operateMifareCardData(mifareCardOperationType, blockAddress, "01", 20);
   }
   void _showKeyboard(BuildContext context, String parameters) {
     print("_showKeyboard:"+parameters);
