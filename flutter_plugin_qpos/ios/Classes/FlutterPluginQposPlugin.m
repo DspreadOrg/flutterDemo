@@ -45,10 +45,12 @@
       [self.mPos getQPosId];
   } else if ([@"getQposInfo" isEqualToString:call.method]) {
       [self.mPos getQPosInfo];
+  } else if ([@"resetQPosStatus" isEqualToString:call.method]) {
+      BOOL isSuccess = [self.mPos resetPosStatus];
+      result(@(isSuccess));
   } else if ([@"getUpdateCheckValue" isEqualToString:call.method]) {
       [self.mPos getUpdateCheckValueBlock:^(BOOL isSuccess, NSString *stateStr) {
-          if (isSuccess) {
-          }
+          [self sendMessage:@"onRequestUpdateKey" result:stateStr];
       }];
   } else if ([@"getKeyCheckValue" isEqualToString:call.method]) {
       [self.mPos getKeyCheckValue:DUKPT_MKSK_ALLTYPE keyIndex:0];
@@ -356,13 +358,13 @@
 }
 
 -(void)onBluetoothName2Mode:(NSString *)bluetoothName{
-     if (bluetoothName != nil && ![bluetoothName isEqualToString:@""]) {
-         if (![allBluetooth containsObject:bluetoothName]) {
-             [allBluetooth addObject:bluetoothName];
-             NSString *temp = [NSString stringWithFormat:@"%@//%@",bluetoothName,bluetoothName];
-             [self sendMessage:@"onDeviceFound" parameter:temp];
-         }
-       }
+    if (bluetoothName != nil && ![bluetoothName isEqualToString:@""]) {
+        if (![allBluetooth containsObject:bluetoothName]) {
+            [allBluetooth addObject:bluetoothName];
+            NSString *temp = [NSString stringWithFormat:@"%@//%@",bluetoothName,bluetoothName];
+            [self sendMessage:@"onDeviceFound" parameter:temp];
+        }
+    }
 }
 
 -(void)finishScanQPos2Mode{
