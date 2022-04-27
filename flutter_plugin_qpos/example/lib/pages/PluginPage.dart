@@ -63,6 +63,7 @@ class _MyAppState extends State<PluginPage> {
   int? test;
   bool offstage = true;
   var _mifareBlockAddrTxt = new TextEditingController();
+  var _mifareValueTxt = new TextEditingController();
 
 
   @override
@@ -336,9 +337,12 @@ class _MyAppState extends State<PluginPage> {
                         child: RaisedButton(
                           onPressed: () {
                             var blockAddress = _mifareBlockAddrTxt.text;
-                            print("address:"+blockAddress);
+                            var value = _mifareValueTxt.text;
+                            print("address:"+blockAddress+" value:"+value);
                             if(blockAddress.length == 0) blockAddress = "0A";
-                            _flutterPluginQpos.writeMifareCard("CLASSIC", blockAddress, "0002",20);
+                            if(value.length == 0) value = "0002";
+                            _flutterPluginQpos.setIsOperateMifare(false);//set false so the int value won't be conver to Hex
+                            _flutterPluginQpos.writeMifareCard("CLASSIC", blockAddress, value,20);
                           },
                           child: Text('writeMifare'),
                         )),
@@ -362,6 +366,16 @@ class _MyAppState extends State<PluginPage> {
                             border: OutlineInputBorder(),
                           ),
                       )),
+                    Expanded(
+                        child: new TextField(
+                          controller: _mifareValueTxt,//把 TextEditingController 对象应用到 TextField 上
+                          keyboardType: TextInputType.text,
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.all(10.0),
+                            labelText: 'write or operate value',
+                            border: OutlineInputBorder(),
+                          ),
+                        )),
                   ],
                 )
               ],
@@ -590,6 +604,9 @@ class _MyAppState extends State<PluginPage> {
       case 'onGetShutDownTime':
         break;
       case 'writeMifareULData':
+        setState(() {
+          display = "writeMifareULData:"+parameters!;
+        });
         break;
       case 'onQposGenerateSessionKeysResult':
         break;
@@ -809,6 +826,9 @@ class _MyAppState extends State<PluginPage> {
       case 'getMifareFastReadData':
         break;
       case 'getMifareReadData':
+        setState(() {
+          display = parameters!;
+        });
         break;
       case 'getMifareCardVersion':
         break;
@@ -1054,9 +1074,11 @@ class _MyAppState extends State<PluginPage> {
         break;
     }
     var blockAddress = _mifareBlockAddrTxt.text;
-    print("address:"+blockAddress);
+    var value = _mifareValueTxt.text;
+    print("operate address:"+blockAddress+" value:"+value);
     if(blockAddress.length == 0) blockAddress = "0A";
-    _flutterPluginQpos.operateMifareCardData(mifareCardOperationType, blockAddress, "01", 20);
+    if(value.length == 0) value = "01";
+    _flutterPluginQpos.operateMifareCardData(mifareCardOperationType, blockAddress, value, 20);
   }
   void _showKeyboard(BuildContext context, String parameters) {
     print("_showKeyboard:"+parameters);

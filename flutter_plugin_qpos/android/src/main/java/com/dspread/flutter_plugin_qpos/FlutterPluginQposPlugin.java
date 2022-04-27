@@ -311,6 +311,9 @@ public class FlutterPluginQposPlugin implements FlutterPlugin, MethodCallHandler
             String timeout =call.argument("timeout");
             PosPluginHandler.readMifareCard(mifareCardType,block,Integer.parseInt(timeout));
 
+        } else if(call.method.equals("setIsOperateMifare")){
+            boolean isOperateMifare = call.argument("isOperateMifare");
+            PosPluginHandler.setIsOperateMifare(isOperateMifare);
         } else if(call.method.equals("writeMifareCard")){
             String mifareCardType = call.argument("MifareCardType");
             String block = call.argument("block");

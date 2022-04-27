@@ -353,6 +353,12 @@ class FlutterPluginQpos {
     await _methodChannel.invokeMethod('readMifareCard',params);
   }
 
+  void setIsOperateMifare(bool isOperateMifare) {
+    Map<String, bool> params = Map<String, bool>();
+    params['isOperateMifare'] = isOperateMifare;
+    _methodChannel.invokeMethod('setIsOperateMifare',params);
+  }
+
   void writeMifareCard(String mifareCardType,String block,String data,int timeout) async{
     Map<String, String> params = Map<String, String>();
     params['MifareCardType'] = mifareCardType;

@@ -324,6 +324,10 @@ public class PosPluginHandler {
         mPos.readMifareCard(cardType,block,timeout);
     }
 
+    public static void setIsOperateMifare(boolean isOperateMifare){
+        mPos.setIsOperateMifare(isOperateMifare);
+    }
+
     public static void writeMifareCard(String mifareCardType,String block,String data,int timeout){
         QPOSService.MifareCardType cardType = QPOSService.MifareCardType.CLASSIC;
         if(mifareCardType.equals("CLASSIC")){
