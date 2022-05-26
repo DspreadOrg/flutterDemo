@@ -211,6 +211,9 @@
   }else if ([@"setShutDownTime" isEqualToString:call.method]) {
       NSString *timeout = [[call.arguments objectForKey:@"time"] stringValue];
       [self.mPos doSetShutDownTime:timeout];
+  }else if ([@"setIsOperateMifare" isEqualToString:call.method]) {
+      BOOL isOperateMifare = [[call.arguments objectForKey:@"isOperateMifare"] integerValue];
+      [self.mPos setIsOperateMifare:isOperateMifare];
   }else {
       result(FlutterMethodNotImplemented);
   }
