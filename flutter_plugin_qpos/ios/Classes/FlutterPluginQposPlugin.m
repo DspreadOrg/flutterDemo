@@ -214,6 +214,14 @@
   }else if ([@"setIsOperateMifare" isEqualToString:call.method]) {
       BOOL isOperateMifare = [[call.arguments objectForKey:@"isOperateMifare"] integerValue];
       [self.mPos setIsOperateMifare:isOperateMifare];
+  }else if ([@"setFormatId" isEqualToString:call.method]) {
+      NSString *formatId = [call.arguments objectForKey:@"formatId"];
+      if([@"DUKPT" isEqualToString:formatId]){
+          formatId = @"0000";
+      }else if([@"MKSK" isEqualToString:formatId]){
+          formatId = @"0002";
+      }
+      [self.mPos setFormatID:formatId];
   }else {
       result(FlutterMethodNotImplemented);
   }
