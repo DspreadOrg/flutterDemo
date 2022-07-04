@@ -27,6 +27,7 @@ test:
   image: "cirrusci/flutter:stable"
   script:
     - cd flutter_plugin_qpos/example
+    - ls
     - flutter build apk
   artifacts:
     paths:
