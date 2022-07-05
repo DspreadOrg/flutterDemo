@@ -134,7 +134,7 @@ class ButtonState extends State<KeyboardItem> {
             right: 0,
             top: 0,
             left: 0,
-            child: OutlineButton(
+            child: OutlinedButton(
               onPressed: onTap,
               child: Text(
                 text,
