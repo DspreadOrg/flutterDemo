@@ -222,6 +222,9 @@
           formatId = @"0002";
       }
       [self.mPos setFormatID:formatId];
+  }else if ([@"updateEMVConfigByXml" isEqualToString:call.method]) {
+      NSString *xmlStr = [call.arguments objectForKey:@"xmlContent"];
+      [self.mPos updateEMVConfigByXml:xmlStr];
   }else {
       result(FlutterMethodNotImplemented);
   }
