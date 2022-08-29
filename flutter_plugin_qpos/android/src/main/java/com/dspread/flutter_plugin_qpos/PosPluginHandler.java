@@ -263,6 +263,14 @@ public class PosPluginHandler {
                 , pinksn, pinipek, pinipekCheckvalue);
     }
 
+    public static void updateIPEKOperationByKeyType(String keyIndex, String trackksn, String trackipek, String trackipekCheckvalue, String emvksn, String emvipek, String emvipekCheckvalue, String pinksn, String pinipek, String pinipekCheckvalue) {
+        if (keyIndex.length() == 1)
+            keyIndex = "0".concat(keyIndex);
+        mPos.updateIPEKOperationByKeyType(keyIndex, trackksn, trackipek, trackipekCheckvalue
+                , emvksn, emvipek, emvipekCheckvalue
+                , pinksn, pinipek, pinipekCheckvalue);
+    }
+
     public static void updateWorkKey(String pik, String pikCheck, String trk, String trkCheck, String mak, String makCheck, int keyIndex) {
         mPos.updateWorkKey(pik, pikCheck, trk, trkCheck, mak, makCheck, keyIndex);
     }
