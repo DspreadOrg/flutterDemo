@@ -3,6 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/flutter_plugin_qpos.iml" filepath="$PROJECT_DIR$/.idea/modules/flutter_plugin_qpos.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/flutter_plugin_qpos.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/flutter_plugin_qpos.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/flutter_plugin_qpos.main.iml" filepath="$PROJECT_DIR$/.idea/modules/flutter_plugin_qpos.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/flutter_plugin_qpos.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/flutter_plugin_qpos.unitTest.iml" />
     </modules>
   </component>
 </project>

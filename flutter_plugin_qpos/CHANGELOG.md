@@ -1,5 +1,5 @@
-## 0.1.3
+## 0.1.4
 
-* 1.update SDK version to 4.0.5(Add the flag isOperateMifare to make mifare classic support write value without conversion)
-* 2.Add TextEditingController for mifare value
-* 3.Add resetQPosStatus method for ios
+* 1. Add "updateIPEKOperationByKeyType" methed on the android
+* 2. Implement updateEMVConfigByXml method on the iOS
+* 3. Update SDK version to 4.1.5 
