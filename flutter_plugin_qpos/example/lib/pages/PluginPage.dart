@@ -881,11 +881,11 @@ class _MyAppState extends State<PluginPage> {
 
   Widget _getListDate(BuildContext context, int position)  {
     if (items != null) {
-      return new FlatButton(
+      return new TextButton(
           onPressed: () => connectToDevice(items![position]),
           child: new Text("text ${items![position]}"));
     }else{
-      return new FlatButton(
+      return new TextButton(
           onPressed: () => connectToDevice(items![position]),
           child: new Text("No item"));
     }

@@ -14,7 +14,7 @@ class SecondScreen extends StatelessWidget {
         title: Text("Second Screen"),
       ),
       body: Center(
-        child: RaisedButton(
+        child: ElevatedButton(
           onPressed: () {
             _showKeyboard(context);
           },
