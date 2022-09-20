@@ -116,7 +116,7 @@ class _MyAppState extends State<PluginPage> {
       child: new Row(
         children: [
 
-          RaisedButton(
+          ElevatedButton(
             onPressed: () async {
               setState(() {
                 scanFinish = -1;
@@ -126,13 +126,13 @@ class _MyAppState extends State<PluginPage> {
             },
             child: Text("select device"),
           ),
-          RaisedButton(
+          ElevatedButton(
             onPressed: () async {
               startDoTrade();
             },
             child: Text("start do trade"),
           ),
-          RaisedButton(
+          ElevatedButton(
             onPressed: () async {
               disconnectToDevice();
             },
@@ -295,13 +295,13 @@ class _MyAppState extends State<PluginPage> {
                 Row(
                   children: [
                     Expanded(
-                        child: RaisedButton(
+                        child: ElevatedButton(
                             onPressed: () {
                               _flutterPluginQpos.pollOnMifareCard(10);
                             },
                             child: Text('pollOnMifare'))),
                     Expanded(
-                        child: RaisedButton(
+                        child: ElevatedButton(
                           onPressed: () {
                             //MifareCardOperationType should be "CLASSIC" or "UlTRALIGHT"
                             //keyType should be "Key A" or "Key B"
@@ -314,7 +314,7 @@ class _MyAppState extends State<PluginPage> {
                           child: Text('authenticateMifare'),
                         )),
                     Expanded(
-                        child: RaisedButton(
+                        child: ElevatedButton(
                             onPressed: () {
                               // _flutterPluginQpos.operateMifareCardData("CLASSIC", "Key A", "0A", "ffffffffffff", 20);
                               _showMenu(3);
@@ -325,7 +325,7 @@ class _MyAppState extends State<PluginPage> {
                 Row(
                   children: [
                     Expanded(
-                        child: RaisedButton(
+                        child: ElevatedButton(
                             onPressed: () {
                               var blockAddress = _mifareBlockAddrTxt.text;
                               print("address:"+blockAddress);
@@ -334,7 +334,7 @@ class _MyAppState extends State<PluginPage> {
                             },
                             child: Text('readMifare'))),
                     Expanded(
-                        child: RaisedButton(
+                        child: ElevatedButton(
                           onPressed: () {
                             var blockAddress = _mifareBlockAddrTxt.text;
                             var value = _mifareValueTxt.text;
@@ -347,7 +347,7 @@ class _MyAppState extends State<PluginPage> {
                           child: Text('writeMifare'),
                         )),
                     Expanded(
-                        child: RaisedButton(
+                        child: ElevatedButton(
                             onPressed: () {
                               _flutterPluginQpos.finishMifareCard(10);
                             },
@@ -403,7 +403,7 @@ class _MyAppState extends State<PluginPage> {
           ),
           body: new ListView(
             children: [
-              RaisedButton(
+              ElevatedButton(
                 onPressed: () async {
                   openUart();
                 },
@@ -411,19 +411,19 @@ class _MyAppState extends State<PluginPage> {
               ),
               buttonSection,
               textSection,
-              RaisedButton(onPressed:(){
+              ElevatedButton(onPressed:(){
                 _showMenu(1);
               } ,
                   child: Text("update button")
               ),
               // btnMenuSection(),
               // btnMenuDeviceInfoSection,
-              RaisedButton(onPressed:(){
+              ElevatedButton(onPressed:(){
                 _showMenu(2);
               } ,
                   child: Text("device info button")
               ),
-              RaisedButton(onPressed:(){
+              ElevatedButton(onPressed:(){
                  setState(() {
                   offstage = !offstage;
                 });

@@ -13,13 +13,13 @@ class SecondPage extends StatelessWidget{
       appBar: AppBar(title: Text('The second page now'),),
       body:new ListView(
           children: [
-        Center(child: RaisedButton(
+        Center(child: ElevatedButton(
         child: Text('Return'),
         onPressed: (){
           Navigator.pop(context);
         },
       ),),
-        RaisedButton(
+         ElevatedButton(
           onPressed: () async {
             pluginQpos.getQposId();
           },
