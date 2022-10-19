@@ -36,7 +36,6 @@ test:
 
 release_job:
   stage: release
-  image: registry.gitlab.com/gitlab-org/release-cli:latest
   script:
     - echo "Running the release job."
   release:
