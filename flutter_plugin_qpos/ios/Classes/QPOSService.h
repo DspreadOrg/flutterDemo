@@ -8,12 +8,17 @@
 
 #import <Foundation/Foundation.h>
 @class CBPeripheral;
-
 typedef NS_ENUM(NSInteger, PosType) {
     PosType_AUDIO,
     PosType_BLUETOOTH,
-    PosType_BLUETOOTH_new, //new bluetooth mode
+    PosType_BLUETOOTH_new, // delete this mode
     PosType_BLUETOOTH_2mode //bluetooth 2 mode
+};
+
+typedef NS_ENUM(NSInteger, resetState) {
+    resetState_INIT,
+    resetState_RESETING,
+    resetState_RESETED
 };
 
 typedef NS_ENUM(NSInteger, UpdateInformationResult) {
@@ -22,7 +27,14 @@ typedef NS_ENUM(NSInteger, UpdateInformationResult) {
     UpdateInformationResult_UPDATE_PACKET_VEFIRY_ERROR,
     UpdateInformationResult_UPDATE_PACKET_LEN_ERROR,
     UpdateInformationResult_UPDATE_LOWPOWER,
-    UpdateInformationResult_UPDATING
+    UpdateInformationResult_UPDATING,
+    UpdateInformationResult_UPDATE_CMD_ERROR,
+    UpdateInformationResult_UPDATE_SIGNATURE_ERROR,
+    UpdateInformationResult_UPDATE_FRAME_LENGTH_ERROR,
+    UpdateInformationResult_UPDATE_DATA_FORMAT_ERROR,
+    UpdateInformationResult_UPDATE_WRITE_VALUE_ERROR,
+    UpdateInformationResult_UPDATE_NOT_FINISH,
+    UpdateInformationResult_UPDATE_PLEASE_PLUG_INTO_POWER,
 };
 
 typedef NS_ENUM(NSInteger, DoTradeResult)
@@ -37,6 +49,18 @@ typedef NS_ENUM(NSInteger, DoTradeResult)
     DoTradeResult_NFC_ONLINE,   // add 20150715
     DoTradeResult_NFC_OFFLINE,
     DoTradeResult_NFC_DECLINED,
+    DoTradeResult_TRY_ANOTHER_INTERFACE,
+    DoTradeResult_CARD_NOT_SUPPORT,
+    DoTradeResult_PLS_SEE_PHONE
+};
+
+typedef NS_ENUM(NSInteger, EmvOption)
+{
+    EmvOption_START,
+    EmvOption_START_WITH_FORCE_ONLINE,
+    EmvOption_START_WITH_FORCE_PIN,
+    EmvOption_START_WITH_FORCE_ONLINE_FORCE_PIN
+    
 };
 
 typedef NS_ENUM(NSInteger, CHECKVALUE_KEYTYPE)
@@ -54,11 +78,6 @@ typedef NS_ENUM(NSInteger, CHECKVALUE_KEYTYPE)
     DUKPT_EMV_KSN,
     DUKPT_PIN_KSN,
     DUKPT_MKSK_ALLTYPE
-};
-
-typedef NS_ENUM(NSInteger, EmvOption)
-{
-    EmvOption_START, EmvOption_START_WITH_FORCE_ONLINE
 };
 
 typedef NS_ENUM(NSInteger, Error)
@@ -84,7 +103,8 @@ typedef NS_ENUM(NSInteger, Error)
     Error_ICC_ONLINE_TIMEOUT,
     Error_AMOUNT_OUT_OF_LIMIT,
     Error_DIGITS_UNAVAILABLE,
-    Error_QPOS_MEMORY_OVERFLOW
+    Error_QPOS_MEMORY_OVERFLOW,
+    Error_SELECT_APP_TIMEOUT
 };
 
 typedef NS_ENUM(NSInteger, DHError)
@@ -110,7 +130,8 @@ typedef NS_ENUM(NSInteger, DHError)
     DHError_ICC_ONLINE_TIMEOUT,
     DHError_AMOUNT_OUT_OF_LIMIT,
     DHError_DIGITS_UNAVAILABLE,
-    DHError_QPOS_MEMORY_OVERFLOW
+    DHError_QPOS_MEMORY_OVERFLOW,
+    DHError_SELECT_APP_TIMEOUT
 };
 
 
@@ -128,7 +149,8 @@ typedef NS_ENUM(NSInteger, Display)
     Display_INPUT_OFFLINE_PIN_ONLY,
     Display_INPUT_LAST_OFFLINE_PIN,
     Display_CARD_REMOVED,
-    Display_MSR_DATA_READY
+    Display_MSR_DATA_READY,
+    Display_QPOS_MEMORY_OVERFLOW
     
 };
 
@@ -147,39 +169,33 @@ typedef NS_ENUM(NSInteger, TransactionResult) {
     TransactionResult_INVALID_ICC_DATA,
     TransactionResult_FALLBACK,
     TransactionResult_NFC_TERMINATED,
-    TransactionResult_TRADE_LOG_FULL
-    
-};
-typedef NS_ENUM(NSInteger,DoTradeLog) {
-    DoTradeLog_clear,
-    DoTradeLog_getAllCount,
-    DoTradeLog_getOneLog,
-    DoTradeLog_deleteOneLog,
-    DoTradeLog_deleteLastLog,
-    DoTradeLog_ClearOneByBatchID,
-    DoTradeLog_GetOneByBatchID
+    TransactionResult_TRADE_LOG_FULL,
+    TransactionResult_CONTACTLESS_TRANSACTION_NOT_ALLOW,
+    TransactionResult_CARD_BLOCKED,
+    TransactionResult_TOKEN_INVALID,
+    TransactionResult_APP_BLOCKED,
+    TransactionResult_MULTIPLE_CARDS,
 };
 
 typedef NS_ENUM(NSInteger, TransactionType) {
-    TransactionType_GOODS, // GOODS
-    TransactionType_SERVICES, // SERVICES
-    TransactionType_CASH,//CASH
-    TransactionType_CASHBACK, // CASH BACK
-    TransactionType_INQUIRY, // INQUIRY
-    TransactionType_TRANSFER, // TRANSFER
-    TransactionType_ADMIN,// MANAGEMENT
-    TransactionType_CASHDEPOSIT,//DEPOSIT
-    TransactionType_PAYMENT,// PAYMENT
-    
+    TransactionType_GOODS, // 货物
+    TransactionType_SERVICES, // 服务
+    TransactionType_CASH,//现金
+    TransactionType_CASHBACK, // 退货 返现
+    TransactionType_INQUIRY, // 查询
+    TransactionType_TRANSFER, // 转账
+    TransactionType_ADMIN,//管理
+    TransactionType_CASHDEPOSIT,//存款
+    TransactionType_PAYMENT,// 付款 支付
     //add 2014-04-02
-    TransactionType_PBOCLOG,//        0x0A            /*PBOCLog(electronic cash log)*/
-    TransactionType_SALE,//           0x0B            /*CONSUMPTION*/
-    TransactionType_PREAUTH,//        0x0C            /*PRE-AUTHORIZATION*/
-    TransactionType_ECQ_DESIGNATED_LOAD,//        0x10                /*Electronic cash Q designated account deposit*/
-    TransactionType_ECQ_UNDESIGNATED_LOAD,//    0x11                /*Electronic cash fee is not specified in the account*/
-    TransactionType_ECQ_CASH_LOAD,//    0x12    /*Electronic cash fee cash deposit*/
-    TransactionType_ECQ_CASH_LOAD_VOID,//            0x13                /*Electronic cash deposit cancellation*/
-    TransactionType_ECQ_INQUIRE_LOG,//    0x0A    /*Electronic cash log (same as PBOC log)*/
+    TransactionType_PBOCLOG,//        0x0A            /*PBOC日志(电子现金日志)*/
+    TransactionType_SALE,//           0x0B            /*消费*/
+    TransactionType_PREAUTH,//        0x0C            /*预授权*/
+    TransactionType_ECQ_DESIGNATED_LOAD,//        0x10                /*电子现金Q指定账户圈存*/
+    TransactionType_ECQ_UNDESIGNATED_LOAD,//    0x11                /*电子现金费非指定账户圈存*/
+    TransactionType_ECQ_CASH_LOAD,//    0x12    /*电子现金费现金圈存*/
+    TransactionType_ECQ_CASH_LOAD_VOID,//            0x13                /*电子现金圈存撤销*/
+    TransactionType_ECQ_INQUIRE_LOG,//    0x0A    /*电子现金日志(和PBOC日志一样)*/
     TransactionType_REFUND,
     TransactionType_UPDATE_PIN
 };
@@ -203,33 +219,36 @@ typedef NS_ENUM(NSInteger, CardTradeMode) {
     CardTradeMode_SWIPE_INSERT_CARD,
     CardTradeMode_UNALLOWED_LOW_TRADE,
     CardTradeMode_SWIPE_TAP_INSERT_CARD,// add 20150715
-    CardTradeMode_SWIPE_TAP_INSERT_CARD_UNALLOWED_LOW_TRADE,  //no NFC, only swipe and chip.
+    CardTradeMode_SWIPE_TAP_INSERT_CARD_UNALLOWED_LOW_TRADE,
     CardTradeMode_ONLY_TAP_CARD,
     CardTradeMode_SWIPE_TAP_INSERT_CARD_NOTUP,
-    CardTradeMode_TAP_INSERT_CARD_NOTUP,//
-    CardTradeMode_TAP_INSERT_CARD_TUP,//
+    CardTradeMode_TAP_INSERT_CARD_NOTUP,//无上翻键
+    CardTradeMode_TAP_INSERT_CARD_TUP,//有上翻键
     CardTradeMode_SWIPE_TAP_INSERT_CARD_Down,//下翻建
-    CardTradeMode_SWIPE_TAP_INSERT_CARD_NOTUP_UNALLOWED_LOW_TRADE
+    CardTradeMode_SWIPE_TAP_INSERT_CARD_NOTUP_UNALLOWED_LOW_TRADE,
+    CardTradeMode_SWIPE_INSERT_CARD_UNALLOWED_LOW_TRADE,
+    CardTradeMode_SWIPE_TAP_INSERT_CARD_UNALLOWED_LOW_TRADE_NEW,
+    CardTradeMode_SWIPE_TAP_INSERT_CARD_NOTUP_DELAY,
 };
 
-
-typedef NS_ENUM(NSInteger, DoTradeMode) {
+typedef NS_ENUM(NSInteger, DoTradeMode) {//不需要对外提供
     DoTradeMode_COMMON,
-    DoTradeMode_CHECK_CARD_NO_IPNUT_PIN,
-    DoTradeMode_IS_DEBIT_OR_CREDIT
+    DoTradeMode_CHECK_CARD_NO_IPNUT_PIN,//不输入密码
+    DoTradeMode_IS_DEBIT_OR_CREDIT//
 };
 
+typedef NS_ENUM(NSInteger,DoTradeLog) {
+    DoTradeLog_clear,
+    DoTradeLog_getAllCount,
+    DoTradeLog_getOneLog,
+    DoTradeLog_deleteOneLog,
+    DoTradeLog_deleteLastLog,
+    DoTradeLog_ClearOneByBatchID,
+    DoTradeLog_GetOneByBatchID
+};
 typedef NS_ENUM(NSInteger,EncryptType) {
     EncryptType_plaintext,
     EncryptType_encrypted
-};
-typedef NS_ENUM(NSInteger,EMVOperation) {
-    EMVOperation_clear,
-    EMVOperation_add,
-    EMVOperation_delete,
-    EMVOperation_getList,
-    EMVOperation_update,
-    EMVOperation_quickemv
 };
 
 typedef NS_ENUM(NSInteger,PanStatus) {
@@ -238,10 +257,36 @@ typedef NS_ENUM(NSInteger,PanStatus) {
     PanStatus_ENCRYPTED
 };
 
-typedef NS_ENUM(NSInteger,SessionKeyType) {
-    SessionKeyType_PINKEY,
-    SessionKeyType_TRACKKEY,
-    SessionKeyType_PINKEY_TRACKKEY
+typedef NS_ENUM(NSInteger,EMVOperation) {
+    EMVOperation_clear,
+    EMVOperation_add,
+    EMVOperation_delete,
+    EMVOperation_getList,
+    EMVOperation_update,
+    EMVOperation_quickemv//EMVOperation_getEmv
+};
+
+typedef NS_ENUM(NSInteger,Cmd1620Status){
+    Cmd1620Status_NONE,
+    Cmd1620Status_EXECUTING,
+    Cmd1620Status_QUERY,
+    Cmd1620Status_EXECUTED
+};
+
+typedef NS_ENUM(NSInteger,FelicaOpMode){
+    FelicaOpMode_POWER_ON,
+    FelicaOpMode_SEND_APDU,
+    FelicaOpMode_POWER_OFF
+};
+
+typedef NS_ENUM(NSInteger,FelicaStatusCode){
+    FelicaStatusCode_NFC_FELICA_SUCCESS,
+    FelicaStatusCode_NFC_FELICA_PARAM_ERROR,
+    FelicaStatusCode_NFC_FELICA_POLL_ERROR,
+    FelicaStatusCode_NFC_FELICA_OPERATION_ERROR,
+    FelicaStatusCode_NFC_FELICA_RAW_TRANS_ERROR,
+    FelicaStatusCode_NFC_FELICA_TIMEOUT,
+    FelicaStatusCode_NFC_FELICA_ERROR_END,
 };
 
 typedef NS_ENUM(NSInteger,MifareCardType){
@@ -259,6 +304,33 @@ typedef NS_ENUM(NSInteger,MifareCardOperationType){
     MifareCardOperationType_REDUCE,
     MifareCardOperationType_RESTORE,
 };
+
+typedef NS_ENUM(NSInteger,LEDType){
+    LEDType_FIXED_COLOR,
+    LEDType_RGB_COLOR,
+};
+
+typedef NS_ENUM(NSInteger,LEDStatus){
+    LEDStatus_ON,
+    LEDStatus_OFF,
+    LEDStatus_BLINKS,
+};
+
+typedef NS_ENUM(NSInteger,LEDDirection){
+    LEDDirection_ALL,
+    LEDDirection_LEFT,
+    LEDDirection_RIGHT,
+    LEDDirection_UP,
+    LEDDirection_DOWN,
+};
+
+typedef NS_ENUM(NSInteger,BuzzerType){
+    BuzzerType_COMMON,
+    BuzzerType_PAYMENT_SUCCESS,
+    BuzzerType_PAYMENT_ERROR,
+    BuzzerType_PAIRING_SUCCESS,
+};
+
 
 @protocol QPOSServiceListener<NSObject>
 
@@ -314,7 +386,14 @@ typedef NS_ENUM(NSInteger,MifareCardOperationType){
 -(void)onGetDevicePublicKey:(NSString *)clearKeys;
 -(void)onQposGenerateSessionKeysResult:(NSDictionary *)result;
 -(void)onDoSetRsaPublicKey:(BOOL)result;
--(void)onRequestCvmApp:(NSDictionary *)dataArr;
+-(void)onReturnSetConnectedShutDownTimeResult:(BOOL)isSuccess;
+-(void)onReturnGetConnectedShutDownTimeResult:(NSString *)time;
+-(void)onReturnUpdateKeyByTR_31Result:(BOOL)result;
+-(void)onReturnGetEncryptDataResult:(NSDictionary*)tlv;
+-(void)onReturnBatchSendAPDUResult:(NSDictionary *)apduResponses;
+-(void)onReturnPowerOnFelicaResult:(FelicaStatusCode)result;
+-(void)onReturnPowerOffFelicaResult:(FelicaStatusCode)result;
+-(void)onReturnSendApduFelicaResult:(FelicaStatusCode)result responseLen:(NSString *)responseLen responseData:(NSString *)responseData;
 @end
 
 @interface QPOSService : NSObject
@@ -334,6 +413,19 @@ trackipekCheckValue:(NSString *)trackipekCheckValue
             pinipek:(NSString *)pinipek
   pinipekcheckValue:(NSString *)pinipekcheckValue
               block:(void(^)(BOOL isSuccess,NSString *stateStr))EMVBlock;
+
+- (void)updateIPEKOperationByKeyType:(NSString *)groupKey
+                     tracksn:(NSString *)trackksn
+                   trackipek:(NSString *)trackipek
+         trackipekCheckValue:(NSString *)trackipekCheckValue
+                      emvksn:(NSString *)emvksn
+                     emvipek:(NSString *)emvipek
+           emvipekcheckvalue:(NSString *)emvipekcheckvalue
+                      pinksn:(NSString *)pinksn
+                     pinipek:(NSString *)pinipek
+           pinipekcheckValue:(NSString *)pinipekcheckValue
+                       block:(void(^)(BOOL isSuccess,NSString *stateStr))EMVBlock;
+
 //buzzer
 -(void)doSetBuzzerOperation:(NSInteger)timeOut
                       block:(void (^)(BOOL isSuccess, NSString*stateStr))buzzerBlock;
@@ -376,6 +468,7 @@ trackipekCheckValue:(NSString *)trackipekCheckValue
 //you can set DoTradeMode before calling doTrade.
 -(void)setDoTradeMode:(DoTradeMode)doTradeMode;
 -(void)setFormatID:(NSString *)formatID;
+-(void)setAmountPoint:(BOOL)amoutPoint;
 -(void)startAudio;
 -(void)stopAudio;
 //start trade api
@@ -385,11 +478,14 @@ trackipekCheckValue:(NSString *)trackipekCheckValue
 -(void)doCheckCard;
 -(void)doCheckCard:(NSInteger) timeout;
 -(void)doCheckCard:(NSInteger) timeout keyIndex:(NSInteger) mKeyIndex;
+-(void)doTrade_QF:(NSInteger)tradeMode TradeRandomString:(NSString *)randomString TradeExtraString:(NSString *)extraString;
+-(void)doTrade_QF:(NSInteger)tradeMode TradeRandomString:(NSString *)randomString TradeExtraString:(NSString *)extraString timeout:(NSInteger) delay;
 //open quick emv
 -(void)setIsQuickEMV:(BOOL)isQuickEMV;
 -(BOOL)getQuickEMV;
 -(void)doEmvApp: (EmvOption)aemvOption;
 -(void)setAmount: (NSString *)aAmount aAmountDescribe:(NSString *)aAmountDescribe currency:(NSString *)currency transactionType:(TransactionType)transactionType;
+-(void)setAmount:(NSString *)aAmount aAmountDescribe:(NSString *)aAmountDescribe currency:(NSString *)currency transactionType:(TransactionType)transactionType posDisplayAmount:(BOOL)flag; 
 -(void)cancelSetAmount;
 -(void)finalConfirm: (BOOL)isConfirmed;
 //Multiple AIDs options
@@ -403,11 +499,20 @@ trackipekCheckValue:(NSString *)trackipekCheckValue
 -(void)sendTime: (NSString *)aterminalTime;
 //you can use this api to get NFC batch data.
 -(NSDictionary *)getNFCBatchData;
+-(void)getNFCBatchData:(void(^)(NSDictionary *dict))nfcBatchDataBlock;
 //get ios sdk version
 -(NSString *)getSdkVersion;
 //get pos infomation
 -(void)getQPosInfo;
 -(void)getQPosId;
+//add icc apdu 2014-03-11
+-(void)powerOffIcc;
+-(void)powerOnIcc;
+-(void)sendApdu:(NSString *)apduStr;
+//nfc
+-(void)powerOffNFC:(NSInteger) timeout withBlock:(void (^)(BOOL isSuccess))onPowerOffNFCResultBlock;
+-(void)sendApduByNFC:(NSString *)apduString delay:(NSInteger)timeout withBlock:(void (^)(BOOL isSuccess, NSString *apdu, NSInteger apduLen))onNFCApduResultBlock;
+-(void)powerOnNFC:(NSInteger) isEncrypt delay:(NSInteger) timeout withBlock:(void (^)(BOOL isSuccess, NSString *ksn, NSString *atr, NSInteger atrLen))onPowerOnNFCResultBlock;
 
 -(void)sendPinEntryResult:(NSString *)pin;
 -(void)cancelPinEntry;
@@ -417,7 +522,7 @@ trackipekCheckValue:(NSString *)trackipekCheckValue
 -(void)setAmountIcon:(NSString *)aAmountIcon;
 -(void)setAmountIcon:(AmountType) amtType amtIcon:(NSString *)aAmountIcon;
 //update emv configure api by bin file
--(void)updateEmvConfig:(NSString *)emvAppCfg emvCapk:(NSString*)emvCapkCfg;
+-(void)updateEmvConfig:(NSString *)emvAppCfg emvCapk:(NSString*)emvCapkCfg DEPRECATED_MSG_ATTRIBUTE("Please use [pos updateEMVConfigByXml]");
 -(void)readEmvAppConfig;
 -(void)readEmvCapkConfig;
 //update emv configure api by xml file
@@ -426,10 +531,10 @@ trackipekCheckValue:(NSString *)trackipekCheckValue
 -(void)updateEmvAPPByTlv:(EMVOperation)emvOperation appTlv:(NSString *)appTlv;//appTlv更新emv配置
 -(void)updateEmvCAPKByTlv:(EMVOperation)emvOperation capkTlv:(NSString *)capkTlv;//capkTlv更新emv配置
 //update emv app configure
--(void)updateEmvCAPK:(NSInteger )operationType data:(NSArray *)data  block:(void (^)(BOOL isSuccess, NSString *stateStr))updateCAPKBlock;
--(void)updateEmvAPP:(NSInteger )operationType data:(NSArray*)data  block:(void (^)(BOOL isSuccess, NSString *stateStr))updateEMVAPPBlock;
-
+-(void)updateEmvCAPK:(NSInteger )operationType data:(NSArray *)data  block:(void (^)(BOOL isSuccess, NSString *stateStr))updateCAPKBlock DEPRECATED_MSG_ATTRIBUTE("Please use [pos updateEmvCAPKByTlv]");
+-(void)updateEmvAPP:(NSInteger )operationType data:(NSArray*)data  block:(void (^)(BOOL isSuccess, NSString *stateStr))updateEMVAPPBlock DEPRECATED_MSG_ATTRIBUTE("Please use [pos updateEmvAPPByTlv]");
 //update workkey api
+-(void)udpateWorkKey:(NSString *)updateKey;
 -(void)udpateWorkKey:(NSString *)pik pinKeyCheck:(NSString *)pikCheck trackKey:(NSString *)trk trackKeyCheck:(NSString *)trkCheck macKey:(NSString *)mak macKeyCheck:(NSString *)makCheck;
 -(void)udpateWorkKey:(NSString *)workKey workKeyCheckValue:(NSString *)workKeyCheck;
 -(void)udpateWorkKey:(NSString *)workKey workKeyCheckValue:(NSString *)workKeyCheck keyIndex:(int)keyIndex timeout:(int)timeout;
@@ -453,19 +558,28 @@ trackipekCheckValue:(NSString *)trackipekCheckValue
 //you can use this api to upgrade pos firmware.
 -(NSInteger)getUpdateProgress;
 -(NSInteger)updatePosFirmware:(NSData*)aData address:(NSString*)devAddress;
+-(NSInteger)updateMPPosFirmware:(NSData*)aData address:(NSString*)devAddress;
 //you can use this api to get pinblock and pinksn
 -(void)getPin:(NSInteger)encryptType keyIndex:(NSInteger)keyIndex maxLen:(NSInteger)maxLen typeFace:(NSString *)typeFace cardNo:(NSString *)cardNo data:(NSString *)data delay:(NSInteger)timeout withResultBlock:(void (^)(BOOL isSuccess, NSDictionary * result))getPinBlock;
 -(NSDictionary*)syncGetPin:(NSInteger)encryptType keyIndex:(NSInteger)keyIndex maxLen:(NSInteger)maxLen typeFace:(NSString *)typeFace cardNo:(NSString *)cardNo date:(NSString *)data delay:(NSInteger)timeout;
 
 //you can use this api to get value of special emv tag.
--(NSDictionary *)getICCTag:(NSInteger) cardType tagCount:(NSInteger) mTagCount tagArrStr:(NSString*) mTagArrStr;
--(NSDictionary *)getICCTag:(EncryptType)encryTypeStr cardType:(NSInteger)cardType tagCount:(NSInteger) mTagCount tagArrStr:(NSString*)mTagArrStr;
+-(NSDictionary *)getICCTag:(NSInteger)cardType tagCount:(NSInteger)mTagCount tagArrStr:(NSString*)mTagArrStr;
+-(void)getICCTag:(NSInteger)cardType tagCount:(NSInteger)mTagCount tagArrStr:(NSString*)mTagArrStr tagArrBlock:(void(^)(NSDictionary *dict))tagArrBlock;
+-(NSDictionary *)getICCTag:(EncryptType)encryTypeStr cardType:(NSInteger)cardType tagCount:(NSInteger)mTagCount tagArrStr:(NSString*)mTagArrStr;
+-(void)getICCTag:(EncryptType)encryTypeStr cardType:(NSInteger)cardType tagCount:(NSInteger)mTagCount tagArrStr:(NSString*)mTagArrStr tagArrBlock:(void(^)(NSDictionary *dict))tagArrBlock;
 -(NSDictionary *)getICCTagNew:(EncryptType)encryTypeStr cardType:(NSInteger)cardType tagCount:(NSInteger)mTagCount tagArrStr:(NSString *)mTagArrStr;
+-(void)getICCTagNew:(EncryptType)encryTypeStr cardType:(NSInteger)cardType tagCount:(NSInteger)mTagCount tagArrStr:(NSString *)mTagArrStr tagArrBlock:(void(^)(NSDictionary *dict))tagArrBlock;
 //you can use api to custom input on pos.
 -(void)customInputDisplay:(NSInteger)operationType displayType:(NSInteger)dispType maxLen:(NSInteger)maxLen DisplayString:(NSString *)displayStr delay:(NSInteger)timeout withResultBlock:(void (^)(BOOL isSuccess, NSString * result))customInputDisplayResult;
-
+-(void)buildPinBlock:(NSString *)workKey workKeyCheck:(NSString *)workKeyCheck encryptType:(NSInteger)encryptType keyIndex:(NSInteger)keyIndex maxLen:(NSInteger)maxLen typeFace:(NSString *)typeFace cardNo:(NSString *)cardNo date:(NSString *)date delay:(NSInteger)timeout;
+-(BOOL)syncIsCardExist:(NSInteger)timeout;
 -(void)isCardExist:(NSInteger)timeout withResultBlock:(void (^)(BOOL))isCardExistBlock;
 -(void)isCardExistInOnlineProcess:(NSInteger)timeout withResultBlock:(void (^)(BOOL))isCardExistBlock;
+-(void)cbc_mac_cn_all:(NSInteger)keyLen atype:(NSInteger)algorithmType otype:(NSInteger)operatorType data:(NSString *)dataStr delay:(NSInteger)timeout withResultBlock:(void (^)(NSString *))cbcmacBlock;
+-(void)getKsn:(void(^)(BOOL isSuccess,NSDictionary *dict))getKsnBlock;
+-(void)getIccCardNo: (NSString *)aterminalTime;
+-(void)iccCashBack:(NSString *)transactionTime random:(NSString *)aRandom;
 #pragma mark init emv app
 -(NSMutableDictionary *)getEMVAPPDict;
 #pragma mark init emv capk
@@ -475,11 +589,32 @@ trackipekCheckValue:(NSString *)trackipekCheckValue
 -(void)setAESKey:(NSString *)AESCiphertext CRC:(NSString *)CRC timeout:(NSInteger)timeout;
 -(void)getAESTransmissionKey:(NSInteger)timeout;
 -(void)getShutDownTime;
--(void)setPanStatus:(NSInteger )panStatus;
+-(void)setPanStatus:(PanStatus)panStatus;
+-(void)setPanMaskFormat:(NSInteger)frontLength backLength:(NSInteger)backLength;
 -(void)getDevicePublicKey:(NSInteger)timeout;
--(void)generateSessionKeys:(SessionKeyType)keyType;
--(void)updateRSA:(NSString *)pemFile;
--(void)sendCvmPin:(NSString *)pin isEncrypted:(BOOL)isEncrypted;
+-(void)setShutDownTimeOnConnected:(NSInteger)time;
+-(void)getShutDownTimeOnConnected;
+-(void)updateKeyByTR_31:(NSInteger)keyIndex keyBlock:(NSString *)keyBlock;
+-(void)updateKeyByTR_31:(NSInteger)keyIndex keyBlock:(NSString *)keyBlock timeout:(NSInteger)timeout;
+-(void)generateSessionKeys;
+-(void)updateRSA:(NSString *)publicKey pemFile:(NSString *)pemFile;
+-(void)getEncryptData:(NSData *)data keyType:(NSString*)keyType keyIndex:(NSString *)keyIndex timeOut:(NSInteger)timeout;
+-(void)getMPUCardInfo:(void(^)(NSDictionary *dict))mpuInfoBlock;
+-(void)getMIccCardData:(NSString *)transactionTime;
+-(void)updateKeyByTR_31VersionD:(NSInteger)keyIndex ksn:(NSString *)ksn keyBlock:(NSString *)keyBlock;
+-(void)powerOnFelica:(NSInteger)timeout;
+-(void)powerOffFelica:(NSInteger)timeout;
+-(void)sendApduByFelica:(NSString *)apduString timeout:(NSInteger)timeout;
+-(void)generateTransportKey:(NSInteger)timeout dataBlock:(void(^)(NSDictionary *))dataBlock;
+-(void)updateIPEKByTransportKey:(NSString *)groupKey tracksn:(NSString *)trackksn trackipek:(NSString *)trackipek trackipekCheckValue:(NSString *)trackipekCheckValue emvksn:(NSString *)emvksn emvipek:(NSString *)emvipek emvipekcheckvalue:(NSString *)emvipekcheckvalue pinksn:(NSString *)pinksn pinipek:(NSString *)pinipek pinipekcheckValue:(NSString *)pinipekcheckValue block:(void(^)(BOOL isSuccess))resultBlock;
+-(void)updateWorkKeyByTransportKey:(NSString *)pik pinKeyCheck:(NSString *)pikCheck trackKey:(NSString *)trk trackKeyCheck:(NSString *)trkCheck macKey:(NSString *)mak macKeyCheck:(NSString *)makCheck keyIndex:(NSInteger) mKeyIndex timeout:(NSInteger)timeout block:(void(^)(BOOL isSuccess))resultBlock;
+-(void)sendCVV:(NSString *)cvvStr resultBlock:(void(^)(BOOL))resultBlock;
+-(void)getEncryptedDataBlock:(NSInteger)keyIndex dataBlock:(void(^)(NSDictionary *))dataBlock;
+-(void)setIsSaveLog:(BOOL)IsSaveLog
+              block:(void(^)(BOOL isSuccess,NSString *stateStr))IsSaveLogBlock;
+-(void)doTradeLogOperation:(NSInteger)operationType
+                      data:(NSInteger)data
+                     block:(void(^)(BOOL isSuccess,NSInteger markType, NSDictionary *stateStr))doTradeLogBlock;
 -(void)pollOnMifareCard:(NSInteger)timeout dataBlock:(void(^)(NSDictionary *))dataBlock;
 -(void)authenticateMifareCard:(MifareCardType)mifareCardType keyType:(MifareKeyType)keyType block:(NSString *)block keyValue:(NSString *)keyValue timeout:(NSInteger)timeout resultBlock:(void(^)(BOOL isSuccess))resultBlock;
 -(void)operateMifareCardData:(MifareCardOperationType)operationType block:(NSString *)block data:(NSString *)data timeout:(NSInteger)timeout dataBlock:(void(^)(NSDictionary *))dataBlock;
@@ -487,5 +622,19 @@ trackipekCheckValue:(NSString *)trackipekCheckValue
 -(void)writeMifareCard:(MifareCardType)mifareCardType block:(NSString *)block data:(NSString *)data timeout:(NSInteger)timeout resultBlock:(void(^)(BOOL isSuccess))resultBlock;
 -(void)finishMifareCard:(NSInteger)timeout resultBlock:(void(^)(BOOL isSuccess))resultBlock;
 -(void)setIsOperateMifare:(BOOL)isOperateMifare;
+-(void)setIsSupportClsSelectEmvApp:(BOOL)isSupportClsSelectEmvApp;
+-(NSDictionary *)getEncryptDataDict;
+-(void)sendCvmPin:(NSString *)pin isEncrypted:(BOOL)isEncrypted;
+-(NSString *)getCvmKeyList;
+-(NSArray *)getCvmKeyListArr;
+-(NSInteger)getCvmPinTryLimit;
+-(NSString *)buildCvmPinBlock:(NSDictionary *)encryptedDataDict pin:(NSString *)pin;
+-(void)operateLEDByType:(LEDType)ledType colorValue:(NSString *)colorValue ledDirection:(LEDDirection)ledDirection ledStatus:(LEDStatus)ledStatus lightTime:(NSInteger)lightTime lightOffTime:(NSInteger)lightOffTime blinksTimes:(NSInteger)blinksTimes resultBlock:(void(^)(BOOL isSuccess))resultBlock;
+-(void)playBuzzerByType:(BuzzerType)buzzerType buzzerOnTime:(NSInteger)buzzerOnTime buzzerOffTime:(NSInteger)buzzerOffTime buzzerTimes:(NSInteger)buzzerTimes resultBlock:(void(^)(BOOL isSuccess))resultBlock;
+-(NSDictionary *)getEncryptedTrack2Data;
+-(void)getEncryptedTrack2Data:(void(^)(NSString *ksn, NSString *track2Data))resultBlock;
+-(void)setCustomLogoDisplay:(LcdModeAlign)alcdModeAlign customLogoStr:(NSString *)customLogoStr timeout:(NSInteger)timeout resultBlock:(void(^)(BOOL isSuccess))resultBlock;
+-(NSString *)getRandomNumByLen:(NSInteger)length;
+-(void)getRandomNumByLen:(NSInteger)length resultBlock:(void(^)(NSString *randomStr))resultBlock;
 @end
 

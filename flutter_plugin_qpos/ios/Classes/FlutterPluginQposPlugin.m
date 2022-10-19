@@ -225,6 +225,9 @@
   }else if ([@"updateEMVConfigByXml" isEqualToString:call.method]) {
       NSString *xmlStr = [call.arguments objectForKey:@"xmlContent"];
       [self.mPos updateEMVConfigByXml:xmlStr];
+  }else if ([@"setCardTradeMode" isEqualToString:call.method]) {
+      NSString *cardTradeMode = [call.arguments objectForKey:@"cardTradeMode"];
+      [self.mPos setCardTradeMode:[self convertCardTradeModeStrToEnum:cardTradeMode]];
   }else {
       result(FlutterMethodNotImplemented);
   }
@@ -399,7 +402,6 @@
     self.terminalTime = [dateFormatter stringFromDate:[NSDate date]];
     mTransType = TransactionType_GOODS;
     _currencyCode = @"156";
-    [self.mPos setCardTradeMode:CardTradeMode_SWIPE_TAP_INSERT_CARD];
     [self.mPos doTrade:30];
 }
 
@@ -768,6 +770,40 @@
 
 - (void)onReturnBuzzerStatusResult:(BOOL)isSuccess{
     [self sendMessage:@"onSetBuzzerStatusResult" result:isSuccess];
+}
+
+- (CardTradeMode)convertCardTradeModeStrToEnum:(NSString *)cardTradeModeStr{
+    CardTradeMode cardTradeMode = CardTradeMode_SWIPE_TAP_INSERT_CARD;
+    if([@"ONLY_INSERT_CARD" isEqualToString:cardTradeModeStr]){
+        cardTradeMode = CardTradeMode_ONLY_INSERT_CARD;
+    }else if ([@"ONLY_SWIPE_CARD" isEqualToString:cardTradeModeStr]){
+        cardTradeMode = CardTradeMode_ONLY_SWIPE_CARD;
+    }else if ([@"SWIPE_INSERT_CARD" isEqualToString:cardTradeModeStr]){
+        cardTradeMode = CardTradeMode_SWIPE_INSERT_CARD;
+    }else if ([@"UNALLOWED_LOW_TRADE" isEqualToString:cardTradeModeStr]){
+        cardTradeMode = CardTradeMode_UNALLOWED_LOW_TRADE;
+    }else if ([@"SWIPE_TAP_INSERT_CARD" isEqualToString:cardTradeModeStr]){
+        cardTradeMode = CardTradeMode_SWIPE_TAP_INSERT_CARD;
+    }else if ([@"SWIPE_TAP_INSERT_CARD_UNALLOWED_LOW_TRADE" isEqualToString:cardTradeModeStr]){
+        cardTradeMode = CardTradeMode_SWIPE_TAP_INSERT_CARD_UNALLOWED_LOW_TRADE;
+    }else if ([@"ONLY_TAP_CARD" isEqualToString:cardTradeModeStr]){
+        cardTradeMode = CardTradeMode_ONLY_TAP_CARD;
+    }else if ([@"SWIPE_TAP_INSERT_CARD_NOTUP" isEqualToString:cardTradeModeStr]){
+        cardTradeMode = CardTradeMode_SWIPE_TAP_INSERT_CARD_NOTUP;
+    }else if ([@"TAP_INSERT_CARD_TUP" isEqualToString:cardTradeModeStr]){
+        cardTradeMode = CardTradeMode_TAP_INSERT_CARD_TUP;
+    }else if ([@"SWIPE_TAP_INSERT_CARD_Down" isEqualToString:cardTradeModeStr]){
+        cardTradeMode = CardTradeMode_SWIPE_TAP_INSERT_CARD_Down;
+    }else if ([@"SWIPE_TAP_INSERT_CARD_NOTUP_UNALLOWED_LOW_TRADE" isEqualToString:cardTradeModeStr]){
+        cardTradeMode = CardTradeMode_SWIPE_TAP_INSERT_CARD_NOTUP_UNALLOWED_LOW_TRADE;
+    }else if ([@"SWIPE_INSERT_CARD_UNALLOWED_LOW_TRADE" isEqualToString:cardTradeModeStr]){
+        cardTradeMode = CardTradeMode_SWIPE_INSERT_CARD_UNALLOWED_LOW_TRADE;
+    }else if ([@"SWIPE_TAP_INSERT_CARD_UNALLOWED_LOW_TRADE_NEW" isEqualToString:cardTradeModeStr]){
+        cardTradeMode = CardTradeMode_SWIPE_TAP_INSERT_CARD_UNALLOWED_LOW_TRADE_NEW;
+    }else if ([@"SWIPE_TAP_INSERT_CARD_NOTUP_DELAY" isEqualToString:cardTradeModeStr]){
+        cardTradeMode = CardTradeMode_SWIPE_TAP_INSERT_CARD_NOTUP_DELAY;
+    }
+    return cardTradeMode;
 }
 
 - (NSData*)readLine:(NSString*)name{
