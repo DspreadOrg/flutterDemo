@@ -1,7 +1,6 @@
 stages:
   - test
   - build
-  - release
 
 code_quality:
   stage: test
@@ -33,15 +32,3 @@ test:
     paths:
       - flutter_plugin_qpos/example/build/app/outputs/flutter-apk/app-release.apk
 
-
-release_job:
-  stage: release
-  image: registry.gitlab.com/gitlab-org/release-cli:latest
-  rules:
-    - if: $CI_COMMIT_TAG  
-  script:
-    - echo "Running the release job."
-  release:
-    name: 'Release $CI_COMMIT_TAG'
-    tag_name: '$CI_COMMIT_TAG'
-    description: 'Release created using the release-cli.'
