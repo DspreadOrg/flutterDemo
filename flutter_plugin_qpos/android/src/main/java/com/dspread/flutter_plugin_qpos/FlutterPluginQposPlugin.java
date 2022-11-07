@@ -75,7 +75,9 @@ public class FlutterPluginQposPlugin implements FlutterPlugin, MethodCallHandler
 
     @Override
     public void onDetachedFromEngine(FlutterPlugin.FlutterPluginBinding binding) {
+        TRACE.d("onDetachedFromEngine");
         mContext = null;
+        PosPluginHandler.initEvenvSender(null, null);
         methodChannel.setMethodCallHandler(null);
         methodChannel = null;
         eventChannel.setStreamHandler(null);
@@ -388,7 +390,6 @@ public class FlutterPluginQposPlugin implements FlutterPlugin, MethodCallHandler
     @Override
     public void onCancel(Object arguments) {
         TRACE.d("onCancel");
-        PosPluginHandler.initEvenvSender(null, arguments);
 
     }
 
