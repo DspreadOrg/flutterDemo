@@ -1,3 +1,3 @@
-## 0.1.4+2
+## 0.1.4+3
 
-* 1. free the mEvents in callback onDetachedFromEngine not onCancel
+* 1. Add type when creating Map to avoid warnings
