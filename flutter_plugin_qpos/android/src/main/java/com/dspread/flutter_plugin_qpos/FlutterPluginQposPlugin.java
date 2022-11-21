@@ -52,11 +52,12 @@ public class FlutterPluginQposPlugin implements FlutterPlugin, MethodCallHandler
 
     /**
      * Plugin registration.
+     * Deprecated
      */
-    public static void registerWith(final PluginRegistry.Registrar registrar) {
-//    final FlutterPluginQposPlugin instance = new FlutterPluginQposPlugin();
-//    instance.onAttachedToEngine(registrar.context(), registrar.messenger());
-    }
+//    public static void registerWith(final PluginRegistry.Registrar registrar) {
+////    final FlutterPluginQposPlugin instance = new FlutterPluginQposPlugin();
+////    instance.onAttachedToEngine(registrar.context(), registrar.messenger());
+//    }
 
     @Override
     public void onAttachedToEngine(FlutterPlugin.FlutterPluginBinding binding) {

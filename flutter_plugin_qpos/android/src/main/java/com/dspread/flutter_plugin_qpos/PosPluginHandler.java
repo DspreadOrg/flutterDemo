@@ -24,11 +24,11 @@ public class PosPluginHandler {
     private static int mMode = QPOSService.CommunicationMode.BLUETOOTH.ordinal();
     private static QPOSServiceListenerImpl listener;
     static EventChannel.EventSink mEvents;
-    private static Handler mHandler = new Handler() {
+    private static Handler mHandler = new Handler(Looper.myLooper()) {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-                    Map map = new HashMap();
+                    Map<String,String> map = new HashMap<String,String>();
                     map.put("method", "onUpdatePosFirmwareProcessChanged");
                     StringBuffer parameters = new StringBuffer();
                     int progress = msg.what;

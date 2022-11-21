@@ -1,3 +1,3 @@
-## 0.1.5
+## 0.1.5+1
 
-* 1. delete useless plugin:permission_handler
+* 1. fix some warnings
