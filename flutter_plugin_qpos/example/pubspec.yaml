@@ -18,7 +18,6 @@ dependencies:
   # toast: ^0.1.3
   fluttertoast: ^8.0.8
   #  权限
-  permission_handler: ^9.2.0
 
 dev_dependencies:
   flutter_test:

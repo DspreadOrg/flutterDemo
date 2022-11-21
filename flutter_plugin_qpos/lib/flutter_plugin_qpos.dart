@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_plugin_qpos/QPOSModel.dart';
 import 'package:meta/meta.dart' show visibleForTesting;
-import 'package:permission_handler/permission_handler.dart';
+// import 'package:permission_handler/permission_handler.dart';
 
 
 enum CardTradeMode {
