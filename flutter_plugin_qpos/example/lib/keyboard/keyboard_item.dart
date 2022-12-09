@@ -10,9 +10,10 @@ class KeyboardItem extends StatefulWidget {
   final double keyHeight;
   final double? keyWidth;
   final double parentHeight;
+  final int index;
 
   const KeyboardItem(
-      {Key? key, this.drowEvent, this.callback, required this.text, required this.keyHeight, this.keyWidth,required this.parentHeight})
+      {Key? key, this.drowEvent, this.callback, required this.text, required this.keyHeight, this.keyWidth,required this.parentHeight,this.index = 0})
       : super(key: key);
 
   @override
@@ -21,7 +22,7 @@ class KeyboardItem extends StatefulWidget {
 
 class ButtonState extends State<KeyboardItem> {
   var backMethod;
-  double keyHeight = 44;
+  double keyHeight = 46;
   double keyWidth = 120;
   double txtSize = 18;
   late String text;
@@ -55,50 +56,57 @@ class ButtonState extends State<KeyboardItem> {
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQuery = MediaQuery.of(context);
-
-    var _screenWidth = mediaQuery.size.width;
+    var screenWidth = mediaQuery.size.width;
+    var screenHeight = mediaQuery.size.height;
+    var devicePixelRatio = mediaQuery.devicePixelRatio;
+    var keyHeight = widget.keyHeight;
+    var keyboardKeyIndex = widget.index;
+    //行数
+    int rows = ((keyboardKeyIndex+2)/3 - 1).toInt();
+    //列数
+    int columns = (keyboardKeyIndex - (rows * 3 + 1)).toInt();
+    print("rows: " + rows.toString());
+    print("columns: " + columns.toString());
     // 监听widget渲染完成
-    WidgetsBinding.instance!.addPostFrameCallback((duration) {
-      if(processOnce){
-        return;
-      }
-      processOnce = true;
-      RenderBox? renderBox = anchorKey.currentContext!.findRenderObject() as RenderBox?;
-      var offset = renderBox!.localToGlobal(Offset.zero);
-      double lx = offset.dx;
-      double ly = offset.dy-widget.parentHeight;
-      double rx = offset.dx + _screenWidth / 3;
-      double ry = offset.dy-widget.parentHeight+widget.keyHeight;
-      print("KeyLiftTopPointX:" +
-          lx.toStringAsFixed(0) +
-          "   KeyLiftTopPointY:" +
-          ly.toStringAsFixed(0) +
-          "   KeyRightBomPointX:" +
-          rx.toStringAsFixed(0) +
-          "   KeyRightBomPointY:" +
-          ry.toStringAsFixed(0) +
+    double leftTopPointX = 0;
+    double leftTopPointY = 0;
+    double rightBottomPointX = 0;
+    double rightBottomPointY = 0;
+
+    leftTopPointX = (screenWidth * devicePixelRatio)/3 * columns;
+    leftTopPointY = (screenHeight - keyHeight*5) * devicePixelRatio + keyHeight * devicePixelRatio * rows;
+    rightBottomPointX = leftTopPointX + (screenWidth * devicePixelRatio)/3;
+    rightBottomPointY = leftTopPointY + keyHeight *devicePixelRatio;
+
+    if (keyboardKeyIndex == 10 || keyboardKeyIndex == 12){
+      rightBottomPointY = leftTopPointY + keyHeight *devicePixelRatio * 2;
+    }
+    print("leftTopPointX:" +
+          leftTopPointX.toStringAsFixed(0) +
+          "   leftTopPointY:" +
+          leftTopPointY.toStringAsFixed(0) +
+          "   rightBottomPointX:" +
+          rightBottomPointX.toStringAsFixed(0) +
+          "   rightBottomPointY:" +
+          rightBottomPointY.toStringAsFixed(0) +
           "   value" +
           text);
 
-      StringBuffer buffer = new StringBuffer();
-      if (text == "confirm") {
-        buffer.write(listAddValue(15));
-
-      } else if (text == "del") {
-        buffer.write(listAddValue(14));
-
-      } else if (text == "cancel") {
-        buffer.write(listAddValue(13));
-      } else {
-        buffer.write(listAddValue(int.parse(text)));
-      }
-      buffer.write(listAddValue((lx*1.5).toInt()));
-      buffer.write(listAddValue((ly*1.5).toInt()));
-      buffer.write(listAddValue((rx*1.5).toInt()));
-      buffer.write(listAddValue((ry*1.5).toInt()));
-      widget.drowEvent(buffer.toString());
-    });
-
+    StringBuffer buffer = new StringBuffer();
+    if (text == "confirm") {
+      buffer.write(listAddValue(15));
+    } else if (text == "del") {
+      buffer.write(listAddValue(14));
+    } else if (text == "cancel") {
+      buffer.write(listAddValue(13));
+    } else {
+      buffer.write(listAddValue(int.parse(text)));
+    }
+    buffer.write(listAddValue((leftTopPointX).toInt()));
+    buffer.write(listAddValue((leftTopPointY).toInt()));
+    buffer.write(listAddValue((rightBottomPointX).toInt()));
+    buffer.write(listAddValue((rightBottomPointY).toInt()));
+    widget.drowEvent(buffer.toString());
 
     if (null != widget.keyHeight) {
       keyHeight = widget.keyHeight;
@@ -106,7 +114,7 @@ class ButtonState extends State<KeyboardItem> {
     if (null != widget.keyWidth) {
       keyWidth = widget.keyWidth!;
     }else{
-      keyWidth = _screenWidth / 3;
+      keyWidth = screenWidth / 3;
     }
     return Container(
       height: keyHeight,
