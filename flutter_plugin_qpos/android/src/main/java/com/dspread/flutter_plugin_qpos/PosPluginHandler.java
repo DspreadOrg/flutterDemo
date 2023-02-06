@@ -285,6 +285,7 @@ public class PosPluginHandler {
 
     public static void openUart(String path) {
         mPos.setDeviceAddress(path);
+        mPos.setD20Trade(true);
         mPos.openUart();
     }
 

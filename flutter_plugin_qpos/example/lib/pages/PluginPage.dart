@@ -876,7 +876,8 @@ class _MyAppState extends State<PluginPage> {
 
   void openUart() {
     _flutterPluginQpos.init(communicationMode[2]);
-    _flutterPluginQpos.openUart("/dev/ttyS1");
+    _mAddress = "/dev/ttyS1";
+    _flutterPluginQpos.openUart(_mAddress!);
   }
 
   Widget _getListDate(BuildContext context, int position)  {

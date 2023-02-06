@@ -32,7 +32,7 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
   String data = "";
   var _screenWidth;
   var _screenHeight;
-
+  var keyBoardKeyIndex = 0;
   StringBuffer buffer =  new StringBuffer();
 
   @override
@@ -42,7 +42,6 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
 
   @override
   Widget build(BuildContext context) {
-
 
     MediaQueryData mediaQuery = MediaQuery.of(context);
 
@@ -118,8 +117,8 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
       height: 5 * widget.keyHeight,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[normalWidget(), botomWidget()],
+        //mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[normalWidget(),botomWidget()],
       ),
     );
   }
@@ -160,11 +159,13 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
       height: 3 * widget.keyHeight,
       child: Wrap(
         children: widget.keyList.sublist(0,9).map((item) {
+          keyBoardKeyIndex++;
           var keyboardItem = KeyboardItem(
               parentHeight:5 * widget.keyHeight,
             drowEvent: (value) => onDrowKeyMap(value),
             keyHeight: widget.keyHeight,
             text: item,
+            index: keyBoardKeyIndex,
             callback: (val) => onKeyDown(context, item)
           );
           return keyboardItem;
@@ -190,8 +191,9 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
 
               drowEvent: (value) => onDrowKeyMap(value),
               keyHeight: widget.keyHeight*2,
-              text: widget.keyList[9],
-              callback: (val) => onKeyDown(context, widget.keyList[9]),
+              text: widget.keyList[10],
+              index: keyBoardKeyIndex = 10,
+              callback: (val) => onKeyDown(context, widget.keyList[10]),
             ),
           ),
           Positioned(
@@ -202,8 +204,9 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
 
               drowEvent: (value) => onDrowKeyMap(value),
               keyHeight: widget.keyHeight,
-              text: widget.keyList[10],
-              callback: (val) => onKeyDown(context, widget.keyList[10]),
+              text: widget.keyList[9],
+              index: keyBoardKeyIndex = 11,
+              callback: (val) => onKeyDown(context, widget.keyList[9]),
             ),
           ),
 
@@ -216,6 +219,7 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
               drowEvent: (value) => onDrowKeyMap(value),
               keyHeight: widget.keyHeight,
               text: widget.keyList[11],
+              index: keyBoardKeyIndex = 14,
               callback: (val) => onKeyDown(context, widget.keyList[11]),
             ),
           ),
@@ -228,6 +232,7 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
               drowEvent: (value) => onDrowKeyMap(value),
               keyHeight: widget.keyHeight*2,
               text: widget.keyList[12],
+              index: keyBoardKeyIndex = 12,
               callback: (val) => onKeyDown(context, widget.keyList[12]),
             ),
           ),
