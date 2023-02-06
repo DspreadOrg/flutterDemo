@@ -752,6 +752,9 @@ class _MyAppState extends State<PluginPage> {
       case 'onSetSleepModeTime':
         break;
       case 'onRequestSetAmount':
+
+        // _flutterPluginQpos.setAmountIcon(AmountType.MONEY_TYPE_CUSTOM_STR, "Y");
+
         Map<String, String> params = Map<String, String>();
 
         simpleDialog(context).then((value) {

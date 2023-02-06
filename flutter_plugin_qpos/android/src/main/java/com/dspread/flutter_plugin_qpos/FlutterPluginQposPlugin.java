@@ -154,6 +154,11 @@ public class FlutterPluginQposPlugin implements FlutterPlugin, MethodCallHandler
             int keyIndex = call.argument("keyIndex");
             TRACE.d("keyindex:"+keyIndex);
             PosPluginHandler.doTrade(keyIndex, 40);
+        } else if(call.method.equals("setAmountIcon")){
+            TRACE.d("setAmountIcon");
+            String amountType = call.argument("amountType");
+            String amountIcon = call.argument("amountIcon");
+            PosPluginHandler.setAmountIcon(amountType, amountIcon);
         } else if (call.method.equals("setAmount")) {
             TRACE.d("setAmount");
             String amount = call.argument("amount");

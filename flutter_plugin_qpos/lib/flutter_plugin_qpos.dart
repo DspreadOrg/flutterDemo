@@ -7,7 +7,6 @@ import 'package:flutter_plugin_qpos/QPOSModel.dart';
 import 'package:meta/meta.dart' show visibleForTesting;
 // import 'package:permission_handler/permission_handler.dart';
 
-
 enum CardTradeMode {
   ONLY_INSERT_CARD, ONLY_SWIPE_CARD,
   TAP_INSERT_CARD, TAP_INSERT_CARD_NOTUP,
@@ -24,6 +23,10 @@ enum FormatID {
 
 enum DoTradeMode{
   COMMON,CHECK_CARD_NO_IPNUT_PIN,IS_DEBIT_OR_CREDIT
+}
+
+enum AmountType {
+  MONEY_TYPE_NONE,  MONEY_TYPE_RMB,  MONEY_TYPE_DOLLAR,  MONEY_TYPE_CUSTOM_STR
 }
 
 class FlutterPluginQpos {
@@ -154,6 +157,14 @@ class FlutterPluginQpos {
     Map<String, int> params = Map<String, int>();
     params['keyIndex'] = keyIndex;
     await _methodChannel.invokeMethod('doTrade',params);
+  }
+
+  void setAmountIcon(AmountType amountType, String amountIcon){
+    Map<String, String> params = Map<String, String>();
+    params['amountType'] = amountType.toString().split(".")[1];
+    print("dart:doTradeMode "+amountType.toString().split(".")[1]);
+    params['amountIcon'] = amountIcon;
+    _methodChannel.invokeMethod('setAmountIcon',params);
   }
 
   void setAmount(Map<String, String> params) async{

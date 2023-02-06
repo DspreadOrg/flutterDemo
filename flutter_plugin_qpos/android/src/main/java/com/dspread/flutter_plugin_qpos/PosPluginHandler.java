@@ -172,6 +172,11 @@ public class PosPluginHandler {
         mPos.doTrade(i, i1);
     }
 
+    public static void setAmountIcon(String amountType, String amountIcon) {
+        mPos.setAmountIcon(QPOSService.AmountType.valueOf(amountType), amountIcon);
+    }
+
+
     public static void setAmount(String amount, String cashbackAmount, String currencyCode, String transactionType) {
         mPos.setAmount(amount, cashbackAmount, currencyCode, QPOSService.TransactionType.valueOf(transactionType));
     }

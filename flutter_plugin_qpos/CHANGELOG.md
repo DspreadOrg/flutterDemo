@@ -1,3 +1,3 @@
-## 0.1.5+1
+## 0.1.6
 
-* 1. fix some warnings
+* 1. add api setAmountIcon
