@@ -40,6 +40,7 @@
       [self initPos];
   } else if ([@"connectBluetoothDevice" isEqualToString:call.method]) {
       NSString *bluetoothName = [call.arguments objectForKey:@"bluetooth_addr"];
+      self.bluetoothAddress = bluetoothName;
       [self.mPos connectBT:bluetoothName];
   } else if ([@"getQposId" isEqualToString:call.method]) {
       [self.mPos getQPosId];
@@ -107,7 +108,9 @@
       NSInteger keyIndex = [[call.arguments objectForKey:@"keyIndex"] integerValue];
       [self.mPos setMasterKey:key checkValue:checkValue keyIndex:keyIndex];
   }else if ([@"updatePosFirmware" isEqualToString:call.method]) {
-      [self updatePosFirmwareTest];
+      NSString *firmwareStr = [call.arguments objectForKey:@"upContent"];
+      NSString *bTName = [call.arguments objectForKey:@"address"];
+      [self updatePosFirmware:firmwareStr btName:bTName];
   }else if ([@"updateWorkKey" isEqualToString:call.method]) {
       NSString *pik = [call.arguments objectForKey:@"pik"];
       NSString *pikCheck = [call.arguments objectForKey:@"pikCheck"];
@@ -231,6 +234,8 @@
   }else if ([@"setDoTradeMode" isEqualToString:call.method]) {
       NSString *doTradeMode = [call.arguments objectForKey:@"doTradeMode"];
       [self.mPos setDoTradeMode:[self convertDoTradeModeStrToEnum:doTradeMode]];
+  }else if ([@"getUpdateProgress" isEqualToString:call.method]) {
+      result([NSNumber numberWithInteger:[self.mPos getUpdateProgress]]);
   }else {
       result(FlutterMethodNotImplemented);
   }
@@ -718,36 +723,36 @@
 }
 
 // update pos firmware api
-- (void)updatePosFirmwareTest {
-    NSData *data = [self readLine:@"A27CAYC_S1_master"];//read a14upgrader.asc
+- (void)updatePosFirmware:(NSString *)firmwareStr btName:(NSString *)btName{
+    NSData *data = [QPOSUtil HexStringToByteArray:firmwareStr];//read a14upgrader.asc
     if (data != nil) {
        NSInteger flag = [[QPOSService sharedInstance] updatePosFirmware:data address:self.bluetoothAddress];
         if (flag==-1) {
-            //NSLog(@"Pos is not plugged in");
+            NSLog(@"Pos is not plugged in");
             return;
         }
         self.updateFWFlag = true;
         dispatch_async(dispatch_queue_create(0, 0), ^{
             while (true) {
-                [NSThread sleepForTimeInterval:0.1];
+                [NSThread sleepForTimeInterval:1];
                 NSInteger progress = [self.mPos getUpdateProgress];
                 if (progress < 100) {
                     dispatch_async(dispatch_get_main_queue(), ^{
                         if (!self.updateFWFlag) {
                             return;
                         }
-                        //NSLog(@"Current progress:%ld%%",(long)progress);
+                        NSLog(@"Current progress:%ld%%",(long)progress);
                     });
                     continue;
                 }
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    //NSLog(@"finish upgrader");
+                    NSLog(@"finish upgrader");
                 });
                 break;
             }
         });
     }else{
-        //NSLog( @"pls make sure you have passed the right data");
+        NSLog( @"pls make sure you have passed the right data");
     }
 }
 
