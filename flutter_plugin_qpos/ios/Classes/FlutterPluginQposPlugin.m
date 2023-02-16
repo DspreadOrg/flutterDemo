@@ -228,6 +228,9 @@
   }else if ([@"setCardTradeMode" isEqualToString:call.method]) {
       NSString *cardTradeMode = [call.arguments objectForKey:@"cardTradeMode"];
       [self.mPos setCardTradeMode:[self convertCardTradeModeStrToEnum:cardTradeMode]];
+  }else if ([@"setDoTradeMode" isEqualToString:call.method]) {
+      NSString *doTradeMode = [call.arguments objectForKey:@"doTradeMode"];
+      [self.mPos setDoTradeMode:[self convertDoTradeModeStrToEnum:doTradeMode]];
   }else {
       result(FlutterMethodNotImplemented);
   }
@@ -770,6 +773,18 @@
 
 - (void)onReturnBuzzerStatusResult:(BOOL)isSuccess{
     [self sendMessage:@"onSetBuzzerStatusResult" result:isSuccess];
+}
+
+- (DoTradeMode)convertDoTradeModeStrToEnum:(NSString *)doTradeModeStr{
+    DoTradeMode doTradeMode = DoTradeMode_COMMON;
+    if([@"COMMON" isEqualToString:doTradeModeStr]){
+        doTradeMode = DoTradeMode_COMMON;
+    }else if ([@"IS_DEBIT_OR_CREDIT" isEqualToString:doTradeModeStr]){
+        doTradeMode = DoTradeMode_IS_DEBIT_OR_CREDIT;
+    }else if ([@"CHECK_CARD_NO_IPNUT_PIN" isEqualToString:doTradeModeStr]){
+        doTradeMode = DoTradeMode_CHECK_CARD_NO_IPNUT_PIN;
+    }
+    return doTradeMode;
 }
 
 - (CardTradeMode)convertCardTradeModeStrToEnum:(NSString *)cardTradeModeStr{
