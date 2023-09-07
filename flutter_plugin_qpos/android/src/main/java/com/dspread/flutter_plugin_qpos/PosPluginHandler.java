@@ -302,6 +302,10 @@ public class PosPluginHandler {
         mPos.getTrack2Ciphertext(time);
     }
 
+    public static void getMIccCardData(String time){
+        mPos.getMIccCardData(time);
+    }
+
     public static boolean resetQPosStatus() {return mPos.resetQPosStatus();}
 
     public static void pollOnMifareCard(int timeout) {mPos.pollOnMifareCard(timeout);}

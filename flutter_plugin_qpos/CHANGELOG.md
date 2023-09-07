@@ -1,4 +1,3 @@
-## 0.1.7
+## 0.1.8
 
-* 1. commit the latest version to fix arm64 missing error(IOS)
-* 2. commit the latest version to fix arm64 missing error
+* 1. add api getMIccCardData()

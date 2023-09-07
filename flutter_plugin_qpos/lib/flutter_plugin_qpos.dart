@@ -326,6 +326,12 @@ class FlutterPluginQpos {
     await _methodChannel.invokeMethod('getTrack2Ciphertext',params);
   }
 
+  void getMIccCardData(String time) async{
+    Map<String, String> params = Map<String, String>();
+    params['time'] = time;
+    await _methodChannel.invokeMethod('getMIccCardData',params);
+  }
+
   Future<bool?> resetQPosStatus() async{
     bool? result = await _methodChannel.invokeMethod('resetQPosStatus');
     return result;

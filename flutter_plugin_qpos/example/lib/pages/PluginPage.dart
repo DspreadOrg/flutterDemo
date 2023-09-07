@@ -1036,8 +1036,9 @@ class _MyAppState extends State<PluginPage> {
         //an example to get track2 without doTrade
         // its callback is onRequestBatchData
         // the return data's format is length+data
-        // var currentTime = "20211123143010"; //must be yyyyMMddHHmmss
+        var currentTime = "20211123143010"; //must be yyyyMMddHHmmss
         // _flutterPluginQpos.getTrack2Ciphertext(currentTime);
+        // _flutterPluginQpos.getMIccCardData(currentTime);
         break;
       case "2":
         _flutterPluginQpos.getUpdateCheckValue();
