@@ -99,6 +99,9 @@
       NSString *pinksn = [call.arguments objectForKey:@"pinksn"];
       NSString *pinipek = [call.arguments objectForKey:@"pinipek"];
       NSString *pinipekCheckvalue = [call.arguments objectForKey:@"pinipekCheckvalue"];
+      if(keyIndex.length == 1){
+          keyIndex = [@"0" stringByAppendingString:keyIndex];
+      }
       [self.mPos doUpdateIPEKOperation:keyIndex tracksn:trackksn trackipek:trackipek trackipekCheckValue:trackipekCheckvalue emvksn:emvksn emvipek:emvipek emvipekcheckvalue:emvipekCheckvalue pinksn:pinksn pinipek:pinipek pinipekcheckValue:pinipekCheckvalue block:^(BOOL isSuccess, NSString *stateStr) {
           [self sendMessage:@"onReturnUpdateIPEKResult" result:isSuccess];
       }];
