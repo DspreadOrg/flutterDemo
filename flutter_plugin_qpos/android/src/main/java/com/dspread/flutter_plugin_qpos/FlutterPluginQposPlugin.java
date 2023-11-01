@@ -399,7 +399,8 @@ public class FlutterPluginQposPlugin implements FlutterPlugin, MethodCallHandler
     @Override
     public void onCancel(Object arguments) {
         TRACE.d("onCancel");
-
+        PosPluginHandler.initEvenvSender(null, arguments);
+//
     }
 
     @Override
