@@ -578,6 +578,11 @@ class _MyAppState extends State<PluginPage> {
         }
 
         if (Utils.equals(paras[0], "NFC_ONLINE") || Utils.equals(paras[0], "NFC_OFFLINE")) {
+          Future geticctag = _flutterPluginQpos.getICCTag("PLAINTEXT", 1, 1, "9F06");
+           String icctag = geticctag.toString();
+           print("icctag=="+icctag);
+
+
           Future map = _flutterPluginQpos.getNFCBatchData().then((value) =>  setState(() {
             display = value.toString();
           }));

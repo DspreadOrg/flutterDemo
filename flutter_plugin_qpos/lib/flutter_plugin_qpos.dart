@@ -185,6 +185,14 @@ class FlutterPluginQpos {
     await _methodChannel.invokeMethod('sendTime',params);
 
   }
+  Future<String> getICCTag(String EncryptType, int cardType, int tagCount, String tagArrStr) async{
+    Map<String,String > params = Map<String,String>();
+    params['EncryptType'] = EncryptType;
+    params['cardType'] = cardType.toString();
+    params['tagCount'] = tagCount.toString();
+    params['tagArrStr'] = tagArrStr;
+    return await _methodChannel.invokeMethod('getICCTag',params);
+  }
 
   Future getNFCBatchData() async{
     Map<String,String> map1 = new Map.from(await _methodChannel.invokeMethod('getNFCBatchData'));

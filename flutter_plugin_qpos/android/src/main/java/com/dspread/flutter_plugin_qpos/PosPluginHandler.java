@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dspread.xpos.QPOSService;
@@ -28,13 +29,13 @@ public class PosPluginHandler {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-                    Map<String,String> map = new HashMap<String,String>();
-                    map.put("method", "onUpdatePosFirmwareProcessChanged");
-                    StringBuffer parameters = new StringBuffer();
-                    int progress = msg.what;
-                    parameters.append(progress);
-                    map.put("parameters", parameters.toString());
-                    PosPluginHandler.mEvents.success(JSONObject.toJSONString(map));
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("method", "onUpdatePosFirmwareProcessChanged");
+            StringBuffer parameters = new StringBuffer();
+            int progress = msg.what;
+            parameters.append(progress);
+            map.put("parameters", parameters.toString());
+            PosPluginHandler.mEvents.success(JSONObject.toJSONString(map));
         }
     };
 
@@ -53,12 +54,12 @@ public class PosPluginHandler {
         mMode = mode1.ordinal();
         mContext = context;
         TRACE.d("mode:" + mode);
-        if(mode.equals("UART")) {
+        if (mode.equals("UART")) {
             TRACE.d("mode11:" + mode);
             mPos.setD20Trade(true);
         } else {
             TRACE.d("mode2:" + mode);
-           mPos.setD20Trade(false);
+            mPos.setD20Trade(false);
         }
         mPos.setConext(context);
         //通过handler处理，监听MyPosListener，实现QposService的接口，（回调接口）
@@ -93,13 +94,15 @@ public class PosPluginHandler {
     public static void getQposInfo() {
         mPos.getQposInfo();
     }
+
     public static void getUpdateCheckValue() {
         mPos.getUpdateCheckValue();
     }
 
-    public static void getKeyCheckValue(int index,String value) {
+    public static void getKeyCheckValue(int index, String value) {
         mPos.getKeyCheckValue(index, QPOSService.CHECKVALUE_KEYTYPE.valueOf(value));
     }
+
     //    /**
 //     * OTG 驱动
 //     *
@@ -176,6 +179,15 @@ public class PosPluginHandler {
         mPos.setAmountIcon(QPOSService.AmountType.valueOf(amountType), amountIcon);
     }
 
+    public static String getICCTag(String EncryptType, int cardType, int tagCount, String tagArrStr) {
+        Hashtable<String, String> icctag=null;
+        if ("PLAINTEXT".equals(EncryptType)) {
+            icctag= mPos.getICCTag(QPOSService.EncryptType.PLAINTEXT, cardType, tagCount, tagArrStr);
+        } else if ("ENCRYPTED".equals(EncryptType)) {
+            icctag= mPos.getICCTag(QPOSService.EncryptType.ENCRYPTED, cardType, tagCount, tagArrStr);
+        }
+        return icctag.get("tlv");
+    }
 
     public static void setAmount(String amount, String cashbackAmount, String currencyCode, String transactionType) {
         mPos.setAmount(amount, cashbackAmount, currencyCode, QPOSService.TransactionType.valueOf(transactionType));
@@ -216,9 +228,9 @@ public class PosPluginHandler {
         mPos.updateEmvConfig(emvAppCfg, emvCapkCfg);
     }
 
-    public static void updateEMVConfigByXml(String xmlContent){
-     TRACE.d("emv config: " + xmlContent);
-     mPos.updateEMVConfigByXml(xmlContent);
+    public static void updateEMVConfigByXml(String xmlContent) {
+        TRACE.d("emv config: " + xmlContent);
+        mPos.updateEMVConfigByXml(xmlContent);
     }
 
     public static void updatePosFirmware(String upContent, String mAddress) {
@@ -295,84 +307,88 @@ public class PosPluginHandler {
     }
 
     public static void pinMapSync(String value) {
-        mPos.pinMapSync(value,20);
+        mPos.pinMapSync(value, 20);
     }
 
-    public static void getTrack2Ciphertext(String time){
+    public static void getTrack2Ciphertext(String time) {
         mPos.getTrack2Ciphertext(time);
     }
 
-    public static void getMIccCardData(String time){
+    public static void getMIccCardData(String time) {
         mPos.getMIccCardData(time);
     }
 
-    public static boolean resetQPosStatus() {return mPos.resetQPosStatus();}
-
-    public static void pollOnMifareCard(int timeout) {mPos.pollOnMifareCard(timeout);}
-
-    public static void authenticateMifareCard(String mifareCardType,String keyType,String block,String keyValue,int timeout) {
-        QPOSService.MifareCardType cardType = QPOSService.MifareCardType.CLASSIC;
-        if(mifareCardType.equals("CLASSIC")){
-            cardType = QPOSService.MifareCardType.CLASSIC;
-        } else if(mifareCardType.equals("UlTRALIGHT")){
-            cardType = QPOSService.MifareCardType.UlTRALIGHT;
-        }
-        mPos.authenticateMifareCard(cardType,keyType,block,keyValue,timeout);
+    public static boolean resetQPosStatus() {
+        return mPos.resetQPosStatus();
     }
 
-    public static void operateMifareCardData(String mifareCardOperationType,String block,String data,int timeout){
+    public static void pollOnMifareCard(int timeout) {
+        mPos.pollOnMifareCard(timeout);
+    }
+
+    public static void authenticateMifareCard(String mifareCardType, String keyType, String block, String keyValue, int timeout) {
+        QPOSService.MifareCardType cardType = QPOSService.MifareCardType.CLASSIC;
+        if (mifareCardType.equals("CLASSIC")) {
+            cardType = QPOSService.MifareCardType.CLASSIC;
+        } else if (mifareCardType.equals("UlTRALIGHT")) {
+            cardType = QPOSService.MifareCardType.UlTRALIGHT;
+        }
+        mPos.authenticateMifareCard(cardType, keyType, block, keyValue, timeout);
+    }
+
+    public static void operateMifareCardData(String mifareCardOperationType, String block, String data, int timeout) {
         QPOSService.MifareCardOperationType operationType = QPOSService.MifareCardOperationType.ADD;
-        if(mifareCardOperationType.equals("ADD")){
+        if (mifareCardOperationType.equals("ADD")) {
             operationType = QPOSService.MifareCardOperationType.ADD;
-        } else if(mifareCardOperationType.equals("REDUCE")){
+        } else if (mifareCardOperationType.equals("REDUCE")) {
             operationType = QPOSService.MifareCardOperationType.REDUCE;
-        } else if(mifareCardOperationType.equals("RESTORE")){
+        } else if (mifareCardOperationType.equals("RESTORE")) {
             operationType = QPOSService.MifareCardOperationType.RESTORE;
         }
-        mPos.operateMifareCardData(operationType,block,data,timeout);
+        mPos.operateMifareCardData(operationType, block, data, timeout);
     }
 
-    public static void readMifareCard(String mifareCardType,String block,int timeout){
+    public static void readMifareCard(String mifareCardType, String block, int timeout) {
         QPOSService.MifareCardType cardType = QPOSService.MifareCardType.CLASSIC;
-        if(mifareCardType.equals("CLASSIC")){
+        if (mifareCardType.equals("CLASSIC")) {
             cardType = QPOSService.MifareCardType.CLASSIC;
-        } else if(mifareCardType.equals("UlTRALIGHT")){
+        } else if (mifareCardType.equals("UlTRALIGHT")) {
             cardType = QPOSService.MifareCardType.UlTRALIGHT;
         }
-        mPos.readMifareCard(cardType,block,timeout);
+        mPos.readMifareCard(cardType, block, timeout);
     }
 
-    public static void setIsOperateMifare(boolean isOperateMifare){
+    public static void setIsOperateMifare(boolean isOperateMifare) {
         mPos.setIsOperateMifare(isOperateMifare);
     }
 
-    public static void writeMifareCard(String mifareCardType,String block,String data,int timeout){
+    public static void writeMifareCard(String mifareCardType, String block, String data, int timeout) {
         QPOSService.MifareCardType cardType = QPOSService.MifareCardType.CLASSIC;
-        if(mifareCardType.equals("CLASSIC")){
+        if (mifareCardType.equals("CLASSIC")) {
             cardType = QPOSService.MifareCardType.CLASSIC;
-        } else if(mifareCardType.equals("UlTRALIGHT")){
+        } else if (mifareCardType.equals("UlTRALIGHT")) {
             cardType = QPOSService.MifareCardType.UlTRALIGHT;
         }
-        mPos.writeMifareCard(cardType,block,data,timeout);
+        mPos.writeMifareCard(cardType, block, data, timeout);
     }
 
-    public static void finishMifareCard(int timeout){
+    public static void finishMifareCard(int timeout) {
         mPos.finishMifareCard(timeout);
     }
 
-    public static void setBuzzerStatus(int status){
+    public static void setBuzzerStatus(int status) {
         mPos.setBuzzerStatus(status);
     }
 
-    public static void doSetBuzzerOperation(int times){
+    public static void doSetBuzzerOperation(int times) {
         mPos.doSetBuzzerOperation(times);
     }
 
-    public static void setSleepModeTime(int time){
+    public static void setSleepModeTime(int time) {
         mPos.setSleepModeTime(time);
     }
 
-    public static void setShutDownTime(int time){
+    public static void setShutDownTime(int time) {
         mPos.setShutDownTime(time);
     }
 

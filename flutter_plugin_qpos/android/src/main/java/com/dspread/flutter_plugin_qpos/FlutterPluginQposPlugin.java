@@ -129,6 +129,16 @@ public class FlutterPluginQposPlugin implements FlutterPlugin, MethodCallHandler
         } else if (call.method.equals("getQposInfo")) {
             TRACE.d("getQposInfo");
             PosPluginHandler.getQposInfo();
+        }else if(call.method.equals("getICCTag")){
+            TRACE.d("getIccTag");
+            String EncryptType=call.argument("EncryptType");
+            String cardTypes = call.argument("cardType");
+            String tagCounts = call.argument("tagCount");
+            int  cardtype = Integer.parseInt(cardTypes);
+            int tagCount=Integer.parseInt(tagCounts);
+            String tagArrStr=call.argument("tagArrStr");
+            String getIccTag=PosPluginHandler.getICCTag(EncryptType,cardtype,tagCount,tagArrStr);
+            result.success(getIccTag);
         } else if (call.method.equals("getUpdateCheckValue")) {
             TRACE.d("getUpdateCheckValue");
             PosPluginHandler.getUpdateCheckValue();
