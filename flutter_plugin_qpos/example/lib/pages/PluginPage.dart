@@ -492,7 +492,7 @@ class _MyAppState extends State<PluginPage> {
     _flutterPluginQpos.doTrade(keyIndex);
   }
 
-  void parasListener(QPOSModel datas) {
+  Future<void> parasListener(QPOSModel datas) async {
     //Map map = new Map<String, dynamic>.from(json.decode(datas));
     // CustomerModel testModel = CustomerModel.fromJson(json.decode(datas));
     //String method = map["method"];
@@ -579,13 +579,16 @@ class _MyAppState extends State<PluginPage> {
 
         if (Utils.equals(paras[0], "NFC_ONLINE") || Utils.equals(paras[0], "NFC_OFFLINE")) {
           Future geticctag = _flutterPluginQpos.getICCTag("PLAINTEXT", 1, 1, "9F06");
-           String icctag = geticctag.toString();
-           print("icctag=="+icctag);
-
+           String icctag = await geticctag;
+           String tlv = "8A025931"+icctag;
+           print("tlv=="+tlv);
+          _flutterPluginQpos.sendNfcProcessResult(tlv);
 
           Future map = _flutterPluginQpos.getNFCBatchData().then((value) =>  setState(() {
             display = value.toString();
           }));
+
+          //
         }else if(Utils.equals(paras[0], "MCR")){
           setState(() {
             display = paras[1];

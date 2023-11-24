@@ -214,6 +214,10 @@ public class PosPluginHandler {
         mPos.selectEmvApp(position);
     }
 
+    public static void sendNfcProcessResult(String tlv){
+        mPos.sendNfcProcessResult(tlv);
+    }
+
     public static void sendOnlineProcessResult(String onlineProcessResult) {
         mPos.sendOnlineProcessResult(onlineProcessResult);
     }

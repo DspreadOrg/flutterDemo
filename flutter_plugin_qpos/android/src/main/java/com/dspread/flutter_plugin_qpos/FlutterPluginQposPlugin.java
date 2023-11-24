@@ -194,6 +194,9 @@ public class FlutterPluginQposPlugin implements FlutterPlugin, MethodCallHandler
         } else if (call.method.equals("getNFCBatchData")) {
             Hashtable<String, String> nfcBatchData = PosPluginHandler.getNFCBatchData();
             result.success(nfcBatchData);
+        }else if(call.method.equals("sendNfcProcessResult")){
+            String sendNfcProcessResult = call.argument("sendNfcProcessResult");
+            PosPluginHandler.sendNfcProcessResult(sendNfcProcessResult);
         } else if (call.method.equals("sendPin")) {
 
             String pinContent = call.argument("pinContent");

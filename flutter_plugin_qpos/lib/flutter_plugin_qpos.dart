@@ -214,10 +214,17 @@ class FlutterPluginQpos {
 
   }
 
+
   void sendOnlineProcessResult(String str)  async{
     Map<String, String> params = Map<String, String>();
     params['onlineProcessResult'] = str;
     await _methodChannel.invokeMethod('sendOnlineProcessResult',params);
+
+  }
+   void sendNfcProcessResult(String tlv)  async{
+    Map<String, String> params = Map<String, String>();
+    params['sendNfcProcessResult'] = tlv;
+    await _methodChannel.invokeMethod('sendNfcProcessResult',params);
 
   }
 
