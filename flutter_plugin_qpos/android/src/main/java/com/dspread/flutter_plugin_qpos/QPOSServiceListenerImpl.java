@@ -95,6 +95,20 @@ public class QPOSServiceListenerImpl extends CQPOSService   {
     }
 
     @Override
+    public void onRequestNFCBatchData(QPOSService.TransactionResult result, String tlv) {
+        super.onRequestNFCBatchData(result, tlv);
+        TRACE.d("onRequestNFCBatchData: " + tlv);
+        Map<String,String> map = new HashMap<String, String>();
+        map.put("method", "onRequestNFCBatchData");
+        StringBuffer parameters = new StringBuffer();
+        parameters.append(result.toString());
+        parameters.append("||");
+        parameters.append(tlv);
+        map.put("parameters", parameters.toString());
+        PosPluginHandler.mEvents.success(JSONObject.toJSONString(map));
+    }
+
+    @Override
     public void onRequestTransactionLog(String tlv) {
         TRACE.d("onRequestTransactionLog(String tlv):" + tlv);
         Map<String,String> map = new HashMap<String,String>();

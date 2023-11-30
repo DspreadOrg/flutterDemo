@@ -629,6 +629,9 @@ class _MyAppState extends State<PluginPage> {
       case 'onRequestBatchData':
         print("onRequestBatchData:"+parameters!);
         break;
+      case 'onRequestNFCBatchData':
+        print("onRequestNFCBatchData:"+parameters!);
+        break;
       case 'onReturnGetPinResult':
         break;
       case 'onReturniccCashBack':
