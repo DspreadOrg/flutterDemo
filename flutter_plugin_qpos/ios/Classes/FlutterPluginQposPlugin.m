@@ -239,6 +239,20 @@
       [self.mPos setDoTradeMode:[self convertDoTradeModeStrToEnum:doTradeMode]];
   }else if ([@"getUpdateProgress" isEqualToString:call.method]) {
       result([NSNumber numberWithInteger:[self.mPos getUpdateProgress]]);
+  }else if ([@"getICCTag" isEqualToString:call.method]) {
+      NSString *encryptType = [call.arguments objectForKey:@"EncryptType"];
+      NSInteger cardType = [[call.arguments objectForKey:@"cardType"] integerValue];
+      NSInteger tagCount = [[call.arguments objectForKey:@"tagCount"] integerValue];
+      NSString *tagArrStr = [call.arguments objectForKey:@"tagArrStr"];
+      EncryptType type = EncryptType_plaintext;
+      if([@"ENCRYPTED" isEqualToString:encryptType]){
+          type = EncryptType_encrypted;
+      }
+      NSDictionary *dict = [self.mPos getICCTag:type cardType:cardType tagCount:tagCount tagArrStr:tagArrStr];
+      result([dict objectForKey:@"tlv"]);
+  }else if ([@"sendNfcProcessResult" isEqualToString:call.method]) {
+      NSString *onlineResult = [call.arguments objectForKey:@"sendNfcProcessResult"];
+      [self.mPos sendNfcProcessResult:onlineResult];
   }else {
       result(FlutterMethodNotImplemented);
   }
@@ -582,38 +596,42 @@
     [self sendMessage:@"onRequestOnlineProcess" parameter: displayStr];
 }
 
--(void) onRequestTransactionResult: (TransactionResult)transactionResult{
+- (NSString *)convertTransactionResultToStr:(TransactionResult)transactionResult{
     NSString *messageTextView = @"";
     if (transactionResult==TransactionResult_APPROVED) {
-        messageTextView = @"Approved";
+        messageTextView = @"TransactionResult_APPROVED";
     }else if(transactionResult == TransactionResult_TERMINATED) {
-        messageTextView = @"Terminated";
+        messageTextView = @"TransactionResult_TERMINATED";
     } else if(transactionResult == TransactionResult_DECLINED) {
-        messageTextView = @"Declined";
+        messageTextView = @"TransactionResult_DECLINED";
     } else if(transactionResult == TransactionResult_CANCEL) {
-        messageTextView = @"Cancel";
+        messageTextView = @"TransactionResult_CANCEL";
     } else if(transactionResult == TransactionResult_CAPK_FAIL) {
-        messageTextView = @"CAPK fail";
+        messageTextView = @"TransactionResult_CAPK_FAIL";
     } else if(transactionResult == TransactionResult_NOT_ICC) {
-        messageTextView = @"Not ICC card";
+        messageTextView = @"TransactionResult_NOT_ICC";
     } else if(transactionResult == TransactionResult_SELECT_APP_FAIL) {
-        messageTextView = @"App fail";
+        messageTextView = @"TransactionResult_SELECT_APP_FAIL";
     } else if(transactionResult == TransactionResult_DEVICE_ERROR) {
-        messageTextView = @"Pos Error";
+        messageTextView = @"TransactionResult_DEVICE_ERROR";
     } else if(transactionResult == TransactionResult_CARD_NOT_SUPPORTED) {
-        messageTextView = @"Card not support";
+        messageTextView = @"TransactionResult_CARD_NOT_SUPPORTED";
     } else if(transactionResult == TransactionResult_MISSING_MANDATORY_DATA) {
-        messageTextView = @"Missing mandatory data";
+        messageTextView = @"TransactionResult_MISSING_MANDATORY_DATA";
     } else if(transactionResult == TransactionResult_CARD_BLOCKED_OR_NO_EMV_APPS) {
-        messageTextView = @"Card blocked or no EMV apps";
+        messageTextView = @"TransactionResult_CARD_BLOCKED_OR_NO_EMV_APPS";
     } else if(transactionResult == TransactionResult_INVALID_ICC_DATA) {
-        messageTextView = @"Invalid ICC data";
+        messageTextView = @"TransactionResult_INVALID_ICC_DATA";
     }else if(transactionResult == TransactionResult_NFC_TERMINATED) {
-        messageTextView = @"NFC Terminated";
+        messageTextView = @"TransactionResult_NFC_TERMINATED";
     }
+    return messageTextView;
+}
+
+-(void) onRequestTransactionResult: (TransactionResult)transactionResult{
     self.inputAmount = @"";
     self.cashbackAmount = @"";
-    [self sendMessage:@"onRequestTransactionResult" parameter:messageTextView];
+    [self sendMessage:@"onRequestTransactionResult" parameter:[self convertTransactionResultToStr:transactionResult]];
 }
 
 -(void) onRequestBatchData: (NSString*)tlv{
@@ -676,6 +694,11 @@
 
 - (void)onGetKeyCheckValue:(NSDictionary *)checkValueResult{
     [self sendMessage:@"onGetKeyCheckValue" parameter:@""];
+}
+
+- (void)onRequestNFCBatchData:(TransactionResult)transactionResult tlv:(NSString *)tlv{
+    NSString *parameter = [NSString stringWithFormat:@"%@||%@",[self convertTransactionResultToStr:transactionResult],tlv];
+    [self sendMessage:@"onRequestNFCBatchData" parameter:parameter];
 }
 
 -(void) onReturnGetPinResult:(NSDictionary*)decodeData{
