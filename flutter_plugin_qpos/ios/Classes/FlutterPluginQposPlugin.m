@@ -317,7 +317,7 @@
     aStr = [aStr stringByAppendingString:@"\n"];
     aStr = [aStr stringByAppendingString:temp];
     
-    [self sendMessage:@"onQposIdResult" parameter:aStr];
+    [self sendMessage:@"onQposIdResult" parameter:[self convertToJsonData:posId]];
 }
 
 -(void) onQposInfoResult: (NSDictionary*)posInfoData{
@@ -376,7 +376,7 @@
     aStr = [aStr stringByAppendingString:@"updateWorkKeyFlag: "];
     aStr = [aStr stringByAppendingString:posInfoData[@"updateWorkKeyFlag"]];
     NSString *posinfo = aStr;
-    [self sendMessage:@"onQposInfoResult" parameter:posinfo];
+    [self sendMessage:@"onQposInfoResult" parameter:[self convertToJsonData:posInfoData]];
 }
 
 -(void)scanBluetooth:(NSInteger)scanTime{
@@ -591,9 +591,9 @@
 
 -(void) onRequestOnlineProcess: (NSString*) tlv{
     //NSLog(@"onRequestOnlineProcess = %@",[[QPOSService sharedInstance] anlysEmvIccData:tlv]);
-    NSString *displayStr = [@"onRequestOnlineProcess: " stringByAppendingString:tlv];
+//    NSString *displayStr = [@"onRequestOnlineProcess: " stringByAppendingString:tlv];
     msgStr = @"Request data to server.";
-    [self sendMessage:@"onRequestOnlineProcess" parameter: displayStr];
+    [self sendMessage:@"onRequestOnlineProcess" parameter: tlv];
 }
 
 - (NSString *)convertTransactionResultToStr:(TransactionResult)transactionResult{
