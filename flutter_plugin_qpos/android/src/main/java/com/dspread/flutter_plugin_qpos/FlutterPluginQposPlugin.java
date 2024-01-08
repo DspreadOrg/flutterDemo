@@ -123,7 +123,10 @@ public class FlutterPluginQposPlugin implements FlutterPlugin, MethodCallHandler
         } else if (call.method.equals("disconnectBT")) {
             TRACE.d("disconnectBT");
             PosPluginHandler.close();
-        } else if (call.method.equals("getQposId")) {
+        } else if (call.method.equals("closeUart")) {
+            TRACE.d("closeUart");
+            PosPluginHandler.closeUart();
+        }else if (call.method.equals("getQposId")) {
             TRACE.d("getQposId");
             PosPluginHandler.getQposId();
         } else if (call.method.equals("getQposInfo")) {

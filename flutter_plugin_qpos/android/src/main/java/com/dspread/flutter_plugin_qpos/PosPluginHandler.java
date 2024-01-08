@@ -156,7 +156,14 @@ public class PosPluginHandler {
                 || mMode == QPOSService.CommunicationMode.USB_OTG_CDC_ACM.ordinal()) {
             mPos.closeUsb();
         }
+    }
 
+    public static void closeUart() {
+        if (mPos == null) {
+            return;
+        } else if (mMode == QPOSService.CommunicationMode.UART.ordinal()) {
+            mPos.closeUart();
+        }
     }
 
     public static void setCardTradeMode(String cardTradeMode) {

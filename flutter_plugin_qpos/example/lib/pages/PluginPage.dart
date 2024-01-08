@@ -409,6 +409,12 @@ class _MyAppState extends State<PluginPage> {
                 },
                 child: Text("open uart"),
               ),
+              ElevatedButton(
+                onPressed: () async {
+                  closeUart();
+                },
+                child: Text("close uart"),
+              ),
               buttonSection,
               textSection,
               ElevatedButton(onPressed:(){
@@ -892,6 +898,10 @@ class _MyAppState extends State<PluginPage> {
     _flutterPluginQpos.init(communicationMode[2]);
     _mAddress = "/dev/ttyS1";
     _flutterPluginQpos.openUart(_mAddress!);
+  }
+
+  void closeUart() {
+    _flutterPluginQpos.closeUart();
   }
 
   Widget _getListDate(BuildContext context, int position)  {

@@ -133,6 +133,10 @@ class FlutterPluginQpos {
     await _methodChannel.invokeMethod('disconnectBT');
   }
 
+  Future<void> closeUart() async{
+    await _methodChannel.invokeMethod('closeUart');
+  }
+
   void setCardTradeMode(CardTradeMode cardTradeMode){
     Map<String, String> params = Map<String, String>();
     params['cardTradeMode'] = cardTradeMode.toString().split(".")[1];
