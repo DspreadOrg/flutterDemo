@@ -158,14 +158,6 @@ public class PosPluginHandler {
         }
     }
 
-    public static void closeUart() {
-        if (mPos == null) {
-            return;
-        } else if (mMode == QPOSService.CommunicationMode.UART.ordinal()) {
-            mPos.closeUart();
-        }
-    }
-
     public static void setCardTradeMode(String cardTradeMode) {
         mPos.setCardTradeMode(QPOSService.CardTradeMode.valueOf(cardTradeMode));
     }
