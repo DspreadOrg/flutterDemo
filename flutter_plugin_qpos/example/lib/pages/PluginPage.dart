@@ -473,13 +473,11 @@ class _MyAppState extends State<PluginPage> {
   void searchNearByDevice() {}
 
   Future<void> connectToDevice(String item) async {
-    List<String> addrs = item.split("//");
-    _mAddress = addrs[1];
     setState(() {
       scanFinish = 0;
       items = null;
     });
-    await _flutterPluginQpos.connectBluetoothDevice(addrs[1]);
+    await _flutterPluginQpos.connectBluetoothDevice(item);
   }
 
   Future<void> disconnectToDevice() async {

@@ -104,8 +104,8 @@ class FlutterPluginQpos {
     return version;
   }
 
-    Future<void> connectBluetoothDevice(String addre) async{
-    await _methodChannel.invokeMethod('connectBluetoothDevice',{"bluetooth_addr" : addre});
+    Future<void> connectBluetoothDevice(String btName) async{
+    await _methodChannel.invokeMethod('connectBluetoothDevice',{"bluetooth_name" : btName});
   }
 
   Future<void> getQposId() async {

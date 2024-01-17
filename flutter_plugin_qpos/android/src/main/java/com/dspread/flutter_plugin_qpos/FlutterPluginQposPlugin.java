@@ -118,8 +118,8 @@ public class FlutterPluginQposPlugin implements FlutterPlugin, MethodCallHandler
         } else if (call.method.equals("connectBluetoothDevice")) {
             TRACE.d("connectBluetoothDevice");
 //            checkBluePermision();
-            String address = call.argument("bluetooth_addr");
-            PosPluginHandler.connectBluetoothDevice(true, 25, address);
+            String bluetooth_name = call.argument("bluetooth_name");
+            PosPluginHandler.connectBluetoothDevice(true, 25, bluetooth_name);
         } else if (call.method.equals("disconnectBT")) {
             TRACE.d("disconnectBT");
             PosPluginHandler.close();

@@ -39,7 +39,7 @@
   }else if ([@"initPos" isEqualToString:call.method]) {
       [self initPos];
   } else if ([@"connectBluetoothDevice" isEqualToString:call.method]) {
-      NSString *bluetoothName = [call.arguments objectForKey:@"bluetooth_addr"];
+      NSString *bluetoothName = [call.arguments objectForKey:@"bluetooth_name"];
       self.bluetoothAddress = bluetoothName;
       [self.mPos connectBT:bluetoothName];
   } else if ([@"getQposId" isEqualToString:call.method]) {
@@ -403,7 +403,7 @@
     if (bluetoothName != nil && ![bluetoothName isEqualToString:@""]) {
         if (![allBluetooth containsObject:bluetoothName]) {
             [allBluetooth addObject:bluetoothName];
-            NSString *temp = [NSString stringWithFormat:@"%@//%@",bluetoothName,bluetoothName];
+            NSString *temp = [NSString stringWithFormat:@"%@",bluetoothName];
             [self sendMessage:@"onDeviceFound" parameter:temp];
         }
     }

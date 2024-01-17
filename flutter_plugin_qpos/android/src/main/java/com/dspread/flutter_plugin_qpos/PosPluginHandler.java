@@ -1,5 +1,6 @@
 package com.dspread.flutter_plugin_qpos;
 
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -66,6 +67,7 @@ public class PosPluginHandler {
         Handler handler = new Handler(Looper.myLooper());
         listener = new QPOSServiceListenerImpl();
         mPos.initListener(handler, listener);
+        listener.deviceList.clear();
     }
 
     public static void getPosSdkVersion(Result result) {
@@ -121,7 +123,11 @@ public class PosPluginHandler {
 
     }
 
-    public static void connectBluetoothDevice(boolean auto, int time, String blueTootchAddress) {
+    public static void connectBluetoothDevice(boolean auto, int time, String blueTootchName) {
+        String blueTootchAddress = listener.deviceList.get(blueTootchName);
+        if (blueTootchAddress == null){
+            return;
+        }
         mPos.connectBluetoothDevice(auto, time, blueTootchAddress);
     }
 
