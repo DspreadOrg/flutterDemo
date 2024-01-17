@@ -115,29 +115,28 @@ class _MyAppState extends State<PluginPage> {
     Widget buttonSection = new Container(
       child: new Row(
         children: [
-
-          ElevatedButton(
-            onPressed: () async {
-              setState(() {
-                scanFinish = -1;
-                items = null;
-              });
-              selectDevice();
-            },
-            child: Text("select device"),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              startDoTrade();
-            },
-            child: Text("start do trade"),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              disconnectToDevice();
-            },
-            child: Text("disconnect"),
-          )
+          Expanded(
+            child:ElevatedButton(
+              onPressed: () async {
+                setState(() {
+                  scanFinish = -1;
+                  items = null;
+                });
+                selectDevice();
+              },
+              child: Text("select device"))),
+          Expanded(
+            child:ElevatedButton(
+              onPressed: () async {
+                startDoTrade();
+              },
+              child: Text("start do trade"))),
+          Expanded(
+            child:ElevatedButton(
+              onPressed: () async {
+                disconnectToDevice();
+              },
+              child: Text("disconnect")))
         ],
       ),
     );
