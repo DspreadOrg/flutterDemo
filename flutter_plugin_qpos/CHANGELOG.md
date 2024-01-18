@@ -1,4 +1,3 @@
-## 0.2.0
+## 0.2.1
 
-* 1. add api sendNfcProcessResult(), callback onRequestNFCBatchData()
-* 2. update SDK version to 4.5.3
+* 1. Unify the parameters passed by Bluetooth connections for Android and iOS
