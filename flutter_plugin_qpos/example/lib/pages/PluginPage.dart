@@ -208,8 +208,12 @@ class _MyAppState extends State<PluginPage> {
               value: "3",
             ),
             PopupMenuItem(
-              child: Text("reset Pos"),
+              child: Text("get Device Public key"),
               value: "4",
+            ),
+            PopupMenuItem(
+              child: Text("reset Pos"),
+              value: "5",
             )
           ]);
     }
@@ -549,7 +553,7 @@ class _MyAppState extends State<PluginPage> {
         setState(() {
           display = "Please input pin on your app";
         });
-        _flutterPluginQpos.sendPin("1111");
+        _flutterPluginQpos.sendPin(Uint8List.fromList(utf8.encode("1111")));
         break;
       case 'onQposRequestPinResult':
         _showKeyboard(context,parameters!);
@@ -585,7 +589,7 @@ class _MyAppState extends State<PluginPage> {
            String icctag = await geticctag;
            String tlv = "8A025931"+icctag;
            print("tlv=="+tlv);
-          _flutterPluginQpos.sendNfcProcessResult(tlv);
+          // _flutterPluginQpos.sendNfcProcessResult(tlv);
 
           Future map = _flutterPluginQpos.getNFCBatchData().then((value) =>  setState(() {
             display = value.toString();
@@ -825,6 +829,10 @@ class _MyAppState extends State<PluginPage> {
       case 'onQposDoGetTradeLogNum':
         break;
       case 'onGetDevicePubKey':
+        print(parameters);
+        setState(() {
+          display = parameters!;
+        });
         break;
       case 'onReturnGetQuickEmvResult':
         break;
@@ -1067,6 +1075,10 @@ class _MyAppState extends State<PluginPage> {
 
         break;
       case "4":
+        _flutterPluginQpos.getDevicePublicKey(5);
+
+        break;
+      case "5":
         _flutterPluginQpos.resetQPosStatus().then((value) =>  setState(() {
           if(value!){
             setState(() {
