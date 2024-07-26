@@ -7,7 +7,9 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_plugin_qpos/flutter_plugin_qpos.dart';
+// import 'package:flutter_plugin_qpos_spoc/flutter_plugin_qpos_spoc.dart';
 import 'package:flutter_plugin_qpos/QPOSModel.dart';
+// import 'package:flutter_plugin_qpos_spoc/QPOSModel.dart';
 import 'package:flutter_plugin_qpos_example/keyboard/view_keyboard.dart';
 import 'package:flutter_plugin_qpos_example/pages/SecondPage.dart';
 
@@ -494,7 +496,7 @@ class _MyAppState extends State<PluginPage> {
     int keyIndex = 0;
     // params['keyIndex'] = 0;
     _flutterPluginQpos.setFormatId(FormatID.DUKPT);
-    // _flutterPluginQpos.setCardTradeMode(CardTradeMode.SWIPE_TAP_INSERT_CARD);
+    _flutterPluginQpos.setCardTradeMode(CardTradeMode.SWIPE_TAP_INSERT_CARD_NOTUP);
     // _flutterPluginQpos.setDoTradeMode(DoTradeMode.COMMON);
     _flutterPluginQpos.doTrade(keyIndex);
   }
@@ -830,6 +832,13 @@ class _MyAppState extends State<PluginPage> {
         break;
       case 'onGetDevicePubKey':
         print(parameters);
+        String m = paras[0];
+        String n = paras[1];
+        int mIndex = m.indexOf(":");
+        m = m.substring(mIndex+1,m.length);
+        int nIndex = n.indexOf(":");
+        n = n.substring(nIndex+1,n.length);
+        print("m:"+m+"\nn:"+n);
         setState(() {
           display = parameters!;
         });
