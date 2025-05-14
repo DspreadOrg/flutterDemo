@@ -92,23 +92,7 @@ class _MyAppState extends State<PluginPage> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
-    String platformVersion;
 
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      platformVersion = (await _flutterPluginQpos.posSdkVersion)!;
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _platformVersion = platformVersion;
-    });
   }
 
   @override
@@ -698,10 +682,28 @@ class _MyAppState extends State<PluginPage> {
       case 'onLcdShowCustomDisplay':
         break;
       case 'onRequestQposConnected':
+        String platformVersion;
+
+        // Platform messages may fail, so we use a try/catch PlatformException.
+        try {
+          platformVersion = (await _flutterPluginQpos.posSdkVersion)!;
+        } on PlatformException {
+          platformVersion = 'Failed to get platform version.';
+        }
+
+        // If the widget was removed from the tree while the asynchronous platform
+        // message was in flight, we want to discard the reply rather than calling
+        // setState to update our non-existent appearance.
+        if (!mounted) return;
+
         setState(() {
-                display = "device connected!";
-                // Navigator.push(context, MaterialPageRoute(builder: (context)=>SecondPage(_flutterPluginQpos)));
-            });
+          _platformVersion = platformVersion;
+          display = "device connected!";
+
+        });
+        // setState(() {
+        //         // Navigator.push(context, MaterialPageRoute(builder: (context)=>SecondPage(_flutterPluginQpos)));
+        //     });
         break;
       case 'onUpdatePosFirmwareResult':
         concelFlag = true;
