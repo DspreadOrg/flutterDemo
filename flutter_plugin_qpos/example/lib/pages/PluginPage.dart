@@ -471,6 +471,7 @@ class _MyAppState extends State<PluginPage> {
   }
 
   Future<void> disconnectToDevice() async {
+    await Future.delayed(const Duration(seconds: 1)); // Delay 1 second
     await _flutterPluginQpos.disconnectBT();
   }
 
