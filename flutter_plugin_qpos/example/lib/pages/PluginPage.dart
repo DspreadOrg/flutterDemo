@@ -481,6 +481,7 @@ class _MyAppState extends State<PluginPage> {
     int keyIndex = 0;
     // params['keyIndex'] = 0;
     _flutterPluginQpos.setFormatId(FormatID.DUKPT);
+    // _flutterPluginQpos.setFormatId("0002");
     _flutterPluginQpos.setCardTradeMode(CardTradeMode.SWIPE_TAP_INSERT_CARD_NOTUP);
     // _flutterPluginQpos.setDoTradeMode(DoTradeMode.COMMON);
     _flutterPluginQpos.doTrade(keyIndex);
