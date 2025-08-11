@@ -1,0 +1,45 @@
+name: Build Flutter APK
+
+on:
+  push:
+    branches:
+      - test
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.13.0'
+
+      - name: Disable analytics
+        run: flutter config --no-analytics
+
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: flutter_plugin_qpos
+
+      - name: Analyze
+        run: flutter analyze
+        working-directory: flutter_plugin_qpos
+
+      - name: Run tests
+        run: flutter test
+        working-directory: flutter_plugin_qpos
+
+      - name: Build APK
+        run: flutter build apk --release
+        working-directory: flutter_plugin_qpos
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-apk
+          path: flutter_plugin_qpos/build/app/outputs/flutter-apk/app-release.apk
