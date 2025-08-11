@@ -1,4 +1,4 @@
-name: Build Flutter APK
+name: Build and Release Flutter APK
 
 on:
   push:
@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # 允许 GITHUB_TOKEN 发布 release
 
     steps:
       - name: Checkout source
@@ -22,21 +24,70 @@ jobs:
       - name: Disable analytics
         run: flutter config --no-analytics
 
+      # 解码 keystore
+      - name: Decode keystore from secret
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > flutter_plugin_qpos/example/android/app/app.keystore
+
+      # 创建 key.properties 文件
+      - name: Create key.properties
+        run: |
+          cat > flutter_plugin_qpos/example/android/key.properties <<EOF
+          storePassword=${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword=${{ secrets.KEY_PASSWORD }}
+          keyAlias=${{ secrets.KEY_ALIAS }}
+          storeFile=app.keystore
+          EOF
+
+      # 安装依赖
       - name: Install dependencies
         run: flutter pub get
-        working-directory: flutter_plugin_qpos
+        working-directory: flutter_plugin_qpos/example
 
+      # 分析插件本体
       - name: Analyze (non-fatal)
         run: flutter analyze || true
         working-directory: flutter_plugin_qpos
 
-      - name: Build APK
+      # 构建 APK（已签名）
+      - name: Build signed APK
         run: flutter build apk --release
         working-directory: flutter_plugin_qpos/example
 
+      # 自动生成 TAG（递增规则 0.0.1 -> 0.0.2 ... -> 0.1.0）
+      - name: Determine next tag
+        id: tag
+        run: |
+          latest_tag=$(git tag --sort=-v:refname | head -n 1)
+          if [[ -z "$latest_tag" ]]; then
+            next_tag="0.0.1"
+          else
+            IFS='.' read -r major minor patch <<<"${latest_tag}"
+            if [[ $patch -lt 9 ]]; then
+              patch=$((patch+1))
+            else
+              patch=0
+              minor=$((minor+1))
+            fi
+            next_tag="${major}.${minor}.${patch}"
+          fi
+          echo "Next tag: $next_tag"
+          echo "tag=$next_tag" >> $GITHUB_OUTPUT
 
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
+      # 创建 Git Tag（必要）
+      - name: Create Git tag
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git tag ${{ steps.tag.outputs.tag }}
+          git push origin ${{ steps.tag.outputs.tag }}
+
+      # 创建 GitHub Release 并上传 APK
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: flutter-apk
-          path: flutter_plugin_qpos/example/build/app/outputs/flutter-apk/app-release.apk
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: Release ${{ steps.tag.outputs.tag }}
+          files: flutter_plugin_qpos/example/build/app/outputs/flutter-apk/app-release.apk
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
