@@ -32,10 +32,11 @@ jobs:
 
       - name: Build APK
         run: flutter build apk --release
-        working-directory: flutter_plugin_qpos
+        working-directory: flutter_plugin_qpos/example
+
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: flutter-apk
-          path: flutter_plugin_qpos/build/app/outputs/flutter-apk/app-release.apk
+          path: flutter_plugin_qpos/example/build/app/outputs/flutter-apk/app-release.apk
