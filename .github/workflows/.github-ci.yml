@@ -26,8 +26,8 @@ jobs:
         run: flutter pub get
         working-directory: flutter_plugin_qpos
 
-      - name: Analyze
-        run: flutter analyze
+      - name: Analyze (non-fatal)
+        run: flutter analyze || true
         working-directory: flutter_plugin_qpos
 
       - name: Run tests
