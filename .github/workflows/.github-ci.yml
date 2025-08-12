@@ -60,7 +60,7 @@ jobs:
         run: |
           latest_tag=$(git tag --sort=-v:refname | head -n 1)
           if [[ -z "$latest_tag" ]]; then
-            next_tag="0.0.1"
+            next_tag="0.0.2"
           else
             IFS='.' read -r major minor patch <<<"${latest_tag}"
             if [[ $patch -lt 9 ]]; then
