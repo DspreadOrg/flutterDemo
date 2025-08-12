@@ -60,7 +60,7 @@ jobs:
         run: |
          # 获取远程 tag 列表
           git fetch --tags
-          latest_tag=$(git tag --sort=-v:refname | head -n 1)
+          latest_tag=$(git tag | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n 1)
           if [[ -z "$latest_tag" ]]; then
             next_tag="0.0.1"
           else
