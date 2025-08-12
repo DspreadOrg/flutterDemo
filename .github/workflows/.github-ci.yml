@@ -58,9 +58,11 @@ jobs:
       - name: Determine next tag
         id: tag
         run: |
+         # 获取远程 tag 列表
+          git fetch --tags
           latest_tag=$(git tag --sort=-v:refname | head -n 1)
           if [[ -z "$latest_tag" ]]; then
-            next_tag="0.0.2"
+            next_tag="0.0.1"
           else
             IFS='.' read -r major minor patch <<<"${latest_tag}"
             if [[ $patch -lt 9 ]]; then
