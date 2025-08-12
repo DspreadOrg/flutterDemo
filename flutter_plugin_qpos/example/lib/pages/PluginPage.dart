@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
 import 'dart:typed_data';
@@ -7,9 +8,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_plugin_qpos/flutter_plugin_qpos.dart';
-// import 'package:flutter_plugin_qpos_spoc/flutter_plugin_qpos_spoc.dart';
 import 'package:flutter_plugin_qpos/QPOSModel.dart';
-// import 'package:flutter_plugin_qpos_spoc/QPOSModel.dart';
 import 'package:flutter_plugin_qpos_example/keyboard/view_keyboard.dart';
 import 'package:flutter_plugin_qpos_example/pages/SecondPage.dart';
 
@@ -20,7 +19,7 @@ import '../Utils.dart';
 import '../LogUtil.dart';
 //import 'package:permission_handler/permission_handler.dart';
 //
-import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sn_progress_dialog/sn_progress_dialog.dart';
 
 class PluginPage extends StatefulWidget {
@@ -47,6 +46,7 @@ final communicationMode = const [
 
 
 class _MyAppState extends State<PluginPage> {
+  BuildContext? _keyboardContext;
   FlutterPluginQpos _flutterPluginQpos = FlutterPluginQpos();
   String _platformVersion = 'Unknown';
   String display = "";
@@ -74,11 +74,11 @@ class _MyAppState extends State<PluginPage> {
     initPlatformState();
     _subscription =
         _flutterPluginQpos.onPosListenerCalled!.listen((QPOSModel datas) {
-      parasListener(datas);
-      setState(() {
-        trasactionData = datas;
-      });
-    });
+          parasListener(datas);
+          setState(() {
+            trasactionData = datas;
+          });
+        });
   }
 
   @override
@@ -88,6 +88,9 @@ class _MyAppState extends State<PluginPage> {
     if (_subscription != null) {
       _subscription!.cancel();
     }
+    _mifareBlockAddrTxt.dispose();
+    _mifareValueTxt.dispose();
+    items = null;
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -102,27 +105,27 @@ class _MyAppState extends State<PluginPage> {
       child: new Row(
         children: [
           Expanded(
-            child:ElevatedButton(
-              onPressed: () async {
-                setState(() {
-                  scanFinish = -1;
-                  items = null;
-                });
-                selectDevice();
-              },
-              child: Text("select device"))),
+              child:ElevatedButton(
+                  onPressed: () async {
+                    setState(() {
+                      scanFinish = -1;
+                      items = null;
+                    });
+                    selectDevice();
+                  },
+                  child: Text("select device"))),
           Expanded(
-            child:ElevatedButton(
-              onPressed: () async {
-                startDoTrade();
-              },
-              child: Text("start do trade"))),
+              child:ElevatedButton(
+                  onPressed: () async {
+                    startDoTrade();
+                  },
+                  child: Text("start do trade"))),
           Expanded(
-            child:ElevatedButton(
-              onPressed: () async {
-                disconnectToDevice();
-              },
-              child: Text("disconnect")))
+              child:ElevatedButton(
+                  onPressed: () async {
+                    disconnectToDevice();
+                  },
+                  child: Text("disconnect")))
         ],
       ),
     );
@@ -248,7 +251,7 @@ class _MyAppState extends State<PluginPage> {
       else if(type == 2) pop = popMenuInfo();
       else if(type == 3) pop = popMenuOperateMifare();
       showMenu<String>(
-          context: context,
+        context: context,
         items: pop.itemBuilder(context) as List<PopupMenuEntry<String>>,
         position: position,   ).then<void>((String? newValue) {
         if (!mounted) return null;
@@ -277,103 +280,103 @@ class _MyAppState extends State<PluginPage> {
     );
 
     Widget mifareSection = new Offstage(
-          offstage: offstage,
-          child: new Container(
-            child: new Column(
+      offstage: offstage,
+      child: new Container(
+        child: new Column(
+          children: [
+            Row(
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                        child: ElevatedButton(
-                            onPressed: () {
-                              _flutterPluginQpos.pollOnMifareCard(10);
-                            },
-                            child: Text('pollOnMifare'))),
-                    Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            //MifareCardOperationType should be "CLASSIC" or "UlTRALIGHT"
-                            //keyType should be "Key A" or "Key B"
-                            var blockAddress = _mifareBlockAddrTxt.text;
-                            print("address:"+blockAddress);
-                            if(blockAddress.length == 0) blockAddress = "0A";
-                            _flutterPluginQpos.authenticateMifareCard("CLASSIC", "Key A", blockAddress, "ffffffffffff", 20);
+                Expanded(
+                    child: ElevatedButton(
+                        onPressed: () {
+                          _flutterPluginQpos.pollOnMifareCard(10);
+                        },
+                        child: Text('pollOnMifare'))),
+                Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        //MifareCardOperationType should be "CLASSIC" or "UlTRALIGHT"
+                        //keyType should be "Key A" or "Key B"
+                        var blockAddress = _mifareBlockAddrTxt.text;
+                        print("address:"+blockAddress);
+                        if(blockAddress.length == 0) blockAddress = "0A";
+                        _flutterPluginQpos.authenticateMifareCard("CLASSIC", "Key A", blockAddress, "ffffffffffff", 20);
 
-                          },
-                          child: Text('authenticateMifare'),
-                        )),
-                    Expanded(
-                        child: ElevatedButton(
-                            onPressed: () {
-                              // _flutterPluginQpos.operateMifareCardData("CLASSIC", "Key A", "0A", "ffffffffffff", 20);
-                              _showMenu(3);
-                            },
-                            child: Text('operateMifareData')))
-                  ],
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                        child: ElevatedButton(
-                            onPressed: () {
-                              var blockAddress = _mifareBlockAddrTxt.text;
-                              print("address:"+blockAddress);
-                              if(blockAddress.length == 0) blockAddress = "0A";
-                              _flutterPluginQpos.readMifareCard("CLASSIC", blockAddress, 20);
-                            },
-                            child: Text('readMifare'))),
-                    Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            var blockAddress = _mifareBlockAddrTxt.text;
-                            var value = _mifareValueTxt.text;
-                            print("address:"+blockAddress+" value:"+value);
-                            if(blockAddress.length == 0) blockAddress = "0A";
-                            if(value.length == 0) value = "0002";
-                            _flutterPluginQpos.setIsOperateMifare(false);//set false so the int value won't be conver to Hex
-                            _flutterPluginQpos.writeMifareCard("CLASSIC", blockAddress, value,20);
-                          },
-                          child: Text('writeMifare'),
-                        )),
-                    Expanded(
-                        child: ElevatedButton(
-                            onPressed: () {
-                              _flutterPluginQpos.finishMifareCard(10);
-                            },
-                            child: Text('finishMifare')))
-                  ],
-                ),
-                Row(
-                  children:[
-                    Expanded(
-                      child: new TextField(
-                          controller: _mifareBlockAddrTxt,//把 TextEditingController 对象应用到 TextField 上
-                          keyboardType: TextInputType.text,
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.all(10.0),
-                            labelText: 'mifare block address',
-                            border: OutlineInputBorder(),
-                          ),
-                      )),
-                    Expanded(
-                        child: new TextField(
-                          controller: _mifareValueTxt,//把 TextEditingController 对象应用到 TextField 上
-                          keyboardType: TextInputType.text,
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.all(10.0),
-                            labelText: 'write or operate value',
-                            border: OutlineInputBorder(),
-                          ),
-                        )),
-                  ],
-                )
+                      },
+                      child: Text('authenticateMifare'),
+                    )),
+                Expanded(
+                    child: ElevatedButton(
+                        onPressed: () {
+                          // _flutterPluginQpos.operateMifareCardData("CLASSIC", "Key A", "0A", "ffffffffffff", 20);
+                          _showMenu(3);
+                        },
+                        child: Text('operateMifareData')))
               ],
             ),
+            Row(
+              children: [
+                Expanded(
+                    child: ElevatedButton(
+                        onPressed: () {
+                          var blockAddress = _mifareBlockAddrTxt.text;
+                          print("address:"+blockAddress);
+                          if(blockAddress.length == 0) blockAddress = "0A";
+                          _flutterPluginQpos.readMifareCard("CLASSIC", blockAddress, 20);
+                        },
+                        child: Text('readMifare'))),
+                Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        var blockAddress = _mifareBlockAddrTxt.text;
+                        var value = _mifareValueTxt.text;
+                        print("address:"+blockAddress+" value:"+value);
+                        if(blockAddress.length == 0) blockAddress = "0A";
+                        if(value.length == 0) value = "0002";
+                        _flutterPluginQpos.setIsOperateMifare(false);//set false so the int value won't be conver to Hex
+                        _flutterPluginQpos.writeMifareCard("CLASSIC", blockAddress, value,20);
+                      },
+                      child: Text('writeMifare'),
+                    )),
+                Expanded(
+                    child: ElevatedButton(
+                        onPressed: () {
+                          _flutterPluginQpos.finishMifareCard(10);
+                        },
+                        child: Text('finishMifare')))
+              ],
+            ),
+            Row(
+              children:[
+                Expanded(
+                    child: new TextField(
+                      controller: _mifareBlockAddrTxt,//把 TextEditingController 对象应用到 TextField 上
+                      keyboardType: TextInputType.text,
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.all(10.0),
+                        labelText: 'mifare block address',
+                        border: OutlineInputBorder(),
+                      ),
+                    )),
+                Expanded(
+                    child: new TextField(
+                      controller: _mifareValueTxt,//把 TextEditingController 对象应用到 TextField 上
+                      keyboardType: TextInputType.text,
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.all(10.0),
+                        labelText: 'write or operate value',
+                        border: OutlineInputBorder(),
+                      ),
+                    )),
+              ],
+            )
+          ],
+        ),
 
-          ),
+      ),
 
 
-        );
+    );
 
     Widget textResultSection = new Container(
       child: new Column(
@@ -419,7 +422,7 @@ class _MyAppState extends State<PluginPage> {
                   child: Text("device info button")
               ),
               ElevatedButton(onPressed:(){
-                 setState(() {
+                setState(() {
                   offstage = !offstage;
                 });
 
@@ -471,7 +474,6 @@ class _MyAppState extends State<PluginPage> {
   }
 
   Future<void> disconnectToDevice() async {
-    await Future.delayed(const Duration(seconds: 1)); // Delay 1 second
     await _flutterPluginQpos.disconnectBT();
   }
 
@@ -544,7 +546,8 @@ class _MyAppState extends State<PluginPage> {
         _flutterPluginQpos.sendPin(Uint8List.fromList(utf8.encode("1111")));
         break;
       case 'onQposRequestPinResult':
-        _showKeyboard(context,parameters!);
+        List? keyList = datas.keyList;
+        _showKeyboard(context,keyList!,parameters!);
         break;
       case 'onGetPosComm':
         break;
@@ -574,10 +577,10 @@ class _MyAppState extends State<PluginPage> {
 
         if (Utils.equals(paras[0], "NFC_ONLINE") || Utils.equals(paras[0], "NFC_OFFLINE")) {
           Future geticctag = _flutterPluginQpos.getICCTag("PLAINTEXT", 1, 1, "9F06");
-           String icctag = await geticctag;
-           String tlv = "8A025931"+icctag;
-           print("tlv=="+tlv);
-          // _flutterPluginQpos.sendNfcProcessResult(tlv);
+          String icctag = await geticctag;
+          String tlv = "8A025931"+icctag;
+          print("tlv=="+tlv);
+          _flutterPluginQpos.sendNfcProcessResult(tlv);
 
           Future map = _flutterPluginQpos.getNFCBatchData().then((value) =>  setState(() {
             display = value.toString();
@@ -642,6 +645,7 @@ class _MyAppState extends State<PluginPage> {
       case 'onRequestQposDisconnected':
         setState(() {
           display = "device disconnected!";
+
         });
         break;
       case 'onReturnPowerOnIccResult':
@@ -777,7 +781,7 @@ class _MyAppState extends State<PluginPage> {
         break;
       case 'onRequestSetAmount':
 
-        // _flutterPluginQpos.setAmountIcon(AmountType.MONEY_TYPE_CUSTOM_STR, "Y");
+      // _flutterPluginQpos.setAmountIcon(AmountType.MONEY_TYPE_CUSTOM_STR, "Y");
 
         Map<String, String> params = Map<String, String>();
 
@@ -806,6 +810,11 @@ class _MyAppState extends State<PluginPage> {
       case 'onRequestIsServerConnected':
         break;
       case 'onRequestNoQposDetected':
+        setState(() {
+          scanFinish = 1;
+          display = "onRequestNoQposDetected :\n"+parameters!;
+        });
+
         break;
       case 'onRequestOnlineProcess':
         tlvData = parameters!;
@@ -889,6 +898,9 @@ class _MyAppState extends State<PluginPage> {
         });
         break;
       case 'onGetKeyCheckValue':
+        setState(() {
+          display = parameters!;
+        });
         break;
       case 'bluetoothIsPowerOff2Mode':
         print("bluetoothIsPowerOff2Mode");
@@ -899,6 +911,10 @@ class _MyAppState extends State<PluginPage> {
       case 'onReturnGetPinInputResult':
         setState(() {
           numPinField = int.parse(parameters!);
+          if (numPinField == -1 && _keyboardContext != null) {
+            Navigator.pop(_keyboardContext!);
+            _keyboardContext = null;
+          }
         });
         break;
       default:
@@ -926,7 +942,7 @@ class _MyAppState extends State<PluginPage> {
     if (items != null) {
       return new TextButton(
           onPressed: () => connectToDevice(items![position]),
-          child: new Text("text ${items![position]}"));
+          child: new Text("${items![position]}"));
     }else{
       return new TextButton(
           onPressed: () => connectToDevice(items![position]),
@@ -1049,6 +1065,8 @@ class _MyAppState extends State<PluginPage> {
             "1A4D672DCA6CB3351FD1B02B237AF9AE", "08D7B4FB629D0885",
             "1A4D672DCA6CB3351FD1B02B237AF9AE", "08D7B4FB629D0885",
             0);
+        // String envelop = "0002008100ADD4CB0594E12A818CD14401F91F2C5130D3AE3EEC5324BF2C48F4F3415ACBAB36DE9DB3128A3885D5C9EB780281496DE272193A73FB1E779E2BC611A86E839A32C5994CCF0F6F53AC2681EA8414F255B0A60D61CB30A4D86D17621B58F1E9F0FEFC44B928A7AE3B0C9F284A2E8FFF3BD10E17CB07FF109CE96D9AC22A5A45BC8A44253AD8C1AF431ED67114573CDAED22D6F4A4ED2655105E6B5D31304C9F1500CC1588948E21FD01806B88C4203E8805386F1FC478CAA3BADCBE2D3A83A338368AB571750722F6852C6DAB4A9BF94C93666654D7A3C78D07F189FA33808385D18A843E8EC72453F7E84E6DA9F35A2D6C2FBF5D2873EE972B991B4354071CB052808C637585868A0EB5B63462603C544852703C67C0AE5C0A1365C892C6D738FB1FDF2AB706C0AB19D4CF0361849104ED73AB69FCDDC51A8F3405F62FF8065A3B5FE73883759A05A94AA914046AA8E8F8445E4E9C3A4AACB448D9006C51BDC54C02E6DE1C4BB97D1ACF9438AB5272217129323638ECB8772AEFAD7B8689881395FE7451E29683769E910C04B99805A7974AE949F282A61358A010090E4C2298FD1F0CD2E81449DC81E572DF39A01EAEE90FF8079C1F077CA04B9DDDCA99B34C53B5898B116F4697451A3104EAAE8721CE6A9C39F73F781B2800C676E3BB43B2B8A5EF9DA82D572315F4C9A3BAC882B213C476BF414241E05D1BA1D9E21EB3FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF";
+        //   _flutterPluginQpos.updateWorkKeyByDigEnvelop(envelop);
         break;
       case "5":
         DefaultAssetBundle.of(context).loadString('configs/emv_profile_tlv.xml',cache:false).then((value) {
@@ -1100,9 +1118,9 @@ class _MyAppState extends State<PluginPage> {
             });
           }
         }));
-        // bool a = _flutterPluginQpos.resetPosStatus() as bool;
-        // if(a) {
-        // }
+    // bool a = _flutterPluginQpos.resetPosStatus() as bool;
+    // if(a) {
+    // }
     }
   }
 
@@ -1128,18 +1146,23 @@ class _MyAppState extends State<PluginPage> {
     if(value.length == 0) value = "01";
     _flutterPluginQpos.operateMifareCardData(mifareCardOperationType, blockAddress, value, 20);
   }
-  void _showKeyboard(BuildContext context, String parameters) {
-    print("_showKeyboard:"+parameters);
+  void _showKeyboard(BuildContext context, List keyList, String parameters) {
+    print("_showKeyboard:"+keyList.toString()+" "+parameters);
 
     List<String> keyBoardList = new List.empty(growable: true);
-    var paras = parameters.split("||");
-    String keyMap = paras[0];
+    for(int i = 0; i<keyList.length;i++){
+      print("POS"+keyList[i]);
 
-    for(int i = 0; i< keyMap.length;i+=2 ){
-      String keyValue = keyMap.substring(i,i+2);
-      print("POS"+keyValue);
-      keyBoardList.add(int.parse(keyValue,radix: 16).toString());
+      keyBoardList.add(int.parse(keyList[i],radix: 16).toString());
     }
+    // var paras = parameters.split("||");
+    // String keyMap = paras[0];
+
+    // for(int i = 0; i< keyMap.length;i+=2 ){
+    //   String keyValue = keyMap.substring(i,i+2);
+    //   print("POS"+keyValue);
+    //   keyBoardList.add(int.parse(keyValue,radix: 16).toString());
+    // }
 
     for(int i=0;i<keyBoardList.length;i++){
       if(keyBoardList[i] == "13"){
@@ -1157,16 +1180,18 @@ class _MyAppState extends State<PluginPage> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (builder) {
+        _keyboardContext = builder;
         return CustomKeyboard(
           pwdField: numPinField,
           initEvent: (value) {
             print("pinMapSync:"+value);
-             _flutterPluginQpos.pinMapSync(value);
+            _flutterPluginQpos.pinMapSync(value);
           },
           callback: (keyEvent) {
             if (keyEvent.isClose()) {
               print("POS keyEvent.isClose()");
               Navigator.pop(context);
+              _keyboardContext = null;
             }
           },
           keyList: keyBoardList,
@@ -1184,153 +1209,49 @@ class _MyAppState extends State<PluginPage> {
 
 }
 
-  Future simpleDialog(BuildContext context)async{
-    print("simpleDialog");
-    var result=await showDialog(context: context,
-        builder:(context){
-          return SimpleDialog(
-            title: Text("Transcation Type"),
-            children: <Widget>[
-              SimpleDialogOption(
-                child: Text("GOODS"),
-                onPressed: (){
-                  print("GOODS");
-                  Navigator.pop(context,"GOODS");
+// 使用ListView.builder懒加载对话框选项，减少内存占用
+Future simpleDialog(BuildContext context)async{
+  print("simpleDialog");
+  final transactionTypes = [
+    "GOODS", "SERVICES", "CASH", "CASHBACK", "INQUIRY",
+    "TRANSFER", "ADMIN", "CASHDEPOSIT", "PAYMENT",
+    "PBOCLOG||ECQ_INQUIRE_LOG", "SALE", "PREAUTH",
+    "ECQ_DESIGNATED_LOAD", "ECQ_UNDESIGNATED_LOAD",
+    "ECQ_CASH_LOAD", "ECQ_CASH_LOAD_VOID", "CHANGE_PIN",
+    "REFOUND", "SALES_NEW"
+  ];
+
+  var result=await showDialog(context: context,
+      builder:(context){
+        return SimpleDialog(
+          title: Text("Transcation Type"),
+          children: [
+            SizedBox(
+              width: double.maxFinite,
+              height: 300,
+              child: ListView.builder(
+                itemCount: transactionTypes.length,
+                itemBuilder: (context, index) {
+                  final type = transactionTypes[index];
+                  return SimpleDialogOption(
+                    child: Text(type),
+                    onPressed: (){
+                      print(type);
+                      Navigator.pop(context, type);
+                    },
+                  );
                 },
               ),
-              SimpleDialogOption(
-                child: Text("SERVICES "),
-                onPressed: (){
-                  print("SERVICES");
-                  Navigator.pop(context,"SERVICES");
-                },
-              ),
-              SimpleDialogOption(
-                child: Text("CASH"),
-                onPressed: (){
-                  print("CASH");
-                  Navigator.pop(context,"CASH");
-                },
-              ),
-              SimpleDialogOption(
-                child: Text("CASHBACK"),
-                onPressed: (){
-                  print("CASHBACK");
-                  Navigator.pop(context,"CASHBACK");
-                },
-              ),
-              SimpleDialogOption(
-                child: Text("INQUIRY"),
-                onPressed: (){
-                  print("INQUIRY");
-                  Navigator.pop(context,"INQUIRY");
-                },
-              ),
-              SimpleDialogOption(
-                child: Text("TRANSFER"),
-                onPressed: (){
-                  print("TRANSFER");
-                  Navigator.pop(context,"TRANSFER");
-                },
-              ),
-              SimpleDialogOption(
-                child: Text("ADMIN"),
-                onPressed: (){
-                  print("ADMIN");
-                  Navigator.pop(context,"ADMIN");
-                },
-              ),
-              SimpleDialogOption(
-                child: Text("CASHDEPOSIT"),
-                onPressed: (){
-                  print("CASHDEPOSIT");
-                  Navigator.pop(context,"CASHDEPOSIT");
-                },
-              ),
-              SimpleDialogOption(
-                child: Text("PAYMENT"),
-                onPressed: (){
-                  print("PAYMENT");
-                  Navigator.pop(context,"PAYMENT");
-                },
-              ),
-              SimpleDialogOption(
-                child: Text("PBOCLOG||ECQ_INQUIRE_LOG"),
-                onPressed: (){
-                  print("PBOCLOG||ECQ_INQUIRE_LOG");
-                  Navigator.pop(context,"PBOCLOG||ECQ_INQUIRE_LOG");
-                },
-              ),
-              SimpleDialogOption(
-                child: Text("SALE"),
-                onPressed: (){
-                  print("SALE");
-                  Navigator.pop(context,"SALE");
-                },
-              ),
-              SimpleDialogOption(
-                child: Text("PREAUTH"),
-                onPressed: (){
-                  print("PREAUTH");
-                  Navigator.pop(context,"PREAUTH");
-                },
-              ),
-              SimpleDialogOption(
-                child: Text("ECQ_DESIGNATED_LOAD"),
-                onPressed: (){
-                  print("ECQ_DESIGNATED_LOAD");
-                  Navigator.pop(context,"ECQ_DESIGNATED_LOAD");
-                },
-              ),
-              SimpleDialogOption(
-                child: Text("ECQ_UNDESIGNATED_LOAD"),
-                onPressed: (){
-                  print("ECQ_UNDESIGNATED_LOAD");
-                  Navigator.pop(context,"ECQ_UNDESIGNATED_LOAD");
-                },
-              ),
-              SimpleDialogOption(
-                child: Text("ECQ_CASH_LOAD"),
-                onPressed: (){
-                  print("ECQ_CASH_LOAD");
-                  Navigator.pop(context,"ECQ_CASH_LOAD");
-                },
-              ),
-              SimpleDialogOption(
-                child: Text("ECQ_CASH_LOAD_VOID"),
-                onPressed: (){
-                  print("ECQ_CASH_LOAD_VOID");
-                  Navigator.pop(context,"ECQ_CASH_LOAD_VOID");
-                },
-              ),
-              SimpleDialogOption(
-                child: Text("CHANGE_PIN"),
-                onPressed: (){
-                  print("CHANGE_PIN");
-                  Navigator.pop(context,"CHANGE_PIN");
-                },
-              ),
-              SimpleDialogOption(
-                child: Text("REFOUND"),
-                onPressed: (){
-                  print("REFOUND");
-                  Navigator.pop(context,"REFOUND");
-                },
-              ),
-              SimpleDialogOption(
-                child: Text("SALES_NEW"),
-                onPressed: (){
-                  print("SALES_NEW");
-                  Navigator.pop(context,"SALES_NEW");
-                },
-              ),
-            ],
-          );
-        }
-    );
-    print("result --- > "+result);
-    return result;
-  }
+            )
+          ],
+        );
+      }
+  );
+  // 清空列表释放内存
+  transactionTypes.clear();
+  print("result --- > "+result);
+  return result;
+}
 
 
 // class SecondPage extends StatelessWidget{
