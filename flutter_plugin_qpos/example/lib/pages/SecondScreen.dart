@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_plugin_qpos_example/keyboard/view_keyboard.dart';
 // import 'package:toast/toast.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
 
 
 class SecondScreen extends StatelessWidget {
@@ -73,8 +73,8 @@ class SecondScreen extends StatelessWidget {
           onResult: (data) {
             // Toast.show("POS onResult" + data, context,
             //     duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
-            Fluttertoast.showToast(msg:"POS onResult" + data,
-                toastLength:Toast.LENGTH_LONG, gravity: ToastGravity.CENTER);
+            // Fluttertoast.showToast(msg:"POS onResult" + data,
+            //     toastLength:Toast.LENGTH_LONG, gravity: ToastGravity.CENTER);
           }, pwdField: null,
         );
       },

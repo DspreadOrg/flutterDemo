@@ -51,7 +51,7 @@ jobs:
 
       # 构建 APK（已签名）
       - name: Build signed APK
-        run: flutter build apk --release
+        run: flutter build apk
         working-directory: flutter_plugin_qpos/example
 
       # 自动生成 TAG（递增规则 0.0.1 -> 0.0.2 ... -> 0.1.0）
