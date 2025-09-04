@@ -1086,6 +1086,17 @@ class _MyAppState extends State<PluginPage> {
         // _flutterPluginQpos.doSetBuzzerOperation(3);
         // _flutterPluginQpos.setShutDownTime(20);
         // _flutterPluginQpos.setSleepModeTime(10);
+        // _flutterPluginQpos.isCardExist(10).then((value) =>  setState(() {
+        //   if(value!){
+        //     setState(() {
+        //       display = "card exist";
+        //     });
+        //   } else{
+        //     setState(() {
+        //       display = "card removed";
+        //     });
+        //   }
+        // }));
 
         break;
       case "1":
