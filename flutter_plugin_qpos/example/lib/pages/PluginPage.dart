@@ -910,7 +910,9 @@ class _MyAppState extends State<PluginPage> {
         break;
       case 'onReturnGetPinInputResult':
         setState(() {
-          numPinField = int.parse(parameters!);
+          List<String> parts = parameters!.split('||');
+          numPinField = int.parse(parts[0]);
+          // print("onReturnGetPinInputResult:"+parts.toString()+" "+parts[0]);
           if (numPinField == -1 && _keyboardContext != null) {
             Navigator.pop(_keyboardContext!);
             _keyboardContext = null;
